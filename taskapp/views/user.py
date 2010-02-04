@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render_to_response
 from pytask.taskapp.models import Task
-from pytask.taskapp.forms.user import RegistrationForm, LoginForm, UserProfileForm, UserProfileEditForm
+from pytask.taskapp.forms.user import RegistrationForm, LoginForm, UserProfileEditForm
 from pytask.taskapp.events.user import createUser, updateProfile
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
@@ -104,10 +104,9 @@ def view_my_profile(request,uid):
     edit_profile = True if request.user == User.objects.get(pk=uid) else False
     try:
         profile = Profile.objects.get(user = User.objects.get(pk=uid))
-        view_profile_form = UserProfileForm(instance = profile)
     except Profile.DoesNotExist:
         raise Http404
-    return render_to_response('user/my_profile.html', {'view_profile_form': view_profile_form,'edit_profile':edit_profile})
+    return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile})
 
 def edit_my_profile(request):
     """ enables the user to edit his/her user profile """
