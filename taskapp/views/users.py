@@ -66,7 +66,7 @@ def register(request):
                 form = RegistrationForm(request.POST)
                 return render_to_response('user/register.html',{'form':form,'errors':errors})#HttpResponse('Password did not match')
         else:
-            form = RegistrationForm()
+            form = RegistrationForm(request.POST)
     else:
         form = RegistrationForm()
     return render_to_response('user/register.html', {'form': form})
