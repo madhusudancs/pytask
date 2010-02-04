@@ -4,8 +4,8 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
-from pytask.taskapp.views.users import redirect_to_homepage, homepage, register, user_login, user_logout
-from pytask.taskapp.views.tasks import browse_tasks, view_task
+from pytask.taskapp.views.user import redirect_to_homepage, homepage, register, user_login, user_logout
+from pytask.taskapp.views.task import browse_tasks, view_task
 
 urlpatterns = patterns('',
     # Example:
