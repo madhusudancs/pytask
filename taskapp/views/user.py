@@ -6,10 +6,10 @@ from pytask.taskapp.events.user import createUser
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 
-def show_msg(error_msg):
+def show_msg(message):
     """ simply redirect to homepage """
     
-    return render_to_response('error.html',{'error_msg':error_msg})
+    return render_to_response('show_msg.html',{'message':message})
 
 def homepage(request):
     """ check for authentication and display accordingly. """
