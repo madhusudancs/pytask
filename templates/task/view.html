@@ -3,7 +3,7 @@
     {{task.title}}
 {% endblock %}
 {% block content %}
-    <a href="/task/browse/pg=1">Browse tasks</a>
+    <a href="/task/browse/">Browse tasks</a>
     <h3>{{ task.title }}</h3><br />
     <!-- we have to write our own datetime.strftime filter and use in the next line -->
     created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
