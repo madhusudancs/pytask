@@ -96,4 +96,11 @@ class Credit(models.Model):
     
     def __unicode__(self):
         return unicode(self.task.title)
+        
+class Claim(models.Model):
+    
+    task = models.ForeignKey('Task')
+    user = models.ForeignKey(User)
+    message = models.TextField()
+    creation_datetime = models.DateTimeField()
     

@@ -21,7 +21,7 @@ def createTask(title,desc,created_by,credits):
     """
 
     try:
-        task = Task.objects.get(title=title)
+        task = Task.objects.get(title__iexact=title)
         return None
     except Task.DoesNotExist:
         task = Task(title=title)
@@ -32,3 +32,10 @@ def createTask(title,desc,created_by,credits):
     task.save()
     return task
 
+def addSubTask(main_task, sub_task):
+    """ add sub_task to subs list of main_task """
+    
+    main_task.subs.add(sub_task)
+    main_task.status = "LO"
+    main_task.save()
+    return main_task

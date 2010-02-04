@@ -7,8 +7,20 @@
     <h3>{{ task.title }}</h3><br />
     <!-- we have to write our own datetime.strftime filter and use in the next line -->
     created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
+    Mentors:
+    {% for mentor in mentors %}
+        <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}|</a>
+    {% endfor %}
+    {% if is_mentor %}
+        <br /><a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a><br />
+        edit task goes here and it should contain all those add subs and add deps depending on availability<br />
+    {% endif %}
+    <hr>
     <br />Description:<br />
     <br />{{ task.desc }}<br />
+    <hr>
+    status of task is {{task.status}}<br />
+    view claims goes here depending on availability of claim<br />
     {% if comments %}
         <br/>comments:<br />
         {% for comment in comments %}
@@ -16,7 +28,7 @@
         {{ comment.data }}<br />
         {% endfor %}
     {% endif %}
-    
+
     {% if not is_guest %}
         <br />Add comment:<br />
         <form action="" method="post">

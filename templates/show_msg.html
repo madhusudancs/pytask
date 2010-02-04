@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if message %}
-    {{message}}<br />
-    <a href="/">click here</a> to return to Homepage
+        {{message}}<br />
+    {% endif %}
+    {% if redirect_url %}
+        <a href={{redirect_url}}>click here</a> to return to {{url_desc}}
+    {% else %}
+        <a href="/">click here</a> to return to Homepage
     {% endif %}
 {% endblock %}

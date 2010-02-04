@@ -6,10 +6,10 @@ from pytask.taskapp.events.user import createUser
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 
-def show_msg(message):
+def show_msg(message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
     
-    return render_to_response('show_msg.html',{'message':message})
+    return render_to_response('show_msg.html',{'message':message, 'redirect_url':redirect_url, 'url_desc':url_desc})
 
 def homepage(request):
     """ check for authentication and display accordingly. """
@@ -28,19 +28,22 @@ def homepage(request):
             task_list = Task.objects.order_by('id').reverse()
         else:
             task_list = Task.objects.order_by('id').reverse()[:10]
+            
+        return render_to_response('index.html', {'is_guest':is_guest, 'task_list':task_list})
+        
     else:
         user_profile = user.get_profile()
         is_mentor = True if user.task_mentors.all() else False
         can_create_task = False if user_profile.rights == u"CT" else True
         
-    context = {'user':user,
-               'is_guest':is_guest,
-               'is_mentor':is_mentor,
-               'task_list':task_list,
-               'can_create_task':can_create_task,
-               }
-               
-    return render_to_response('index.html', context)
+        context = {'user':user,
+                   'is_guest':is_guest,
+                   'is_mentor':is_mentor,
+                   'task_list':task_list,
+                   'can_create_task':can_create_task,
+                   }
+                   
+        return render_to_response('index.html', context)
 
 
 def register(request):
