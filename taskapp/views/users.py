@@ -50,13 +50,17 @@ def register(request):
         if form.is_valid():
             data = form.cleaned_data
             if data['password'] == data['repeat_password']:
-                try:
-                    if User.objects.get(username__exact = data['username']):
-                        errors=['Choose some other username']
-                        return render_to_response('user/register.html',{'form':form,'errors':errors})
-                except:
-                     u = createUser(username=data['username'], email=data['email'], password=data['password'],dob = data['dob'],gender = data['gender'])
-                return redirect('/accounts/login/')
+                if data['username'].isalnum():
+                    try:
+                        if User.objects.get(username__exact = data['username']):
+                            errors=['Choose some other username']
+                            return render_to_response('user/register.html',{'form':form,'errors':errors})
+                    except:
+                         u = createUser(username=data['username'], email=data['email'], password=data['password'],dob = data['dob'],gender = data['gender'])
+                    return redirect('/accounts/login/')
+                else:
+                    errors = ['Username can contain only alphabets and numbers!']
+                    return render_to_response('user/register.html',{'form':form,'errors':errors})
             else:
                 errors=['Password do not match']
                 form = RegistrationForm(request.POST)
