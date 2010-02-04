@@ -20,12 +20,15 @@
     <br />{{ task.desc }}<br />
     <hr>
     status of task is {{task.status}}<br />
-    {% if user_can_view_claim %}
+    {% if assigned_user %}
+        Task has been assigned to <a href="/user/view/uid={{assigned_user.id}}">{{assigned_user.username}}</a><br />
+    {% endif %}
+    {% if not is_guest %}
         <a href="/task/claim/tid={{task.id}}">View claims</a><br />
-        view claims goes here depending on availability of claim<br />
     {% endif %}
     
     {% if comments %}
+        <hr />
         <br/>comments:<br />
         {% for comment in comments %}
             <br /><a href="/user/view/uid={{comment.created_by.id}}">{{ comment.created_by.username }}</a> at {{ comment.creation_datetime.ctime }} wrote:<br />

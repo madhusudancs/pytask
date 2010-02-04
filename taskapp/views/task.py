@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm 
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AssignTaskForm
+from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addClaim, assignTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -39,7 +39,6 @@ def view_task(request, tid):
     is_mentor = True if user in task.mentors.all() else False
     
     task_claimable = True if task.status in ["OP", "RE"] else False
-    user_can_view_claim = True if ( task_claimable and not ( is_guest or is_mentor ) ) else False
     
     context = {'user':user,
                'task':task,
@@ -47,9 +46,11 @@ def view_task(request, tid):
                'mentors':mentors,
                'is_guest':is_guest,
                'is_mentor':is_mentor,
-               'user_can_view_claim':user_can_view_claim,
                'errors':errors,
                }
+               
+    if task.status == "AS":
+        context['assigned_user'] = task.assigned_users.all()[0]
     
     if request.method == 'POST':
         if not is_guest:
@@ -172,25 +173,75 @@ def claim_task(request, tid):
     ## see if that "one to n" or "n to one" relationship has a special field
     
     task_url = "/task/view/tid=%s"%tid
+    claim_url = "/task/claim/tid=%s"%tid
+    
+    errors = []
     
     user = request.user
     task = Task.objects.get(id=tid)
     claims = Claim.objects.filter(task=task)
     
     is_guest = True if not user.is_authenticated() else False
+    if user in task.mentors.all():
+        is_mentor = True 
+    else:
+         is_mentor = False
 
-    task_claimable = True if task.status in ["OP", "RE"] else False
-    user_can_claim = True if ( task_claimable and not ( is_guest or is_mentor ) and ( user not in task.claimed_users.all() ) ) else False
+    task_claimable = True if task.status in ["OP", "RE", "CL"] else False
+    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in task.claimed_users.all() )  else False
+    
+    context = {'is_mentor':is_mentor,
+               'task':task,
+               'claims':claims,
+               'user_can_claim':user_can_claim,
+               'task_claimable':task_claimable,
+               'errors':errors}
     
     if not is_guest:
-        if task_claimable:
-            pass
+        if request.method == "POST":
+            claim_proposal = request.POST['message']
+            if claim_proposal:
+                addClaim(task, claim_proposal, user)
+                return redirect(claim_url)
+            else:
+                errors.append('Please fill up proposal in the field below')
+                return render_to_response('task/claim.html', context)
         else:
-            return show_msg('You are not logged in to view claims for this task', task_url, 'view the task')
+            return render_to_response('task/claim.html', context)
     else:
         return show_msg('You are not logged in to view claims for this task', task_url, 'view the task')
     
     
+def assign_task(request, tid):
+    """ first get the status of the task and then assign it to one of claimed users
+    generate list of claimed users by passing it as an argument to a function.
+    """
     
+    task_url = "/task/view/tid=%s"%tid
     
+    user = request.user
+    task = Task.objects.get(id=tid)
+    
+    is_guest = True if not user.is_authenticated() else False
+    is_mentor = True if user in task.mentors.all() else False
+
+    task_claimed = True if task.status == "CL" else False
+    
+    if (not is_guest) and is_mentor:
+        if task_claimed:
+            user_list = ((user.id,user.username) for user in task.claimed_users.all())
+            form = AssignTaskForm(user_list)
+    
+            if request.method == "POST":
+                uid = request.POST['user']
+                assigned_user = User.objects.get(id=uid)
+                assignTask(task, assigned_user)
+                return redirect(task_url)
+            else:
+                return render_to_response('task/assign.html',{'form':form})
+        else:
+            return show_msg('The task is already assigned', task_url, 'view the task')
+    else:
+        return show_msg('You are not authorised to perform this action', task_url, 'view the task')
+        
     

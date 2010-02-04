@@ -1,5 +1,5 @@
 from datetime import datetime
-from pytask.taskapp.models import Profile, Task, Comment, Credit
+from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim
 
 def publishTask(task):
     """ set the task status to open """
@@ -39,3 +39,25 @@ def addSubTask(main_task, sub_task):
     main_task.status = "LO"
     main_task.save()
     return main_task
+
+def addClaim(task, message, user):
+    """ add claim data to the database if it does not exist 
+    and also update the claimed users field of the task.
+    """
+    
+    task.claimed_users.add(user)
+    task.status = "CL"
+    task.save()
+    claim = Claim()
+    claim.message = message
+    claim.task = task
+    claim.user = user
+    claim.creation_datetime = datetime.now()
+    claim.save()
+    
+def assignTask(task, user):
+    """ check for the status of task and assign it to the particular user """
+    
+    task.assigned_users.add(user)
+    task.status = "AS"
+    task.save()

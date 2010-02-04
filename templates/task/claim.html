@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    List of all the claims for the task <a href="/task/view/tid={{task.id}}">{{task.title}}</a><br />
+    {% for claim in claims %}
+        <hr />
+        <a href="/user/view/uid={{claim.user.id}}">{{claim.user.username}}</a> at {{claim.creation_datetime.ctime}} wrote:<br />
+        {{claim.message}}<br />
+    {% endfor %}
+    {% if task_claimable and is_mentor %}
+        <a href="/task/assign/tid={{task.id}}">Assign task</a>
+    {% endif %}
+    {% if user_can_claim %}
+    <hr />
+    {% if errors %}
+        {% for error in errors %}
+            {{error}}<br />
+        {% endfor %}
+    {% endif %}
+    Claim the task:<br />
+        <form action="" method="post">
+        <textarea name="message"></textarea><br />
+        <input type="submit" value="Submit Claim">
+        </form>
+    {% endif %}
+{% endblock %}

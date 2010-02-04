@@ -19,3 +19,11 @@ class ClaimTaskForm(forms.ModelForm):
     class Meta:
         model = Claim
         fields = ['message']
+
+def AssignTaskForm(choices, instance=None):
+    """ return a form object with appropriate choices """
+    
+    class myform(forms.Form):
+        user = forms.ChoiceField(choices=choices, required=True)
+    form = myform()
+    return form

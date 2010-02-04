@@ -4,8 +4,8 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
-from pytask.taskapp.views.user import homepage, register, user_login, user_logout, view_my_profile, edit_my_profile
-from pytask.taskapp.views.task import browse_tasks, view_task, create_task, add_mentor, add_tasks, claim_task
+from pytask.taskapp.views.user import homepage, register, user_login, user_logout
+from pytask.taskapp.views.task import browse_tasks, view_task, create_task, add_mentor, add_tasks, claim_task, assign_task
 
 urlpatterns = patterns('',
     # Example:
@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     (r'^task/addmentor/tid=(\d+)', add_mentor),
     (r'^task/addtasks/tid=(\d+)', add_tasks),
     (r'^task/claim/tid=(\d+)', claim_task),
+    (r'^task/assign/tid=(\d+)', assign_task),
     
     (r'^admin/', include(admin.site.urls)),
     
