@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<form action="/accounts/login/" method="post">
+    {{ form.as_p }}
+
+{% if errors %}
+    <p style="color: red;">
+        Please correct the error{{ errors|pluralize }} below.
+        {% for i in errors %}
+            <br>{{ i }}
+        {% endfor %}
+    </p>
+{% endif %}
+
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}
