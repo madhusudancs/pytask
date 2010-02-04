@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render_to_response
 from pytask.taskapp.models import Task
-from pytask.taskapp.forms.user import RegistrationForm, LoginForm
-from pytask.taskapp.events.user import createUser
+from pytask.taskapp.forms.user import RegistrationForm, LoginForm, UserProfileForm, UserProfileEditForm
+from pytask.taskapp.events.user import createUser, updateProfile
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+from pytask.taskapp.models import Profile
 
 def show_msg(message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
@@ -97,3 +98,34 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return show_msg('You have logged off successfully!!!')
+
+def view_my_profile(request,uid):
+    """ allows the user to view the profiles of users """
+    edit_profile = True if request.user == User.objects.get(pk=uid) else False
+    try:
+        profile = Profile.objects.get(user = User.objects.get(pk=uid))
+        view_profile_form = UserProfileForm(instance = profile)
+    except Profile.DoesNotExist:
+        raise Http404
+    return render_to_response('user/my_profile.html', {'view_profile_form': view_profile_form,'edit_profile':edit_profile})
+
+def edit_my_profile(request):
+    """ enables the user to edit his/her user profile """
+    if str(request.user) == 'AnonymousUser':
+        return show_msg('Please register yourself to activate the functionality')
+    if request.method == 'POST':
+        form = UserProfileEditForm(request.POST)
+#        if not form.is_valid():
+#            edit_profile_form = UserProfileEditForm(instance = form)
+#            return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form})
+        if request.user.is_authenticated() == True:
+            profile = Profile.objects.get(user = request.user)
+            data = request.POST#form.cleaned_data
+            properties = {'aboutme':data['aboutme'], 'foss_comm':data['foss_comm'], 'phonenum':data['phonenum'], 'homepage':data['homepage'], 'street':data['street'], 'city':data['city'], 'country':data['country'], 'nick':data['nick']}
+            #fields = ['dob','gender','credits','aboutme','foss_comm','phonenum','homepage','street','city','country','nick']
+            updateProfile(profile,properties)
+            return redirect('/user/view/uid='+str(profile.user_id))
+    else:
+        profile = Profile.objects.get(user = request.user)
+        edit_profile_form = UserProfileEditForm(instance = profile)
+        return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form})
