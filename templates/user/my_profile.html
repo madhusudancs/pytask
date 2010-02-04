@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if edit_profile %}
+    <a href="/user/edit/">edit my profile</a>
+{% endif %}
+
+<br>
+{{ view_profile_form.as_p }}
+
+{% endblock %}
