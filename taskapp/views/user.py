@@ -128,3 +128,7 @@ def edit_my_profile(request):
         profile = Profile.objects.get(user = request.user)
         edit_profile_form = UserProfileEditForm(instance = profile)
         return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form})
+
+def browse_users(request):
+    userlist = User.objects.order_by('username')
+    return render_to_response('user/browse.html',{'userlist':userlist})

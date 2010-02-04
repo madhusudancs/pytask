@@ -7,11 +7,12 @@
 {% block content %}
     <!--{{ view_profile_form.as_p }}-->
 
-    <h2>{{ profile }}'s Profile</h2><hr>
+    <h2>{{ profile }}'s Profile</h2>
+    <hr>
     {% if edit_profile %}
         <a href="/user/edit/">edit profile</a>
+        <hr>
     {% endif %}
-    <hr>
     {% if profile.aboutme %}
         <br><h4>About Me</h4><hr>{{ profile.aboutme }}
     {% endif %}
