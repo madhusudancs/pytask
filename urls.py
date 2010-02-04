@@ -4,7 +4,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
-from pytask.taskapp.views.user import homepage, register, user_login, user_logout
+from pytask.taskapp.views.user import homepage, register, user_login, user_logout, view_my_profile, edit_my_profile
 from pytask.taskapp.views.task import browse_tasks, view_task, create_task, add_mentor, add_tasks, claim_task, assign_task
 
 urlpatterns = patterns('',
@@ -32,6 +32,6 @@ urlpatterns = patterns('',
     (r'^accounts/logout/$',user_logout),
     
     (r'^user/view/uid=(\d+)$', view_my_profile),
-    (r'^user/edit/?$',edit_my_profile),
+    (r'^user/edit/?$', edit_my_profile),
 
 )
