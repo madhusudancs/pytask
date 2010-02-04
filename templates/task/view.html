@@ -20,7 +20,11 @@
     <br />{{ task.desc }}<br />
     <hr>
     status of task is {{task.status}}<br />
-    view claims goes here depending on availability of claim<br />
+    {% if user_can_view_claim %}
+        <a href="/task/claim/tid={{task.id}}">View claims</a><br />
+        view claims goes here depending on availability of claim<br />
+    {% endif %}
+    
     {% if comments %}
         <br/>comments:<br />
         {% for comment in comments %}

@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from pytask.taskapp.views.user import homepage, register, user_login, user_logout
-from pytask.taskapp.views.task import browse_tasks, view_task, create_task, add_mentor, add_tasks
+from pytask.taskapp.views.task import browse_tasks, view_task, create_task, add_mentor, add_tasks, claim_task
 
 urlpatterns = patterns('',
     # Example:
@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     (r'^task/create/$', create_task),
     (r'^task/addmentor/tid=(\d+)', add_mentor),
     (r'^task/addtasks/tid=(\d+)', add_tasks),
+    (r'^task/claim/tid=(\d+)', claim_task),
     
     (r'^admin/', include(admin.site.urls)),
     

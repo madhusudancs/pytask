@@ -14,7 +14,7 @@ STATUS_CHOICES = (
     ("LO", "Locked"),
 	("CL", "Claimed"),
 	("AS", "Assigned"),
-    ("RO", "Reopened"),
+    ("RE", "Reopened"),
     ("CD", "Closed"),
     ("DL", "Deleted"),
     ("CM", "Completed"))

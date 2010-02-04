@@ -3,7 +3,7 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
-from pytask.taskapp.models import User, Task, Comment
+from pytask.taskapp.models import User, Task, Comment, Claim
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm 
 from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask
 from pytask.taskapp.views.user import show_msg
@@ -38,12 +38,16 @@ def view_task(request, tid):
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in task.mentors.all() else False
     
+    task_claimable = True if task.status in ["OP", "RE"] else False
+    user_can_view_claim = True if ( task_claimable and not ( is_guest or is_mentor ) ) else False
+    
     context = {'user':user,
                'task':task,
                'comments':comments,
                'mentors':mentors,
                'is_guest':is_guest,
                'is_mentor':is_mentor,
+               'user_can_view_claim':user_can_view_claim,
                'errors':errors,
                }
     
@@ -171,8 +175,20 @@ def claim_task(request, tid):
     
     user = request.user
     task = Task.objects.get(id=tid)
+    claims = Claim.objects.filter(task=task)
     
+    is_guest = True if not user.is_authenticated() else False
+
+    task_claimable = True if task.status in ["OP", "RE"] else False
+    user_can_claim = True if ( task_claimable and not ( is_guest or is_mentor ) and ( user not in task.claimed_users.all() ) ) else False
     
+    if not is_guest:
+        if task_claimable:
+            pass
+        else:
+            return show_msg('You are not logged in to view claims for this task', task_url, 'view the task')
+    else:
+        return show_msg('You are not logged in to view claims for this task', task_url, 'view the task')
     
     
     
