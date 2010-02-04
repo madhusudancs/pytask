@@ -2,7 +2,11 @@ from datetime import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
+
 from pytask.taskapp.models import Task, Comment
+from pytask.taskapp.forms.task import TaskCreateForm
+from pytask.taskapp.events.task import createTask, addMentor, publishTask
+from pytask.taskapp.views.user import show_msg
 
 def browse_tasks(request):
     """ display all the tasks """
@@ -50,3 +54,57 @@ def view_task(request, tid):
             return render_to_response('task/view.html', context)
     else:
         return render_to_response('task/view.html', context)
+        
+def create_task(request):
+    """ check for rights and create a task if applicable.
+    if user cannot create a task, redirect to homepage.
+    """
+    
+    user = request.user
+    is_guest = True if not user.is_authenticated() else False
+    
+    if not is_guest:
+        user_profile = user.get_profile()
+        can_create_task = False if user_profile.rights == "CT" else True
+        if can_create_task:
+            if request.method == "POST":
+                form = TaskCreateForm(request.POST)
+                if form.is_valid():
+                    data = form.cleaned_data
+                    title = data['title']
+                    desc = data['desc']
+                    credits = data['credits']
+                    publish = data['publish']
+                    task = createTask(title,desc,user,credits)
+                    
+                    if not task:
+                        error_msg = "Another task with the same title exists"
+                        return render_to_response('task/create.html',{'form':form, 'error_msg':error_msg})
+                    
+                    addMentor(task, user)
+                    if publish: publishTask(task)    
+                    task_url = '/task/view/tid=%s'%task.id
+                    return redirect(task_url)
+                else:
+                    return render_to_response('task/create.html',{'form':form})
+            else:
+                form = TaskCreateForm()
+                return render_to_response('task/create.html',{'form':form})
+        else:
+            return show_msg('You are not authorised to create a task.')
+    else:
+        return show_msg('You are not authorised to create a task.')
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

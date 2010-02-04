@@ -6,10 +6,10 @@ from pytask.taskapp.events.user import createUser
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 
-def redirect_to_homepage(request):
+def show_msg(error_msg):
     """ simply redirect to homepage """
     
-    return redirect('/')
+    return render_to_response('error.html',{'error_msg':error_msg})
 
 def homepage(request):
     """ check for authentication and display accordingly. """
@@ -81,7 +81,7 @@ def user_login(request):
                 login(request, user)
                 return redirect('/')# Redirect to a success page.
             else:
-                return HttpResponse('username is not active, please contact the administrator')# Return a 'disabled account' error message
+                return show_msg('username is not active, please contact the administrator')# Return a 'disabled account' error message
         else:
             errors = ['Please check your username and password']
             form = LoginForm()
@@ -93,4 +93,4 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
-    return HttpResponse('You have logged off successfully!!!')
+    return show_msg('You have logged off successfully!!!')

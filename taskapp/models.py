@@ -9,6 +9,7 @@ RIGHTS_CHOICES = (
 	("CT", "Contributor"),)
 
 STATUS_CHOICES = (
+    ("UP", "Unpublished"),
 	("OP", "Open"),
     ("LO", "Locked"),
 	("CL", "Claimed"),
@@ -47,14 +48,14 @@ class Task(models.Model):
     
     title = models.CharField(max_length = 200, unique = True)
     desc = models.TextField()
-    status = models.CharField(max_length = 2, choices = STATUS_CHOICES)
+    status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
     tags = models.CharField(max_length = 200, blank = True)
     
     subs = models.ManyToManyField('self', blank = True, related_name = "%(class)s_parents")
     deps = models.ManyToManyField('self', blank = True, related_name = "%(class)s_deps")
     
     credits = models.PositiveSmallIntegerField()
-    progress = models.PositiveSmallIntegerField()
+    progress = models.PositiveSmallIntegerField(default = 0)
         
     mentors = models.ManyToManyField(User, related_name = "%(class)s_mentors")
     created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
