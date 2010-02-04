@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if is_guest %}
+        Welcome Guest<br>
+        <a href="/accounts/register/">Register</a>
+        <a href="/accounts/login/">Login</a><br /><br />
+        Recent Tasks:<br />
+        {% for task in task_list %}
+            <a href="/task/view/tid={{ task.id }}">{{ task.title }}</a><br />
+        {% endfor %}
+    {% else %}
+        Welcome {{ user.username }} <br />
+        <a href="/accounts/logout/">logout</a><br />
+        <br />
+        <a href="/task/browse/">Tasks</a><br />
+        <a href="/user/browse/">Users</a><br />
+        <a href="/user/view/uid={{user.id}}">My Profile</a><br />
+    {% endif %}
+    {% if can_create_task %}
+        <a href="/task/create/">Create a task</a><br />
+    {% endif %}
+{% endblock %}

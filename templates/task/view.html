@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{task.title}}
+{% endblock %}
+{% block content %}
+    <a href="/task/browse/pg=1">Browse tasks</a>
+    <h3>{{ task.title }}</h3><br />
+    <!-- we have to write our own datetime.strftime filter and use in the next line -->
+    created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
+    <br />Description:<br />
+    <br />{{ task.desc }}<br />
+    {% if comments %}
+        <br/>comments:<br />
+        {% for comment in comments %}
+            <br /><a href="/user/view/uid={{comment.created_by.id}}">{{ comment.created_by.username }}</a> at {{ comment.creation_datetime.ctime }} wrote:<br />
+        {{ comment.data }}<br />
+        {% endfor %}
+    {% endif %}
+    
+    {% if not is_guest %}
+        <br />Add comment:<br />
+        <form action="" method="post">
+        <!-- we might even want to use forms here -->
+        <textarea  name="data"></textarea><br />
+        <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+{% endblock %}

@@ -81,4 +81,4 @@ INSTALLED_APPS = (
     'pytask.taskapp',
 )
 
-AUTH_PROFILE_MODULE = 'taskapp.models.Profile'
+AUTH_PROFILE_MODULE = 'taskapp.Profile'

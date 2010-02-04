@@ -24,12 +24,12 @@ UPLOADS_DIR = "./uploads"
 class Profile(models.Model):
 	
     user = models.ForeignKey(User, unique = True)
-    aboutme = models.TextField()
-    dob = models.DateField()
+    dob = models.DateField(help_text = "YYYY-MM-DD")
     gender = models.CharField(max_length = 1, choices = GENDER_CHOICES)
-    rights = models.CharField(max_length = 2, choices = RIGHTS_CHOICES)
-    credits = models.PositiveSmallIntegerField()
+    rights = models.CharField(max_length = 2, choices = RIGHTS_CHOICES, default = u"CT")
+    credits = models.PositiveSmallIntegerField(default = 0)
     
+    aboutme = models.TextField(blank = True)
     foss_comm = models.CharField(max_length = 80, blank = True)
     phonenum = models.CharField(max_length = 15, blank = True)
     homepage = models.URLField(blank = True)
@@ -62,6 +62,8 @@ class Task(models.Model):
     assigned_users = models.ManyToManyField(User, blank = True, related_name = "%(class)s_assigned_users")
     
     creation_datetime = models.DateTimeField()
+    
+    #is_claimable = models.BooleanField()
     
     ## not yet decided if attribs after this are to be included
     ## tasktype = "" ## "bugfix"/"enhancement"
