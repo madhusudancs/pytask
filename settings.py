@@ -10,7 +10,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = '../pytaskDb'             # Or path to database file if using sqlite3.
+DATABASE_NAME = '../../pytask.db'             # Or path to database file if using sqlite3.
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -48,7 +48,7 @@ MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '@7p-w6$99)@&+sp024%is8i=4#62q8*y0xx=5e_z*4h3%@#7u)'
+SECRET_KEY = '#7bo8^p1gc=$85gv09z5d_d9-8xk1p=me7_c^3ito@jjth6^^w'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -69,6 +69,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    './templates',
 )
 
 INSTALLED_APPS = (
@@ -79,3 +80,5 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'pytask.taskapp',
 )
+
+AUTH_PROFILE_MODULE = 'taskapp.models.Profile'
