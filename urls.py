@@ -7,6 +7,8 @@ admin.autodiscover()
 from pytask.taskapp.views.user import homepage, register, user_login, user_logout, view_my_profile, edit_my_profile, browse_users
 from pytask.taskapp.views.task import browse_tasks, view_task, create_task, add_mentor, add_tasks, claim_task, assign_task
 
+from pytask.taskapp.utils.seed_db import seed_db
+
 urlpatterns = patterns('',
     # Example:
     # (r'^pytask/', include('pytask.foo.urls')),
@@ -34,4 +36,6 @@ urlpatterns = patterns('',
     (r'^user/view/uid=(\d+)$', view_my_profile),
     (r'^user/edit/?$', edit_my_profile),
     (r'^user/browse/?$',browse_users),
+    
+    (r'^seed_db/$', seed_db),
 )

@@ -26,13 +26,17 @@ def createUser(username,email,password,dob,gender):
         gender : u'M'/u'F' 
     """
 
-    user = User(username=username, email=email)
-    user.set_password(password)
-    user.save()
-    properties = {'dob':dob, 'gender':gender}
-    user_profile = Profile(user=user)
-    updateProfile(user_profile, properties)
-    return user
+    try:
+        user = User.objects.get(username=username)
+        return user
+    except:        
+        user = User(username=username, email=email)
+        user.set_password(password)
+        user.save()
+        properties = {'dob':dob, 'gender':gender}
+        user_profile = Profile(user=user)
+        updateProfile(user_profile, properties)
+        return user
     
 def createSuUser(username,email,password,dob,gender):
     """ create user using createUser method and set the is_superuser flag """
@@ -41,3 +45,4 @@ def createSuUser(username,email,password,dob,gender):
     su_user.is_staff = True
     su_user.is_superuser = True
     su_user.save()
+    return su_user
