@@ -34,10 +34,10 @@ def createUser(username,email,password,dob,gender):
     updateProfile(user_profile, properties)
     return user
     
-def createSuUser(username,email,password,**properties):
+def createSuUser(username,email,password,dob,gender):
     """ create user using createUser method and set the is_superuser flag """
     
-    su_user = createUser(username,email,password,**properties)
+    su_user = createUser(username,email,password,dob,gender)
     su_user.is_staff = True
     su_user.is_superuser = True
     su_user.save()
