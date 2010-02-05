@@ -255,4 +255,9 @@ def assign_task(request, tid):
     else:
         return show_msg('You are not authorised to perform this action', task_url, 'view the task')
         
+def edit_task(request, tid):
+    """ see what are the attributes that can be edited depending on the current status
+    and then give the user fields accordingly.
+    """
     
+    return None

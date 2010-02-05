@@ -4,8 +4,8 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
-from pytask.taskapp.views.user import homepage, register, user_login, user_logout, view_my_profile, edit_my_profile, browse_users
-from pytask.taskapp.views.task import browse_tasks, view_task, create_task, add_mentor, add_tasks, claim_task, assign_task
+from pytask.taskapp.views import user as userViews
+from pytask.taskapp.views import task as taskViews
 
 from pytask.taskapp.utils.seed_db import seed_db
 
@@ -17,26 +17,26 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     
-    (r'^$', homepage),
+    (r'^$', userViews.homepage),
     
-    (r'^task/browse/$', browse_tasks),
-    (r'^task/view/tid=(\d+)$', view_task),
-    (r'^task/create/$', create_task),
-    (r'^task/addmentor/tid=(\d+)', add_mentor),
-    #(r'^task/addtasks/tid=(\d+)', add_tasks),
-    (r'^task/edit/tid=(\d+)', edit_task),
-    (r'^task/claim/tid=(\d+)', claim_task),
-    (r'^task/assign/tid=(\d+)', assign_task),
+    (r'^task/browse/$', taskViews.browse_tasks),
+    (r'^task/view/tid=(\d+)$', taskViews.view_task),
+    (r'^task/create/$', taskViews.create_task),
+    (r'^task/addmentor/tid=(\d+)', taskViews.add_mentor),
+    #(r'^task/addtasks/tid=(\d+)', taskViews.add_tasks),
+    (r'^task/edit/tid=(\d+)', taskViews.edit_task),
+    (r'^task/claim/tid=(\d+)', taskViews.claim_task),
+    (r'^task/assign/tid=(\d+)', taskViews.assign_task),
     
     (r'^admin/', include(admin.site.urls)),
     
-    (r'^accounts/register/$',register),
-    (r'^accounts/login/$',user_login),
-    (r'^accounts/logout/$',user_logout),
+    (r'^accounts/register/$', userViews.register),
+    (r'^accounts/login/$', userViews.user_login),
+    (r'^accounts/logout/$', userViews.user_logout),
     
-    (r'^user/view/uid=(\d+)$', view_my_profile),
-    (r'^user/edit/?$', edit_my_profile),
-    (r'^user/browse/?$',browse_users),
+    (r'^user/view/uid=(\d+)$', userViews.view_my_profile),
+    (r'^user/edit/?$', userViews.edit_my_profile),
+    (r'^user/browse/?$', userViews.browse_users),
     
     (r'^seed_db/$', seed_db),
 )
