@@ -123,7 +123,12 @@ def add_mentor(request, tid):
         user_list = list(User.objects.all())
         for mentor in task.mentors.all():
             user_list.remove(mentor)
+            
+        for a_user in task.claimed_users.all():
+            user_list.remove(a_user)
+            
         non_mentors = ((_.id,_.username) for _ in user_list)
+        ## code till must be made elegant and not brute force like above
         
         form = AddMentorForm(non_mentors)
         if request.method == "POST":
