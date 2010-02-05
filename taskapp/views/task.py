@@ -189,12 +189,14 @@ def claim_task(request, tid):
 
     task_claimable = True if task.status in ["OP", "RE", "CL"] else False
     user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in task.claimed_users.all() )  else False
+    task_claimed = True if task.status == "CL" else False
     
     context = {'is_mentor':is_mentor,
                'task':task,
                'claims':claims,
                'user_can_claim':user_can_claim,
                'task_claimable':task_claimable,
+               'task_claimed':task_claimed,
                'errors':errors}
     
     if not is_guest:
@@ -239,8 +241,12 @@ def assign_task(request, tid):
                 return redirect(task_url)
             else:
                 return render_to_response('task/assign.html',{'form':form})
-        else:
+        elif task.status == "AS":
             return show_msg('The task is already assigned', task_url, 'view the task')
+        elif task.status == "OP":
+            return show_msg('No one has still claimed the task', task_url, 'view the task')
+        else:
+            return show_msg('The task status is %s. how can you assign it now'%task.status, task_url, 'view the task')
     else:
         return show_msg('You are not authorised to perform this action', task_url, 'view the task')
         

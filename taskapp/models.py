@@ -46,7 +46,7 @@ class Profile(models.Model):
 
 class Task(models.Model):
     
-    title = models.CharField(max_length = 200, unique = True)
+    title = models.CharField(max_length = 100, unique = True)
     desc = models.TextField()
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
     tags = models.CharField(max_length = 200, blank = True)

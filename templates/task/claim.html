@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-    List of all the claims for the task <a href="/task/view/tid={{task.id}}">{{task.title}}</a><br />
-    {% for claim in claims %}
-        <hr />
-        <a href="/user/view/uid={{claim.user.id}}">{{claim.user.username}}</a> at {{claim.creation_datetime.ctime}} wrote:<br />
-        {{claim.message}}<br />
-    {% endfor %}
-    {% if task_claimable and is_mentor %}
+    {% if claims %}
+        List of all the claims for the task <a href="/task/view/tid={{task.id}}">{{task.title}}</a><br />
+        {% for claim in claims %}
+            <hr />
+            <a href="/user/view/uid={{claim.user.id}}">{{claim.user.username}}</a> at {{claim.creation_datetime.ctime}} wrote:<br />
+            {{claim.message}}<br />
+        {% endfor %}
+    {% else %}
+        There are no claims for task <a href="/task/view/tid={{task.id}}">{{task.title}}</a> yet.
+    {% endif %}
+    {% if task_claimed and is_mentor %}
         <a href="/task/assign/tid={{task.id}}">Assign task</a>
     {% endif %}
     {% if user_can_claim %}
