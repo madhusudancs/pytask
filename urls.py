@@ -38,5 +38,4 @@ urlpatterns = patterns('',
     (r'^user/edit/?$', userViews.edit_my_profile),
     (r'^user/browse/?$', userViews.browse_users),
     
-    (r'^seed_db/$', seed_db),
 )

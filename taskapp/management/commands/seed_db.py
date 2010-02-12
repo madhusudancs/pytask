@@ -1,10 +1,14 @@
+import sys
 from datetime import datetime
+from django.core.management.base import NoArgsCommand
+
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+
 from pytask.taskapp.events import task as taskEvents
 from pytask.taskapp.events import user as userEvents
 
-def seed_db(request):
+
+def seed_db():
     """ a method to seed the database with random data """
     
     defaultMentor = userEvents.createSuUser("admin", "admin@example.com", "123456", datetime.now(), "M")
@@ -29,5 +33,10 @@ def seed_db(request):
         if task:
             taskEvents.addMentor(task, defaultMentor)
             taskEvents.publishTask(task)
+
+class Command(NoArgsCommand):
+    
+    def handle_noargs(self, **options):
+        """ Just copied the code from seed_db.py """
         
-    return HttpResponse("Done")
+        seed_db()
