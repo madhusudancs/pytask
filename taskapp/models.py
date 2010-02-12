@@ -25,15 +25,15 @@ UPLOADS_DIR = "./uploads"
 class Profile(models.Model):
 	
     user = models.ForeignKey(User, unique = True)
-    dob = models.DateField(help_text = "YYYY-MM-DD")
+    dob = models.DateField(verbose_name = u"Date of Birth", help_text = "YYYY-MM-DD")
     gender = models.CharField(max_length = 1, choices = GENDER_CHOICES)
     rights = models.CharField(max_length = 2, choices = RIGHTS_CHOICES, default = u"CT")
     credits = models.PositiveSmallIntegerField(default = 0)
     
     aboutme = models.TextField(blank = True)
-    foss_comm = models.CharField(max_length = 80, blank = True)
-    phonenum = models.CharField(max_length = 15, blank = True)
-    homepage = models.URLField(blank = True)
+    foss_comm = models.CharField(max_length = 80, blank = True, verbose_name = u"Foss Communities", help_text = u"Comma seperated list of foss communities you are involved in.")
+    phonenum = models.CharField(max_length = 15, blank = True, verbose_name = u"Phone Number")
+    homepage = models.URLField(blank = True, verbose_name = u"Homepage/Blog")
     street = models.CharField(max_length = 80, blank = True)
     city = models.CharField(max_length = 25, blank = True)
     country = models.CharField(max_length = 25, blank = True)
@@ -46,8 +46,8 @@ class Profile(models.Model):
 
 class Task(models.Model):
     
-    title = models.CharField(max_length = 100, unique = True)
-    desc = models.TextField()
+    title = models.CharField(max_length = 100, unique = True, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
+    desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
     tags = models.CharField(max_length = 200, blank = True)
     

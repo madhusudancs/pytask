@@ -7,7 +7,6 @@ admin.autodiscover()
 from pytask.taskapp.views import user as userViews
 from pytask.taskapp.views import task as taskViews
 
-from pytask.taskapp.utils.seed_db import seed_db
 
 urlpatterns = patterns('',
     # Example:
