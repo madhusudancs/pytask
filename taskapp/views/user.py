@@ -6,6 +6,8 @@ from pytask.taskapp.events.user import createUser, updateProfile
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from pytask.taskapp.models import Profile
+from django.contrib.auth.decorators import login_required
+
 
 def show_msg(message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
@@ -99,6 +101,7 @@ def user_logout(request):
     logout(request)
     return show_msg('You have logged off successfully!!!')
 
+@login_required
 def view_my_profile(request,uid):
     """ allows the user to view the profiles of users """
     edit_profile = True if request.user == User.objects.get(pk=uid) else False
