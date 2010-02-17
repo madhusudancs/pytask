@@ -1,9 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render_to_response
 from pytask.taskapp.models import Task
-from pytask.taskapp.forms.user import RegistrationForm, LoginForm, UserProfileEditForm
+from pytask.taskapp.forms.user import UserProfileEditForm
 from pytask.taskapp.events.user import createUser, updateProfile
-from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from pytask.taskapp.models import Profile
 from django.contrib.auth.decorators import login_required
@@ -47,59 +46,6 @@ def homepage(request):
                    }
                    
         return render_to_response('index.html', context)
-
-
-def register(request):
-    """ user registration: gets the user details and create the user and userprofile if data entered is valid"""
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            if data['password'] == data['repeat_password']:
-                if data['username'].isalnum():
-                    try:
-                        if User.objects.get(username__exact = data['username']):
-                            errors=['Choose some other username']
-                            return render_to_response('user/register.html',{'form':form,'errors':errors})
-                    except:
-                         u = createUser(username=data['username'], email=data['email'], password=data['password'],dob = data['dob'],gender = data['gender'])
-                    return redirect('/accounts/login/')
-                else:
-                    errors = ['Username can contain only alphabets and numbers!']
-                    return render_to_response('user/register.html',{'form':form,'errors':errors})
-            else:
-                errors=['Password do not match']
-                form = RegistrationForm(request.POST)
-                return render_to_response('user/register.html',{'form':form,'errors':errors})#HttpResponse('Password did not match')
-        else:
-            form = RegistrationForm(request.POST)
-    else:
-        form = RegistrationForm()
-    return render_to_response('user/register.html', {'form': form})
-
-def user_login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect('/')# Redirect to a success page.
-            else:
-                return show_msg('username is not active, please contact the administrator')# Return a 'disabled account' error message
-        else:
-            errors = ['Please check your username and password']
-            form = LoginForm()
-            return render_to_response('user/login.html',{'form':form,'errors':errors})# Return an 'invalid login' error message.
-        return redirect('/')
-    else:
-        form = LoginForm()
-        return render_to_response('user/login.html',{'form': form})
-
-def user_logout(request):
-    logout(request)
-    return show_msg('You have logged off successfully!!!')
 
 @login_required
 def view_my_profile(request,uid):

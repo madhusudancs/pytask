@@ -29,10 +29,6 @@ urlpatterns = patterns('',
     
     (r'^admin/', include(admin.site.urls)),
     
-    (r'^accounts/register/$', userViews.register),
-    (r'^accounts/login/$', userViews.user_login),
-    (r'^accounts/logout/$', userViews.user_logout),
-    
     (r'^user/view/uid=(\d+)$', userViews.view_my_profile),
     (r'^user/edit/?$', userViews.edit_my_profile),
     (r'^user/browse/?$', userViews.browse_users),
