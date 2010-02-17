@@ -72,6 +72,8 @@ TEMPLATE_DIRS = (
     './templates',
 )
 
+ACCOUNT_ACTIVATION_DAYS = 5
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,6 +81,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'pytask.taskapp',
+    'registration',
 )
 
 AUTH_PROFILE_MODULE = 'taskapp.Profile'

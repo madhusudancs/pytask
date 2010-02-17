@@ -29,8 +29,10 @@ urlpatterns = patterns('',
     
     (r'^admin/', include(admin.site.urls)),
     
+    (r'^accounts/', include('registration.urls')),
+    (r'^accounts/profile/$', userViews.view_my_profile),
+    
     (r'^user/view/uid=(\d+)$', userViews.view_my_profile),
     (r'^user/edit/?$', userViews.edit_my_profile),
-    (r'^user/browse/?$', userViews.browse_users),
     
 )

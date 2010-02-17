@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render_to_response
 from pytask.taskapp.models import Task
 from pytask.taskapp.forms.user import UserProfileEditForm
@@ -48,8 +48,12 @@ def homepage(request):
         return render_to_response('index.html', context)
 
 @login_required
-def view_my_profile(request,uid):
+def view_my_profile(request,uid=None):
     """ allows the user to view the profiles of users """
+    if uid == None:
+        edit_profile = True
+        profile = Profile.objects.get(user = request.user)
+        return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile})
     edit_profile = True if request.user == User.objects.get(pk=uid) else False
     try:
         profile = Profile.objects.get(user = User.objects.get(pk=uid))
@@ -78,6 +82,3 @@ def edit_my_profile(request):
         edit_profile_form = UserProfileEditForm(instance = profile)
         return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form})
 
-def browse_users(request):
-    userlist = User.objects.order_by('username')
-    return render_to_response('user/browse.html',{'userlist':userlist})

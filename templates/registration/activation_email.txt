@@ -1,0 +1,9 @@
+Welcome to PyTasks:
+
+Click on the following link 
+http://www.pytasks.in/accounts/activate/{{activation_key}}
+and activate your account.
+Note that the account has to activated within {{expiration_days}} days
+
+Regards,
+PyTasks Team
