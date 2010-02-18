@@ -7,6 +7,8 @@ admin.autodiscover()
 from pytask.taskapp.views import user as userViews
 from pytask.taskapp.views import task as taskViews
 
+from pytask.taskapp.forms.user import RegistrationFormCustom
+from registration.views import register
 
 urlpatterns = patterns('',
     # Example:
@@ -29,6 +31,7 @@ urlpatterns = patterns('',
     
     (r'^admin/', include(admin.site.urls)),
     
+    url(r'^accounts/register/$',register,{'form_class' : RegistrationFormCustom},name='registration_register'),
     (r'^accounts/', include('registration.urls')),
     (r'^accounts/profile/$', userViews.view_my_profile),
     
