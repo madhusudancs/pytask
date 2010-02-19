@@ -61,6 +61,7 @@ def view_my_profile(request,uid=None):
         raise Http404
     return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile})
 
+@login_required
 def edit_my_profile(request):
     """ enables the user to edit his/her user profile """
     if str(request.user) == 'AnonymousUser':

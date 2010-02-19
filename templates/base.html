@@ -3,5 +3,11 @@
     <title>{% block title %}PyTasks{% endblock %}</title>
 </head>
 <body>
-<h2><a href="/">PyTasks</a></h2><br />{% block content %}This is the default content{% endblock %}</body>
+<h2><a href="/">PyTasks</a></h2>
+<a href="javascript:history.go(-1)">back</a> 
+{% if user.is_authenticated %}
+ | <a href="/accounts/logout">logout</a> 
+{% endif %}
+<br><br>
+{% block content %}This is the default content{% endblock %}</body>
 </html>
