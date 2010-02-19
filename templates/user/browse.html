@@ -1,7 +1,0 @@
-{% extends 'base.html' %}
-{% block content %}
-    List of all the users:<br />
-    {% for user in userlist %}
-        <a href="/user/view/uid={{ user.id }}">{{ user.username }}</a><br />
-    {% endfor %}
-{% endblock %}
