@@ -3,7 +3,7 @@
 from django import forms
 from pytask.taskapp.models import GENDER_CHOICES, Profile
 from django.forms import ModelForm
-from registration.forms import RegistrationForm
+from registration.forms import RegistrationFormUniqueEmail
 from registration.models import RegistrationProfile
 
 class UserProfileEditForm(ModelForm):
@@ -13,7 +13,7 @@ class UserProfileEditForm(ModelForm):
         model = Profile
         exclude = ('user','rights','dob','credits')
 
-class RegistrationFormCustom(RegistrationForm):
+class RegistrationFormCustom(RegistrationFormUniqueEmail):
     """Used instead of RegistrationForm used by default django-registration backend, this adds date of birth and gender to the default django-registration RegistrationForm"""
     
     dob = forms.DateField(help_text = "YYYY-MM-DD", required=True, label=u'date of birth')
