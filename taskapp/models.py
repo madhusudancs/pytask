@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 import tagging
 from tagging.fields import TagField
 
-
 GENDER_CHOICES = (( 'M', 'Male'), ('F', 'Female'))
 RIGHTS_CHOICES = (
 	("AD", "Admin"),
@@ -13,10 +12,10 @@ RIGHTS_CHOICES = (
 
 STATUS_CHOICES = (
     ("UP", "Unpublished"),
-	("OP", "Open"),
+    ("OP", "Open"),
     ("LO", "Locked"),
-	("CL", "Claimed"),
-	("AS", "Assigned"),
+    ("CL", "Claimed"),
+    ("AS", "Assigned"),
     ("RE", "Reopened"),
     ("CD", "Closed"),
     ("DL", "Deleted"),
@@ -108,6 +107,26 @@ class Claim(models.Model):
     user = models.ForeignKey(User)
     message = models.TextField()
     creation_datetime = models.DateTimeField()
+
+class Request(models.Model):
+
+    to = models.ForeignKey(User, related_name = "%(class)s_to", blank = False)
+    by = models.ForeignKey(User, related_name = "%(class)s_by", blank = False)
+    role = models.CharField(max_length = 2, blank = False)
+    is_active = models.BooleanField(default = True)
+    reply = models.BooleanField(default = False)
+    read = models.BooleanField()
+    creation_date = models.DateTimeField()
+    reply_date = models.DateTimeField()
+
+class Notification(models.Model):
+
+    to = models.ManyToManyField(User, related_name = "%(class)s_to", blank = False)
+    is_read = models.BooleanField(default = False)
+    sent_date = models.DateTimeField()
+    sub = models.CharField(max_length = 100)
+    message = models.TextField()
+    deleted = models.BoolenField(default = False)
     
 tagging.register(Profile)
 tagging.register(Task)
