@@ -54,7 +54,7 @@ class Task(models.Model):
     desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
 #    tags = models.CharField(max_length = 200, blank = True)
-    tags = TagField()
+    tags_field = TagField()
     
     subs = models.ManyToManyField('self', blank = True, related_name = "%(class)s_parents")
     deps = models.ManyToManyField('self', blank = True, related_name = "%(class)s_deps")
