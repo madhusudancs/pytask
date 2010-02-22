@@ -75,6 +75,7 @@ TEMPLATE_DIRS = (
 ACCOUNT_ACTIVATION_DAYS = 5
 
 LOGIN_REDIRECT_URL = '/'
+FORCE_LOWERCASE_TAGS = True
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -84,6 +85,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'pytask.taskapp',
     'registration',
+    'tagging'
 )
 
 AUTH_PROFILE_MODULE = 'taskapp.Profile'

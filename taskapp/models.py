@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+import tagging
+from tagging.fields import TagField
+
 
 GENDER_CHOICES = (( 'M', 'Male'), ('F', 'Female'))
 RIGHTS_CHOICES = (
@@ -31,7 +34,8 @@ class Profile(models.Model):
     credits = models.PositiveSmallIntegerField(default = 0)
     
     aboutme = models.TextField(blank = True)
-    foss_comm = models.CharField(max_length = 80, blank = True, verbose_name = u"Foss Communities", help_text = u"Comma seperated list of foss communities you are involved in.")
+#    foss_comm = models.CharField(max_length = 80, blank = True, verbose_name = u"Foss Communities", help_text = u"Comma seperated list of foss communities you are involved in.")
+    foss_comm = TagField()
     phonenum = models.CharField(max_length = 15, blank = True, verbose_name = u"Phone Number")
     homepage = models.URLField(blank = True, verbose_name = u"Homepage/Blog")
     street = models.CharField(max_length = 80, blank = True)
@@ -49,7 +53,8 @@ class Task(models.Model):
     title = models.CharField(max_length = 100, unique = True, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
-    tags = models.CharField(max_length = 200, blank = True)
+#    tags = models.CharField(max_length = 200, blank = True)
+    tags = TagField()
     
     subs = models.ManyToManyField('self', blank = True, related_name = "%(class)s_parents")
     deps = models.ManyToManyField('self', blank = True, related_name = "%(class)s_deps")
@@ -104,3 +109,5 @@ class Claim(models.Model):
     message = models.TextField()
     creation_datetime = models.DateTimeField()
     
+tagging.register(Profile)
+tagging.register(Task)
