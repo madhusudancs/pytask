@@ -4,7 +4,7 @@ from pytask.taskapp.models import Task, Claim
 class TaskCreateForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'desc', 'tags', 'credits']
+        fields = ['title', 'desc', 'tags_field', 'credits']
     publish = forms.BooleanField(required=False)
 
 def AddMentorForm(choices,instance=None):
