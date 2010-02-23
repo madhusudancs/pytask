@@ -1,3 +1,7 @@
+import random
+import string
+import os
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.contrib.auth.models import User
 import tagging
@@ -24,6 +28,24 @@ STATUS_CHOICES = (
 IMAGES_DIR = "./images"
 UPLOADS_DIR = "./uploads"
 
+class CustomImageStorage(FileSystemStorage):
+
+    def path(self, name):
+        """ we return images directory path.
+        """
+
+        return os.path.join(IMAGES_DIR, name)
+
+    def get_available_name(self, name):
+        """ here we are going with username as the name of image.
+        """
+    
+        root, ext = os.path.splitext(name)
+        name = ''.join([ random.choice(string.uppercase+string.digits) for i in range(10)])+ext
+        while self.exists(name):
+            name = ''.join([ random.choice(string.uppercase+string.digits) for i in range(10)])+ext
+        return name
+
 class Profile(models.Model):
     
     user = models.ForeignKey(User, unique = True)
@@ -41,7 +63,7 @@ class Profile(models.Model):
     city = models.CharField(max_length = 25, blank = True)
     country = models.CharField(max_length = 25, blank = True)
     nick = models.CharField(max_length = 20, blank = True)
-    photo = models.ImageField(upload_to = IMAGES_DIR, blank = True)
+    photo = models.ImageField(storage = CustomImageStorage(),upload_to = IMAGES_DIR, blank = True)
 
     def __unicode__(self):
         return unicode(self.user.username)

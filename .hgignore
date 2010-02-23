@@ -40,4 +40,4 @@ project/media/user/*
 project/static/media
 project/kiwipycon/user/*.pyc
 apache/*
-
+images/*

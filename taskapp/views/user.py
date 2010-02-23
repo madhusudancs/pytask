@@ -1,3 +1,4 @@
+import os
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render_to_response
 from pytask.taskapp.models import Task
@@ -74,7 +75,20 @@ def edit_my_profile(request):
         if request.user.is_authenticated() == True:
             profile = Profile.objects.get(user = request.user)
             data = request.POST#form.cleaned_data
-            properties = {'aboutme':data['aboutme'], 'foss_comm':data['foss_comm'], 'phonenum':data['phonenum'], 'homepage':data['homepage'], 'street':data['street'], 'city':data['city'], 'country':data['country'], 'nick':data['nick'],'photo':request.FILES['photo']}
+            properties = {'aboutme':data['aboutme'],
+                          'foss_comm':data['foss_comm'],
+                          'phonenum':data['phonenum'],
+                          'homepage':data['homepage'],
+                          'street':data['street'],
+                          'city':data['city'],
+                          'country':data['country'],
+                          'nick':data['nick']}
+            uploaded_photo = request.FILES.get('photo',None)
+            prev_photo = profile.photo
+            if uploaded_photo:
+                if prev_photo:
+                    os.remove(prev_photo.path)
+                properties['photo'] = uploaded_photo
             #fields = ['dob','gender','credits','aboutme','foss_comm','phonenum','homepage','street','city','country','nick']
             updateProfile(profile,properties)
             return redirect('/user/view/uid='+str(profile.user_id))
