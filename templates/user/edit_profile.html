@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form action="/user/edit/" method="post">
+    <form action="/user/edit/" enctype = "multipart/form-data" method="post">
         {{ edit_profile_form.as_p }}
     <input type="submit" value="Apply Changes" />
     </form>
