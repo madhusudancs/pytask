@@ -13,6 +13,39 @@ def publishTask(task):
     task.save()
     return task
 
+def addSubTask(main_task, sub_task):
+    """ add the task to subs attribute of the task and update its status.
+    sub task can be added only if a task is in UP/OP/LO/Cd state.
+    """
+
+    ## Shall modify after talking to pr about subtasks
+    ## I think i might even remove the concept of subtasks
+    main_task.subs.add(sub_task)
+    sub_tasks = main_task.subs.all()
+    if main_task.status == "OP":
+        if any(map(lambda t:t.status!="CM",sub_tasks)):
+            main_task.status = "LO"
+        else:
+            "CM"
+    main_task.save()
+
+def addDep(main_task, dependency):
+    """ add the dependency task to deps attribute of the task.
+    update the status of main_task accordingly.
+    note that deps can be added only if task is in UP/OP/LO/CD state.
+    And also if the task doesn't have any subs.
+    """
+
+    main_task.deps.add(dependency)
+    deps = main_task.deps.all()
+    if main_task.status in ["OP", "LO"]: 
+        if all(map(lambda t:t.status=="CM",deps)):
+            main_task.status = "OP"
+        else:
+            main_task.status = "LO"
+    
+    main_task.save()
+
 def addMentor(task,mentor):
     """ add the mentor to mentors list of the task """
     
