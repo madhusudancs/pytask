@@ -17,7 +17,10 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    
+
+    (r'^images/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': './images/'}),
+
     (r'^$', userViews.homepage),
     
     (r'^task/browse/$', taskViews.browse_tasks),
