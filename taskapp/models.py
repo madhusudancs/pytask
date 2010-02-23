@@ -126,7 +126,7 @@ class Notification(models.Model):
     sent_date = models.DateTimeField()
     sub = models.CharField(max_length = 100)
     message = models.TextField()
-    deleted = models.BoolenField(default = False)
+    deleted = models.BooleanField(default = False)
     
 tagging.register(Profile)
 tagging.register(Task)
