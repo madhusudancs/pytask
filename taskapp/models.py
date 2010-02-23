@@ -25,7 +25,7 @@ IMAGES_DIR = "./images"
 UPLOADS_DIR = "./uploads"
 
 class Profile(models.Model):
-	
+    
     user = models.ForeignKey(User, unique = True)
     dob = models.DateField(verbose_name = u"Date of Birth", help_text = "YYYY-MM-DD")
     gender = models.CharField(max_length = 1, choices = GENDER_CHOICES)
@@ -41,7 +41,7 @@ class Profile(models.Model):
     city = models.CharField(max_length = 25, blank = True)
     country = models.CharField(max_length = 25, blank = True)
     nick = models.CharField(max_length = 20, blank = True)
-#    photo = models.ImageField(upload_to = IMAGES_DIR, blank = True)
+    photo = models.ImageField(upload_to = IMAGES_DIR, blank = True)
 
     def __unicode__(self):
         return unicode(self.user.username)
@@ -83,9 +83,9 @@ class Comment(models.Model):
     data = models.TextField()
     created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
     creation_datetime = models.DateTimeField()
-#    deleted_by = models.ForeignKey(User, null = True, blank = True, related_name = "%(class)s_deleted_by")
-#    deleted = models.BooleanField()
-#    attachment = models.FileField(upload_to = UPLOADS_DIR, blank = True)
+    deleted_by = models.ForeignKey(User, null = True, blank = True, related_name = "%(class)s_deleted_by")
+    deleted = models.BooleanField()
+    attachment = models.FileField(upload_to = UPLOADS_DIR, blank = True)
     
     def __unicode__(self):
         return unicode(self.task.title)
@@ -119,6 +119,7 @@ class Request(models.Model):
     creation_date = models.DateTimeField()
     reply_date = models.DateTimeField()
     replied = models.BooleanField(default = False)
+    task = models.ForeignKey(Task,related_name = "%(class)s_task", blank = True, null = True)
 
 class Notification(models.Model):
 
