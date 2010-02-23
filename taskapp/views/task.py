@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AssignTaskForm
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addClaim, assignTask
+from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addClaim, assignTask, getTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -30,7 +30,7 @@ def view_task(request, tid):
     task_url = "/task/view/tid=%s"%tid
     
     user = request.user
-    task = Task.objects.get(id=tid)
+    task = getTask(tid)
     comments = Comment.objects.filter(task=task)
     mentors = task.mentors.all()
     errors = []
@@ -55,7 +55,7 @@ def view_task(request, tid):
     if request.method == 'POST':
         if not is_guest:
             data = request.POST["data"]
-            task = Task.objects.get(id=tid)
+            task = getTask(tid)
             new_comment = Comment(task=task, data=data, created_by=user, creation_datetime=datetime.now())
             new_comment.save()
             return redirect(task_url)
@@ -112,7 +112,7 @@ def add_mentor(request, tid):
     task_url = "/task/view/tid=%s"%tid
     
     user = request.user
-    task = Task.objects.get(id=tid)
+    task = getTask(tid)
     errors = []
     
     is_guest = True if not user.is_authenticated() else False
@@ -149,7 +149,7 @@ def add_tasks(request, tid):
     task_url = "/task/view/tid=%s"%tid
     
     user = request.user
-    task = Task.objects.get(id=tid)
+    task = getTask(tid)
     errors = []
     
     is_guest = True if not user.is_authenticated() else False
@@ -183,7 +183,7 @@ def claim_task(request, tid):
     errors = []
     
     user = request.user
-    task = Task.objects.get(id=tid)
+    task = getTask(tid)
     claims = Claim.objects.filter(task=task)
     
     is_guest = True if not user.is_authenticated() else False
@@ -227,7 +227,7 @@ def assign_task(request, tid):
     task_url = "/task/view/tid=%s"%tid
     
     user = request.user
-    task = Task.objects.get(id=tid)
+    task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in task.mentors.all() else False

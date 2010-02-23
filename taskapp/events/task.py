@@ -99,3 +99,20 @@ def assignTask(task, user):
     task.assigned_users.add(user)
     task.status = "AS"
     task.save()
+
+def getTask(tid):
+    """ retreive the task from database.
+    if the task has deps or subs, update its status correspondingly.
+    """
+
+    task = Task.objects.get(id=tid)
+    deps = task.deps.all()
+    subs = task.subs.all()
+
+    if deps and task.status in ["OP", "LO"]:
+        task.status = "OP" if all(map(lambda t:t.status=="CM",deps)) else "LO"
+    if subs and task.status in ["OP", "LO", "CM"]:
+        task.status = "CM" if all(map(lambda t:t.status=="CM",subs)) else "LO"
+
+    task.save()
+    return task
