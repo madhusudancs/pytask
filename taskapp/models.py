@@ -110,14 +110,15 @@ class Claim(models.Model):
 
 class Request(models.Model):
 
-    to = models.ForeignKey(User, related_name = "%(class)s_to", blank = False)
+    to = models.ManyToManyField(User, related_name = "%(class)s_to", blank = False)
     by = models.ForeignKey(User, related_name = "%(class)s_by", blank = False)
     role = models.CharField(max_length = 2, blank = False)
     is_active = models.BooleanField(default = True)
     reply = models.BooleanField(default = False)
-    read = models.BooleanField()
+    read = models.BooleanField(default = False)
     creation_date = models.DateTimeField()
     reply_date = models.DateTimeField()
+    replied = models.BooleanField(default = False)
 
 class Notification(models.Model):
 
