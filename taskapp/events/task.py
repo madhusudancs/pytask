@@ -4,7 +4,12 @@ from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim
 def publishTask(task):
     """ set the task status to open """
     
-    task.status = "OP"
+    sub_tasks = task.subs.all()
+    dependencies = task.deps.all()
+    if sub_tasks or any(map(lambda t:t.status!="CM",dependencies)):
+        task.status = "LO"
+    else:
+        task.status = "OP"
     task.save()
     return task
 
