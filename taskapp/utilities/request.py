@@ -23,22 +23,18 @@ def create_request(to,by,role,task=None,assigned_user=None,pynts=0):
     req.pynts = pynts
     req.save()
 
-def reply_to_request(request_id, reply):
+def reply_to_request(request_obj, reply):
     """
     makes a request replied with the given reply.
     arguments:
-        request_id - a number denoting the id of the Request object
+        request_obj - Request object for which change is intended
         reply - a boolean value to be given as reply (True/False)
     """
-    try:
-        request = Request.objects.get(id = request_id)
-    except Request.DoesNotExist:
-        return False #No such request exist
-    if not request.replied:
-        request.reply = reply
-        request.replied = True
-        request.read = True
-        request.reply_date = datetime.now()
-        request.save()
+    if not request_obj.replied:
+        request_obj.reply = reply
+        request_obj.replied = True
+        request_obj.read = True
+        request_obj.reply_date = datetime.now()
+        request_obj.save()
         return True #Reply has been added successfully
     return False #Already replied
