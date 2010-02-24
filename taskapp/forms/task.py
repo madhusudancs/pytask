@@ -27,3 +27,17 @@ def AssignTaskForm(choices, instance=None):
         user = forms.ChoiceField(choices=choices, required=True)
     form = myform()
     return form
+
+def AddTaskForm(task_choices, is_plain=False):
+    """ if is_plain is true, it means the task has no subs/deps.
+    so we also give a radio button to choose between subs and dependencies.
+    else we only give choices.
+    """
+
+    class myForm(forms.Form):
+        if is_plain:
+            type_choices = [('S','Subtasks'),('D','Dependencies')]
+            type = forms.ChoiceField(type_choices, widget=forms.RadioSelect)
+
+        task = forms.MultipleChoiceField(choices=task_choices)
+    return myForm()

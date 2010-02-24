@@ -32,7 +32,7 @@ def addSubTask(main_task, sub_task):
 def addDep(main_task, dependency):
     """ add the dependency task to deps attribute of the task.
     update the status of main_task accordingly.
-    note that deps can be added only if task is in UP/OP/LO/CD state.
+    note that deps can be added only if task is in UP/OP/LO state.
     And also if the task doesn't have any subs.
     """
 

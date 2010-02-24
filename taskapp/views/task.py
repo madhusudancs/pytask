@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AssignTaskForm
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addClaim, assignTask, getTask, updateTask
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AssignTaskForm, AddTaskForm 
+from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -161,19 +161,55 @@ def add_tasks(request, tid):
     
     user = request.user
     task = getTask(tid)
+
+    deps = task.deps.all()
+    subs = task.subs.all()
+
+    is_plain = False if deps or subs else True
+
+    ## again a brute force method
+    valid_tasks = []
+    for a_task in Task.objects.all():
+        if not ( a_task.status in deps or a_task in subs or a_task.status=="CD" or a_task==task ):
+            valid_tasks.append(a_task)
+
+    task_choices = [ (_.id,_.title) for _ in valid_tasks ]
     errors = []
     
     is_guest = True if not user.is_authenticated() else False
     
     if (not is_guest) and user in task.mentors.all():
-        if task.status in ["OP", "LO"]:
+        if task.status in ["UP", "OP", "LO"]:
+            form = AddTaskForm(task_choices, is_plain)
             if request.method == "POST":
                 ## first decide if adding subs and deps can be in same page
                 ## only exclude tasks with status deleted
-                pass
+                data = request.POST
+                print data
+                if is_plain and not data.get('type', None): errors.append('Please choose which type of task(s) do you want to add.')
+                if not data.get('task', None): errors.append('Please choose a one task')
+
+                if not errors:
+                    if is_plain:
+                        update_method = addDep if data['type'] == "D" else addSubTask
+                    elif deps:
+                        update_method = addDep
+                    elif subs:
+                        update_method = addSubTask
+                    else:
+                        print "Screw you"
+
+                    ## we might iterate over a task list later on
+                    task_id = data['task']
+                    sub_or_dep = getTask(task_id)
+                    print task_id, sub_or_dep
+                    update_method(task, sub_or_dep)
+
+                    return redirect(task_url)
+                else:
+                    return render_to_response('task/addtask.html', {'user':user, 'form':form, 'errors':errors})
             else:
-                ## write a form just like add mentor and get the form here
-                pass
+                return render_to_response('task/addtask.html', {'user':user, 'form':form, 'errors':errors})
         else:
             errors = ["The task cannot be added subtasks or dependencies in this state"]
 #            return render_to_response('task/add.html', {'form':form, 'errors':errors})
@@ -181,6 +217,11 @@ def add_tasks(request, tid):
     else:
         return show_msg('You are not authorised to add subtasks or dependencies for this task', task_url, 'view the task')
     
+def remove_task(request, tid):
+    """ display a list of tasks and remove the selectes ones.
+    """
+
+    pass
     
 def claim_task(request, tid):
     """ display a list of claims for get and display submit only if claimable """
