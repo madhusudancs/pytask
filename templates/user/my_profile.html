@@ -13,6 +13,11 @@
         <a href="/user/edit/">edit profile</a> | <a href="/accounts/password/change">change password</a>
         <hr>
     {% endif %}
+    {% if profile.photo %}
+        <a href={{ profile.photo.url }}>
+        <img border="0" height="200" src={{ profile.photo.url }}>
+        </a>
+    {% endif %}
     {% if profile.aboutme %}
         <br><h4>About Me</h4><hr>{{ profile.aboutme }}
     {% endif %}
