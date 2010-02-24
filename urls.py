@@ -40,5 +40,9 @@ urlpatterns = patterns('',
     
     (r'^user/view/uid=(\d+)$', userViews.view_my_profile),
     (r'^user/edit/?$', userViews.edit_my_profile),
+
+    (r'^user/requests/$', userViews.browse_requests),
+    (r'^user/requests/rid=(\d+)/$', userViews.view_request),
+    (r'^user/requests/rid=(\d+)/(\w+)/$', userViews.process_request),
     
 )

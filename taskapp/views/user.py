@@ -1,13 +1,13 @@
 import os
+
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect, render_to_response
-from pytask.taskapp.models import Task
-from pytask.taskapp.forms.user import UserProfileEditForm
-from pytask.taskapp.events.user import createUser, updateProfile
 from django.contrib.auth.models import User
-from pytask.taskapp.models import Profile
 from django.contrib.auth.decorators import login_required
 
+from pytask.taskapp.models import Task, Profile, Request
+from pytask.taskapp.events.user import createUser, updateProfile
+from pytask.taskapp.forms.user import UserProfileEditForm
 
 def show_msg(message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
@@ -95,3 +95,51 @@ def edit_my_profile(request):
         edit_profile_form = UserProfileEditForm(instance = profile)
         return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form, 'user':request.user})
 
+@login_required
+def browse_requests(request):
+    
+    user = request.user
+    active_reqs = user.request_to.filter(replied=False)
+    reqs = active_reqs.order_by('creation_date').reverse()
+    for pos, req in enumerate(reversed(reqs)):
+        req.pos = pos
+    context = {
+        'user':user,
+        'reqs':reqs,
+    }
+
+    return render_to_response('user/browse_requests.html', context)
+
+@login_required
+def view_request(request, rid):
+    """ please note that request variable in this method is that of django.
+    our app request is called user_request.
+    """
+
+    user = request.user
+    reqs = user.request_to.filter(replied=False).order_by('creation_date')
+    user_request = reqs[int(rid)]
+
+    context = {
+        'user':user,
+        'req':user_request,
+        'sent_users':user_request.to.all()
+    }
+
+    return render_to_response('user/view_request.html', context)
+
+@login_required
+def process_request(request, rid, reply):
+    """ check if the method is post and then update the request.
+    if it is get, display a 404 error.
+    """
+
+    if request.method=="POST":
+        user = request.user
+        browse_request_url= '/user/requests'
+        reqs = user.request_to.filter(replied=False).order_by('creation_date')
+        user_request = reqs[int(rid)]
+
+        return show_msg("Your reply has been processed", browse_request_url, "view other requests")
+    else:
+        return show_msg("You are not authorised to do this", browse_request_url, "view other requests")

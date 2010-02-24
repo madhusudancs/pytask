@@ -143,6 +143,10 @@ class Request(models.Model):
     assigned_user = models.ForeignKey(User, related_name = "%(class)s_assigned_user", blank = True, null = True)
     pynts = models.PositiveIntegerField(default=0)
 
+    def __unicode__(self):
+
+        return u"Request %s %s"%(self.by.username, self.role)
+
 class Notification(models.Model):
 
     to = models.ManyToManyField(User, related_name = "%(class)s_to", blank = False)

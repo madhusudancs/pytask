@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+    From:&nbsp; <a href=""/user/view/uid={{req.by.id}}"">{{req.by.username}}</a><br />
+    To: 
+    {% for to_user in sent_users %}
+        <a href="/user/view/uid={{to_user.id}}">{{to_user.username}}</a>,&nbsp;
+    {% endfor %}
+    <br />
+    Message: <br />
+    {% ifequal "PY" req.role %}
+        <a href="/user/view/uid={{req.by.id}}">{{req.by.username}}</a> assigned {{req.pynts}} pynts to 
+        <a href="/user/view/uid={{req.assigned_to.id}}">{{req.assigned_to.username}}</a> for the task
+        <a href="/task/view/tid={{req.task.id}}">{{req.task.title}}</a><br />
+        Please click yes/no<br />
+        <form action="yes/" method="post">
+            <input value="Yes" type="submit">
+        </form>
+        <form action="no/" method="post">
+            <input value="No" type="submit">
+        </form>
+    {% else %}
+    {% endifequal %}
+    
+{% endblock %}
