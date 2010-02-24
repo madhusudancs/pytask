@@ -167,3 +167,11 @@ def updateTask(task, title=None, desc=None, credits=None, tags_field=None):
     if tags_field:task.tags_field = tags_field
     task.save()
     return task
+
+def removeTask(main_task, sub_task):
+    """ get the corresponding map object and remove the sub_task.
+    """
+
+    mapobj = Map.objects.get(main=main_task)
+    mapobj.subs.remove(sub_task)
+    mapobj.save()

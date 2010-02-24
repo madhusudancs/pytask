@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm 
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm
+from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -217,7 +217,40 @@ def remove_task(request, tid):
     """ display a list of tasks and remove the selectes ones.
     """
 
-    pass
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = request.user
+    task = getTask(tid)
+
+    is_guest = True if not user.is_authenticated() else False
+    if (not is_guest) and user in task.mentors.all():
+
+        deps, subs = task.deps, task.subs
+        task_list = deps if task.sub_type == "D" else subs
+
+        if task_list:
+            choices = [(_.id,_.title) for _ in task_list ]
+            form = ChoiceForm(choices)
+
+            errors = []
+
+            if request.method == "POST":
+                data = request.POST
+                if not data.get('choice', None): errors.append("Please choose a task to remove.")
+                if not errors:
+                    tid = data['choice']
+                    sub_task = getTask(tid)
+                    removeTask(task, sub_task)
+                    return redirect(task_url)
+                else:
+                    return render_to_response('task/removetask.html', {'user':user, 'form':form, 'errors':errors})
+            else:
+                return render_to_response('task/removetask.html', {'user':user, 'form':form, 'errors':errors})
+        else:
+            return show_msg("The task has no subtasks/dependencies to be removed", task_url, "view the task")
+    else:
+        return show_msg("You are not authorised to do this", task_url, "view the task")
+
     
 def claim_task(request, tid):
     """ display a list of claims for get and display submit only if claimable """
@@ -293,7 +326,7 @@ def assign_task(request, tid):
             form = ChoiceForm(user_list)
     
             if request.method == "POST":
-                uid = request.POST['user']
+                uid = request.POST['choice']
                 assigned_user = User.objects.get(id=uid)
                 assignTask(task, assigned_user)
                 return redirect(task_url)
