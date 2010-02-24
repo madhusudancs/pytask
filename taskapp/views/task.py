@@ -128,11 +128,14 @@ def add_mentor(request, tid):
     if (not is_guest) and user in task.mentors.all():
         
         ## now iam going for a brute force method
-        user_list = list(User.objects.all())
+        user_list = list(User.objects.filter(is_active=True))
         for mentor in task.mentors.all():
             user_list.remove(mentor)
             
         for a_user in task.claimed_users.all():
+            user_list.remove(a_user)
+
+        for a_user in task.assigned_users.all():
             user_list.remove(a_user)
             
         non_mentors = ((_.id,_.username) for _ in user_list)
@@ -196,12 +199,13 @@ def claim_task(request, tid):
 
     mentors = task.mentors.all()
     claimed_users = task.claimed_users.all()
+    assigned_users = task.assigned_users.all()
     
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in mentors else False
 
     task_claimable = True if task.status in ["OP", "WR"] else False
-    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in claimed_users )  else False
+    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in claimed_users ) and ( user not in assigned_users )  else False
     task_claimed = True if claimed_users else False
     
     context = {'user':user,

@@ -13,7 +13,9 @@
             <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}|</a>
         {% endfor %}
         {% if can_mod_mentors %}
-            <a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a><br />
+            <a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a>
+            <a href="/task/mentor/remove/tid={{task.id}}">Remove a mentor</a>
+            <br />
             edit task goes here and it should contain all those add subs and add deps depending on availability<br />
         {% endif %}
 
