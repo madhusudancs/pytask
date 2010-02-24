@@ -20,7 +20,7 @@ class ClaimTaskForm(forms.ModelForm):
         model = Claim
         fields = ['message']
 
-def AssignTaskForm(choices, instance=None):
+def ChoiceForm(choices, instance=None):
     """ return a form object with appropriate choices """
     
     class myform(forms.Form):

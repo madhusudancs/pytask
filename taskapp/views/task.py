@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AssignTaskForm, AddTaskForm 
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm 
 from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask
 from pytask.taskapp.views.user import show_msg
 
@@ -290,7 +290,7 @@ def assign_task(request, tid):
     if (not is_guest) and is_mentor:
         if task_claimed:
             user_list = ((user.id,user.username) for user in claimed_users)
-            form = AssignTaskForm(user_list)
+            form = ChoiceForm(user_list)
     
             if request.method == "POST":
                 uid = request.POST['user']
