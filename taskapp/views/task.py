@@ -38,7 +38,7 @@ def view_task(request, tid):
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in task.mentors.all() else False
     
-    task_claimable = True if task.status in ["OP", "RE"] else False
+    task_claimable = True if task.status in ["OP", "WR"] else False
     
     context = {'user':user,
                'task':task,
@@ -49,9 +49,10 @@ def view_task(request, tid):
                'errors':errors,
                }
                
-    if task.status == "AS":
-        context['assigned_user'] = task.assigned_users.all()[0]
-    
+    assigned_users = task.assigned_users.all()
+    if assigned_users:
+        context['assigned_users'] = assigned_users
+   
     if request.method == 'POST':
         if not is_guest:
             data = request.POST["data"]

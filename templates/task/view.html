@@ -20,8 +20,12 @@
     <br />{{ task.desc }}<br />
     <hr>
     status of task is {{task.status}}<br />
-    {% if assigned_user %}
-        Task has been assigned to <a href="/user/view/uid={{assigned_user.id}}">{{assigned_user.username}}</a><br />
+	{% if assigned_users %}
+		Users working on this task:
+		{% for user in assigned_users %}
+			<a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
+		{% endfor %}
+		<br />
     {% endif %}
     {% if not is_guest %}
         <a href="/task/claim/tid={{task.id}}">View claims</a><br />
