@@ -8,7 +8,8 @@
             {{claim.message}}<br />
         {% endfor %}
     {% else %}
-        There are no claims for task <a href="/task/view/tid={{task.id}}">{{task.title}}</a> yet.
+        There are no claims for this task yet.<br />
+        <a href="/task/view/tid={{task.id}}">Click here</a> to return to the task.
     {% endif %}
     {% if task_claimed and is_mentor %}
         <a href="/task/assign/tid={{task.id}}">Assign task</a>

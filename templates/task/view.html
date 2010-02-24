@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
     {% if task_viewable %}
-        <a href="/task/browse/">Browse tasks</a>
+        <a href="/task/edit/tid={{task.id}}">Edit task</a>
         <h3>{{ task.title }}</h3><br />
         <!-- we have to write our own datetime.strftime filter and use in the next line -->
         created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
@@ -13,7 +13,7 @@
             <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}|</a>
         {% endfor %}
         {% if can_mod_mentors %}
-            <br /><a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a><br />
+            <a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a><br />
             edit task goes here and it should contain all those add subs and add deps depending on availability<br />
         {% endif %}
 
