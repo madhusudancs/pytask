@@ -140,6 +140,7 @@ class Request(models.Model):
     reply_date = models.DateTimeField()
     replied = models.BooleanField(default = False)
     task = models.ForeignKey(Task,related_name = "%(class)s_task", blank = True, null = True)
+    assigned_user = models.ForeignKey(User, related_name = "%(class)s_assigned_user", blank = True, null = True)
 
 class Notification(models.Model):
 
