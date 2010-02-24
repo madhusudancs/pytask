@@ -193,18 +193,19 @@ def claim_task(request, tid):
     user = request.user
     task = getTask(tid)
     claims = Claim.objects.filter(task=task)
+
+    mentors = task.mentors.all()
+    claimed_users = task.claimed_users.all()
     
     is_guest = True if not user.is_authenticated() else False
-    if user in task.mentors.all():
-        is_mentor = True 
-    else:
-         is_mentor = False
+    is_mentor = True if user in mentors else False
 
-    task_claimable = True if task.status in ["OP", "RE", "CL"] else False
-    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in task.claimed_users.all() )  else False
-    task_claimed = True if task.status == "CL" else False
+    task_claimable = True if task.status in ["OP", "WR"] else False
+    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in claimed_users )  else False
+    task_claimed = True if claimed_users else False
     
-    context = {'is_mentor':is_mentor,
+    context = {'user':user,
+               'is_mentor':is_mentor,
                'task':task,
                'claims':claims,
                'user_can_claim':user_can_claim,
@@ -268,4 +269,4 @@ def edit_task(request, tid):
     and then give the user fields accordingly.
     """
     
-    return None
+    task = Task.objects.get(id=tid) 
