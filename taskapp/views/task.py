@@ -128,11 +128,14 @@ def add_mentor(request, tid):
     if (not is_guest) and user in task.mentors.all():
         
         ## now iam going for a brute force method
-        user_list = list(User.objects.all())
+        user_list = list(User.objects.filter(is_active=True))
         for mentor in task.mentors.all():
             user_list.remove(mentor)
             
         for a_user in task.claimed_users.all():
+            user_list.remove(a_user)
+
+        for a_user in task.assigned_users.all():
             user_list.remove(a_user)
             
         non_mentors = ((_.id,_.username) for _ in user_list)
@@ -193,18 +196,20 @@ def claim_task(request, tid):
     user = request.user
     task = getTask(tid)
     claims = Claim.objects.filter(task=task)
+
+    mentors = task.mentors.all()
+    claimed_users = task.claimed_users.all()
+    assigned_users = task.assigned_users.all()
     
     is_guest = True if not user.is_authenticated() else False
-    if user in task.mentors.all():
-        is_mentor = True 
-    else:
-         is_mentor = False
+    is_mentor = True if user in mentors else False
 
-    task_claimable = True if task.status in ["OP", "RE", "CL"] else False
-    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in task.claimed_users.all() )  else False
-    task_claimed = True if task.status == "CL" else False
+    task_claimable = True if task.status in ["OP", "WR"] else False
+    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in claimed_users ) and ( user not in assigned_users )  else False
+    task_claimed = True if claimed_users else False
     
-    context = {'is_mentor':is_mentor,
+    context = {'user':user,
+               'is_mentor':is_mentor,
                'task':task,
                'claims':claims,
                'user_can_claim':user_can_claim,
@@ -240,11 +245,14 @@ def assign_task(request, tid):
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in task.mentors.all() else False
 
-    task_claimed = True if task.status == "CL" else False
+    claimed_users = task.claimed_users.all()
+    assigned_users = task.assigned_users.all()
+
+    task_claimed = True if claimed_users else False
     
     if (not is_guest) and is_mentor:
         if task_claimed:
-            user_list = ((user.id,user.username) for user in task.claimed_users.all())
+            user_list = ((user.id,user.username) for user in claimed_users)
             form = AssignTaskForm(user_list)
     
             if request.method == "POST":
@@ -254,12 +262,10 @@ def assign_task(request, tid):
                 return redirect(task_url)
             else:
                 return render_to_response('task/assign.html',{'form':form})
-        elif task.status == "AS":
-            return show_msg('The task is already assigned', task_url, 'view the task')
-        elif task.status == "OP":
-            return show_msg('No one has still claimed the task', task_url, 'view the task')
+        elif assigned_users:
+            return show_msg('When the no of users you need for the task is more than the no of users willing to do the task, I\'d say please re consider the task :P',task_url, 'view the task')
         else:
-            return show_msg('The task status is %s. how can you assign it now'%task.status, task_url, 'view the task')
+            return show_msg('Wait for ppl to claim dude... slow and steady wins the race :)', task_url, 'view the task')
     else:
         return show_msg('You are not authorised to perform this action', task_url, 'view the task')
         
@@ -268,4 +274,4 @@ def edit_task(request, tid):
     and then give the user fields accordingly.
     """
     
-    return None
+    task = Task.objects.get(id=tid) 
