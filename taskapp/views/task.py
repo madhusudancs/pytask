@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AssignTaskForm
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addClaim, assignTask, getTask
+from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addClaim, assignTask, getTask, updateTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -33,25 +33,31 @@ def view_task(request, tid):
     task = getTask(tid)
     comments = Comment.objects.filter(task=task)
     mentors = task.mentors.all()
+    subs = task.subs.all()
+    deps = task.deps.all()
     errors = []
     
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in task.mentors.all() else False
-    
-    task_claimable = True if task.status in ["OP", "WR"] else False
-    
     context = {'user':user,
                'task':task,
                'comments':comments,
                'mentors':mentors,
+               'subs':subs,
+               'deps':deps,
                'is_guest':is_guest,
                'is_mentor':is_mentor,
                'errors':errors,
-               }
-               
-    assigned_users = task.assigned_users.all()
-    if assigned_users:
-        context['assigned_users'] = assigned_users
+              }
+
+    context['task_viewable'] = True if ( task.status not in ["UP", "DL"] ) or is_mentor else False
+    context['task_claimable'] = True if task.status in ["OP", "WR"] else False
+
+    context['can_mod_mentors'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_mentor else False
+    context['can_mod_tasks'] = True if task.status in ["UP", "OP", "LO"] and is_mentor else False
+    context['can_assign_credits'] = True if task.status in ["OP", "WR"] and is_mentor else False
+    
+    context['assigned_users'] = task.assigned_users.all()
    
     if request.method == 'POST':
         if not is_guest:
@@ -93,6 +99,7 @@ def create_task(request):
                         return render_to_response('task/create.html',{'form':form, 'error_msg':error_msg})
                     
                     addMentor(task, user)
+                    updateTask(task,tags_field=data['tags_field'])
                     if publish: publishTask(task)    
                     task_url = '/task/view/tid=%s'%task.id
                     return redirect(task_url)

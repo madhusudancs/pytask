@@ -3,49 +3,73 @@
     {{task.title}}
 {% endblock %}
 {% block content %}
-    <a href="/task/browse/">Browse tasks</a>
-    <h3>{{ task.title }}</h3><br />
-    <!-- we have to write our own datetime.strftime filter and use in the next line -->
-    created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
-    Mentors:
-    {% for mentor in mentors %}
-        <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}|</a>
-    {% endfor %}
-    {% if is_mentor %}
-        <br /><a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a><br />
-        edit task goes here and it should contain all those add subs and add deps depending on availability<br />
-    {% endif %}
-    <hr>
-    <br />Description:<br />
-    <br />{{ task.desc }}<br />
-    <hr>
-    status of task is {{task.status}}<br />
-	{% if assigned_users %}
-		Users working on this task:
-		{% for user in assigned_users %}
-			<a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
-		{% endfor %}
-		<br />
-    {% endif %}
-    {% if not is_guest %}
-        <a href="/task/claim/tid={{task.id}}">View claims</a><br />
-    {% endif %}
-    
-    {% if comments %}
-        <hr />
-        <br/>comments:<br />
-        {% for comment in comments %}
-            <br /><a href="/user/view/uid={{comment.created_by.id}}">{{ comment.created_by.username }}</a> at {{ comment.creation_datetime.ctime }} wrote:<br />
-        {{ comment.data }}<br />
+    {% if task_viewable %}
+        <a href="/task/browse/">Browse tasks</a>
+        <h3>{{ task.title }}</h3><br />
+        <!-- we have to write our own datetime.strftime filter and use in the next line -->
+        created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
+        Mentors:
+        {% for mentor in mentors %}
+            <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}|</a>
         {% endfor %}
-    {% endif %}
+        {% if can_mod_mentors %}
+            <br /><a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a><br />
+            edit task goes here and it should contain all those add subs and add deps depending on availability<br />
+        {% endif %}
 
-    {% if not is_guest %}
-        <br />Add comment:<br />
-        <form action="" method="post">
-        <!-- we might even want to use forms here -->
-        <textarea  name="data"></textarea><br />
-        <input type="submit" value="Submit">
-        </form>
+        {%  if deps %}
+            <br />The task has following dependencies
+            {% for dep in deps %}
+                <a href="/task/view/tid={{dep.id}}">{{dep.title}}</a><br />
+            {% endfor %}
+            {% if can_mod_tasks %}
+                <a href="/task/addtask/tid={{task.id}}">add more tasks</a>
+                <a href="/task/remtask/tid={{task.id}}">remove an existing task</a>
+            {% endif %}
+        {% else %}
+            {%if can_mod_tasks %}
+                <a href="/task/addtask/tid={{task.id}}">add a subtask/dependency </a>
+            {%endif%}
+        {% endif %}
+        
+        <hr>
+        <br />Description:<br />
+        <br />{{ task.desc }}<br />
+        <hr>
+        
+        status of task is {{task.status}}<br />
+        {% if assigned_users %}
+            Users working on this task:
+            {% for user in assigned_users %}
+                <a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
+            {% endfor %}
+            <br />
+        {% endif %}
+        {%if can_assign_credits%}
+            <a href="/task/assigncredits/tid={{task.id}}">Assign credits</a>
+        {%endif%}
+        {% if not is_guest %}
+            <a href="/task/claim/tid={{task.id}}">View claims</a><br />
+        {% endif %}
+        
+        {% if comments %}
+            <hr />
+            <br/>comments:<br />
+            {% for comment in comments %}
+                <br /><a href="/user/view/uid={{comment.created_by.id}}">{{ comment.created_by.username }}</a> at {{ comment.creation_datetime.ctime }} wrote:<br />
+            {{ comment.data }}<br />
+            {% endfor %}
+        {% endif %}
+
+        {% if not is_guest %}
+            <br />Add comment:<br />
+            <form action="" method="post">
+            <!-- we might even want to use forms here -->
+            <textarea  name="data"></textarea><br />
+            <input type="submit" value="Submit">
+            </form>
+        {% endif %}
+    {% else %}
+        You are not authorised to view this task. <a href="/task/browse/">click here</a> to return to browsing the tasks.
     {% endif %}
 {% endblock %}
