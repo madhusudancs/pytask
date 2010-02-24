@@ -1,7 +1,7 @@
 from pytask.taskapp.models import Request
 from datetime import datetime
 
-def create_request(to,by,role,task=None,assigned_user=None):
+def create_request(to,by,role,task=None,assigned_user=None,pynts=0):
     """
     creates an unreplied request, based on the passed arguments
         to - a list of users to which the notification is to be sent
@@ -20,6 +20,7 @@ def create_request(to,by,role,task=None,assigned_user=None):
         req.task = task
     if assigned_user:
         req.assigned_user = assigned_user
+    req.pynts = pynts
     req.save()
 
 def reply_to_request(request_id, reply):
