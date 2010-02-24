@@ -16,9 +16,9 @@ def create_request(to,by,role,task=None,assigned_user=None):
     req.save()
     req.to = to
     req.role = role
-    if task is not None:
+    if task:
         req.task = task
-    if assigned_user is not None:
+    if assigned_user:
         req.assigned_user = assigned_user
     req.save()
 
@@ -33,7 +33,7 @@ def reply_to_request(request_id, reply):
         request = Request.objects.get(id = request_id)
     except Request.DoesNotExist:
         return False #No such request exist
-    if request.replied is not True:
+    if not request.replied:
         request.reply = reply
         request.replied = True
         request.read = True

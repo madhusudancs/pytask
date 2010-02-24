@@ -141,6 +141,7 @@ class Request(models.Model):
     replied = models.BooleanField(default = False)
     task = models.ForeignKey(Task,related_name = "%(class)s_task", blank = True, null = True)
     assigned_user = models.ForeignKey(User, related_name = "%(class)s_assigned_user", blank = True, null = True)
+    pynts = models.PositiveIntegerField(default=0)
 
 class Notification(models.Model):
 
