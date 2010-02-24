@@ -14,3 +14,31 @@ def create_notification(to,subject,message):
     notification.sub = subject
     notification.message = message
     notification.save()
+
+def mark_notification_read(notification_id):
+    """
+    makes a notification identified by the notification_id read.
+    arguments:
+        notification_id - a number denoting the id of the Notification object
+    """
+    try:
+        notification = Notification.objects.get(id = notification_id)
+    except Notification.DoesNotExist:
+        return False
+    notification.is_read = True
+    notification.save()
+    return True
+
+def delete_notification(notification_id):
+    """
+    deletes a notification identified by the notification_id.
+    arguments:
+        notification_id - a number denoting the id of the Notification object
+    """
+    try:
+        notification = Notification.objects.get(id = notification_id)
+    except Notification.DoesNotExist:
+        return False
+    notification.deleted = True
+    notification.save()
+    return True
