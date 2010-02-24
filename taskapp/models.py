@@ -130,17 +130,18 @@ class Claim(models.Model):
 
 class Request(models.Model):
 
-    to = models.ManyToManyField(User, related_name = "%(class)s_to", blank = False)
-    by = models.ForeignKey(User, related_name = "%(class)s_by", blank = False)
+    sent_to = models.ManyToManyField(User, related_name = "%(class)s_sent_to", blank = False)
+    sent_by = models.ForeignKey(User, related_name = "%(class)s_sent_by", blank = False)
     role = models.CharField(max_length = 2, blank = False)
     is_active = models.BooleanField(default = True)
     reply = models.BooleanField(default = False)
-    read = models.BooleanField(default = False)
+    is_read = models.BooleanField(default = False)
     creation_date = models.DateTimeField()
     reply_date = models.DateTimeField()
-    replied = models.BooleanField(default = False)
+    is_replied = models.BooleanField(default = False)
+    replied_by = models.ForeignKey(User, related_name = "%(class)s_replied_by", blank = False)
     task = models.ForeignKey(Task,related_name = "%(class)s_task", blank = True, null = True)
-    assigned_user = models.ForeignKey(User, related_name = "%(class)s_assigned_user", blank = True, null = True)
+    receiving_user = models.ForeignKey(User, related_name = "%(class)s_receiving_user", blank = True, null = True)
     pynts = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
