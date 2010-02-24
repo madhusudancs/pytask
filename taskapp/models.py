@@ -75,9 +75,6 @@ class Task(models.Model):
 #    tags = models.CharField(max_length = 200, blank = True)
     tags_field = TagField()
     
-    subs = models.ManyToManyField('self', blank = True, related_name = "%(class)s_parents")
-    deps = models.ManyToManyField('self', blank = True, related_name = "%(class)s_deps")
-    
     credits = models.PositiveSmallIntegerField()
     progress = models.PositiveSmallIntegerField(default = 0)
         
@@ -87,7 +84,7 @@ class Task(models.Model):
     assigned_users = models.ManyToManyField(User, blank = True, related_name = "%(class)s_assigned_users")
     
     creation_datetime = models.DateTimeField()
-    
+    sub_type = models.CharField(max_length=1, choices = (('D','Dependency'),('S','Subtask')), default = 'D')   
     #is_claimable = models.BooleanField()
     
     ## not yet decided if attribs after this are to be included
@@ -96,6 +93,12 @@ class Task(models.Model):
     
     def __unicode__(self):
         return unicode(self.title)
+
+class Map(models.Model):
+
+    main = models.ForeignKey('Task', related_name = "%(class)s_main")
+    subs = models.ManyToManyField('Task', blank = True, null = True, related_name = "%(class)s_subs")
+
 
 class Comment(models.Model):
     

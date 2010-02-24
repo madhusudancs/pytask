@@ -1,12 +1,15 @@
 from datetime import datetime
-from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim
+from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim, Map
 
 def publishTask(task):
     """ set the task status to open """
-    
-    sub_tasks = task.subs.all()
-    dependencies = task.deps.all()
-    if sub_tasks or any(map(lambda t:t.status!="CM",dependencies)):
+
+    if task.sub_type == 'D':
+        deps, subs = task.map_subs.all(), []
+    else:
+        subs, deps = task.map_subs.all(), []
+   
+    if subs or any(map(lambda t:t.status!="CM",deps)):
         task.status = "LO"
     else:
         task.status = "OP"
@@ -20,8 +23,20 @@ def addSubTask(main_task, sub_task):
 
     ## Shall modify after talking to pr about subtasks
     ## I think i might even remove the concept of subtasks
-    main_task.subs.add(sub_task)
-    sub_tasks = main_task.subs.all()
+
+    main_task.sub_type = "S"
+    main_task.save()
+
+    try:
+        mapobj = Map.objects.get(main=main_task)
+    except Map.DoesNotExist:
+        mapobj = Map()
+        mapobj.main = main_task
+        mapobj.save()
+    mapobj.subs.add(sub_task)
+    mapobj.save()
+
+    sub_tasks = getTask(main_task.id).subs
     if main_task.status == "OP":
         if any(map(lambda t:t.status!="CM",sub_tasks)):
             main_task.status = "LO"
@@ -36,8 +51,21 @@ def addDep(main_task, dependency):
     And also if the task doesn't have any subs.
     """
 
-    main_task.deps.add(dependency)
-    deps = main_task.deps.all()
+    main_task.sub_type = "D"
+    main_task.save()
+
+    try:
+        mapobj = Map.objects.get(main=main_task)
+    except Map.DoesNotExist:
+        mapobj = Map()
+        mapobj.main = main_task
+        mapobj.save()
+
+    mapobj.subs.add(dependency)
+    mapobj.save()
+
+    deps = getTask(main_task.id).deps
+
     if main_task.status in ["OP", "LO"]: 
         if all(map(lambda t:t.status=="CM",deps)):
             main_task.status = "OP"
@@ -99,9 +127,21 @@ def getTask(tid):
     """
 
     task = Task.objects.get(id=tid)
-    deps = task.deps.all()
-    subs = task.subs.all()
+    try:
+        mapobj = Map.objects.get(main=task)
+    except Map.DoesNotExist:
+        mapobj = Map()
+        mapobj.main = task
+        mapobj.save()
+        
+    task_subs = mapobj.subs.all()
 
+    if task.sub_type == "D":
+        task.deps, task.subs = task_subs, []
+    elif task.sub_type == "S":
+        task.subs, task.deps = task_subs, []
+
+    deps, subs = task.deps, task.subs
     if deps and task.status in ["OP", "LO"]:
         task.status = "OP" if all(map(lambda t:t.status=="CM",deps)) else "LO"
     if subs and task.status in ["OP", "LO", "CM"]:

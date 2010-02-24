@@ -39,5 +39,5 @@ def AddTaskForm(task_choices, is_plain=False):
             type_choices = [('S','Subtasks'),('D','Dependencies')]
             type = forms.ChoiceField(type_choices, widget=forms.RadioSelect)
 
-        task = forms.MultipleChoiceField(choices=task_choices)
+        task = forms.ChoiceField(choices=task_choices)
     return myForm()

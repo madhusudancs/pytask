@@ -33,8 +33,9 @@ def view_task(request, tid):
     task = getTask(tid)
     comments = Comment.objects.filter(task=task)
     mentors = task.mentors.all()
-    subs = task.subs.all()
-    deps = task.deps.all()
+
+    deps, subs = task.deps, task.subs
+    
     errors = []
     
     is_guest = True if not user.is_authenticated() else False
@@ -62,7 +63,6 @@ def view_task(request, tid):
     if request.method == 'POST':
         if not is_guest:
             data = request.POST["data"]
-            task = getTask(tid)
             new_comment = Comment(task=task, data=data, created_by=user, creation_datetime=datetime.now())
             new_comment.save()
             return redirect(task_url)
@@ -162,15 +162,13 @@ def add_tasks(request, tid):
     user = request.user
     task = getTask(tid)
 
-    deps = task.deps.all()
-    subs = task.subs.all()
-
+    deps, subs = task.deps, task.subs
     is_plain = False if deps or subs else True
 
     ## again a brute force method
     valid_tasks = []
     for a_task in Task.objects.all():
-        if not ( a_task.status in deps or a_task in subs or a_task.status=="CD" or a_task==task ):
+        if not ( a_task in deps or a_task in subs or a_task.status=="CD" or a_task==task ):
             valid_tasks.append(a_task)
 
     task_choices = [ (_.id,_.title) for _ in valid_tasks ]
@@ -185,7 +183,6 @@ def add_tasks(request, tid):
                 ## first decide if adding subs and deps can be in same page
                 ## only exclude tasks with status deleted
                 data = request.POST
-                print data
                 if is_plain and not data.get('type', None): errors.append('Please choose which type of task(s) do you want to add.')
                 if not data.get('task', None): errors.append('Please choose a one task')
 
@@ -202,7 +199,6 @@ def add_tasks(request, tid):
                     ## we might iterate over a task list later on
                     task_id = data['task']
                     sub_or_dep = getTask(task_id)
-                    print task_id, sub_or_dep
                     update_method(task, sub_or_dep)
 
                     return redirect(task_url)
