@@ -15,7 +15,7 @@ def publishTask(task):
 
 def addSubTask(main_task, sub_task):
     """ add the task to subs attribute of the task and update its status.
-    sub task can be added only if a task is in UP/OP/LO/Cd state.
+    sub task can be added only if a task is in UP/OP/LO state.
     """
 
     ## Shall modify after talking to pr about subtasks
@@ -70,21 +70,12 @@ def createTask(title,desc,created_by,credits):
     task.save()
     return task
 
-def addSubTask(main_task, sub_task):
-    """ add sub_task to subs list of main_task """
-    
-    main_task.subs.add(sub_task)
-    main_task.status = "LO"
-    main_task.save()
-    return main_task
-
 def addClaim(task, message, user):
     """ add claim data to the database if it does not exist 
     and also update the claimed users field of the task.
     """
     
     task.claimed_users.add(user)
-    task.status = "CL"
     task.save()
     claim = Claim()
     claim.message = message
@@ -96,8 +87,10 @@ def addClaim(task, message, user):
 def assignTask(task, user):
     """ check for the status of task and assign it to the particular user """
     
-    task.assigned_users.add(user)
-    task.status = "AS"
+    if task.status in ['OP', 'WR']:
+        task.assigned_users.add(user)
+        task.claimed_users.remove(user)
+        task.status = "WR"
     task.save()
 
 def getTask(tid):
@@ -114,5 +107,23 @@ def getTask(tid):
     if subs and task.status in ["OP", "LO", "CM"]:
         task.status = "CM" if all(map(lambda t:t.status=="CM",subs)) else "LO"
 
+    task.save()
+    return task
+
+def updateTask(task, title=None, desc=None, credits=None, tags_field=None):
+    """ update the property accordingly.
+    while updating title, check for uniqueness of title.
+    return None if any error. 
+    """
+    
+    if title:
+        try:
+            task.title = title
+            task.save()
+        except IntegrityError:
+            return None
+    if desc:task.desc = desc
+    if credits:task.credits = credits
+    if tags_field:task.tags_field = tags_field
     task.save()
     return task
