@@ -120,7 +120,7 @@ def updateTask(task, title=None, desc=None, credits=None, tags_field=None):
         try:
             task.title = title
             task.save()
-        except IntegrityError:
+        except Task.IntegrityError:
             return None
     if desc:task.desc = desc
     if credits:task.credits = credits
