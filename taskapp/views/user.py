@@ -54,13 +54,13 @@ def view_my_profile(request,uid=None):
     if uid == None:
         edit_profile = True
         profile = Profile.objects.get(user = request.user)
-        return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile})
+        return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':request.user})
     edit_profile = True if request.user == User.objects.get(pk=uid) else False
     try:
         profile = Profile.objects.get(user = User.objects.get(pk=uid))
     except Profile.DoesNotExist:
         raise Http404
-    return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile})
+    return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':request.user})
 
 @login_required
 def edit_my_profile(request):
@@ -93,5 +93,5 @@ def edit_my_profile(request):
     else:
         profile = Profile.objects.get(user = request.user)
         edit_profile_form = UserProfileEditForm(instance = profile)
-        return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form})
+        return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form, 'user':request.user})
 

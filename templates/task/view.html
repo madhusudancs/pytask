@@ -23,8 +23,8 @@
                 <a href="/task/view/tid={{dep.id}}">{{dep.title}}</a><br />
             {% endfor %}
             {% if can_mod_tasks %}
-                <a href="/task/addtask/tid={{task.id}}">add more tasks</a>
-                <a href="/task/remtask/tid={{task.id}}">remove an existing task</a>
+                <a href="/task/addtask/tid={{task.id}}">add more dependencies</a>
+                <a href="/task/remtask/tid={{task.id}}">remove an existing dependency</a>
             {% endif %}
         {% else %}
             {%if can_mod_tasks %}
