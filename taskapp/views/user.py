@@ -99,7 +99,7 @@ def edit_my_profile(request):
 def browse_requests(request):
     
     user = request.user
-    active_reqs = user.request_to.filter(replied=False)
+    active_reqs = user.request_sent_to.filter(is_replied=False)
     reqs = active_reqs.order_by('creation_date').reverse()
     for pos, req in enumerate(reversed(reqs)):
         req.pos = pos
@@ -117,13 +117,13 @@ def view_request(request, rid):
     """
 
     user = request.user
-    reqs = user.request_to.filter(replied=False).order_by('creation_date')
+    reqs = user.request_sent_to.filter(is_replied=False).order_by('creation_date')
     user_request = reqs[int(rid)]
 
     context = {
         'user':user,
         'req':user_request,
-        'sent_users':user_request.to.all()
+        'sent_users':user_request.sent_to.all()
     }
 
     return render_to_response('user/view_request.html', context)
@@ -137,9 +137,9 @@ def process_request(request, rid, reply):
     if request.method=="POST":
         user = request.user
         browse_request_url= '/user/requests'
-        reqs = user.request_to.filter(replied=False).order_by('creation_date')
+        reqs = user.request_sent_to.filter(is_replied=False).order_by('creation_date')
         user_request = reqs[int(rid)]
-
+        
         return show_msg("Your reply has been processed", browse_request_url, "view other requests")
     else:
         return show_msg("You are not authorised to do this", browse_request_url, "view other requests")

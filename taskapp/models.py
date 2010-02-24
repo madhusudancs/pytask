@@ -133,20 +133,19 @@ class Request(models.Model):
     sent_to = models.ManyToManyField(User, related_name = "%(class)s_sent_to", blank = False)
     sent_by = models.ForeignKey(User, related_name = "%(class)s_sent_by", blank = False)
     role = models.CharField(max_length = 2, blank = False)
-    is_active = models.BooleanField(default = True)
     reply = models.BooleanField(default = False)
     is_read = models.BooleanField(default = False)
     creation_date = models.DateTimeField()
     reply_date = models.DateTimeField()
     is_replied = models.BooleanField(default = False)
-    replied_by = models.ForeignKey(User, related_name = "%(class)s_replied_by", blank = False)
+    replied_by = models.ForeignKey(User, related_name = "%(class)s_replied_by", blank = True, null = True)
     task = models.ForeignKey(Task,related_name = "%(class)s_task", blank = True, null = True)
     receiving_user = models.ForeignKey(User, related_name = "%(class)s_receiving_user", blank = True, null = True)
     pynts = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
 
-        return u"Request %s %s"%(self.by.username, self.role)
+        return u"Request %s %s"%(self.sent_by.username, self.role)
 
 class Notification(models.Model):
 
