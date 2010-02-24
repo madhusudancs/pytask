@@ -1,12 +1,159 @@
 <html>
 <head>
     <title>{% block title %}PyTasks{% endblock %}</title>
+<style type="text/css">
+        body {
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        color: #333;
+        text-align: center;
+        margin: 0px;
+        padding: 20px 0px 20px 0px;
+        }
+        #wrapper {
+        width: 956px;
+        padding: 10px;
+        margin: 0px auto 0px auto;
+        height: auto;
+        text-align: left;
+        border: 1px solid #ddd;
+        }
+        #header {
+        margin: 0px;
+        padding: 0px;
+        height: 100px;
+        width: auto;
+        background-color: #f1f1f1;
+        }
+        #container {
+        padding: 0px;
+        margin: 10px 0px 0px 0px;
+        background-attachment: scroll;
+        background-image: url(back.gif);
+        background-repeat: repeat-y;
+        background-position: 0px 0px;
+        height: auto; #default was 1%
+        width: auto;
+        }
+        #left {
+        margin: 0px;
+        width: 160px;
+        padding: 10px 20px 10px 20px;
+        float: left;
+        }
+        #nav {
+        margin: 0px;
+        padding: 0px;
+        list-style-image: none;
+        list-style-type: none;
+        }
+        #nav li {
+        margin: 0px;
+        padding: 0px;
+        display: block;
+        background-attachment: scroll;
+        background-image: url(bullet.gif);
+        background-repeat: no-repeat;
+        background-position: 0px 50%;
+        }
+        #nav li a:link, #nav li a:visited, #nav li a:active {
+        color: #666;
+        text-decoration: none;
+        display: block;
+        margin: 0px;
+        padding: 3px 15px 3px 15px;
+        width: 130px;
+        }
+        #nav li a:hover {
+        color: #999;
+        text-decoration: none;
+        }
+        #center {
+        height: auto;
+        width: 504px;
+        padding: 10px 20px 10px 20px;
+        float: left;
+        margin: 0px 0px 0px 6px;
+        line-height: 1.8em;
+        }
+        h1 {
+        font-size: 14px;
+        margin: 0px;
+        padding: 0px;
+        }
+        #right {
+        padding: 10px 20px 10px 20px;
+        height: auto;
+        width: 160px;
+        float: left;
+        margin: 0px 0px 0px 6px;
+        }
+        .clearer {
+        font-size: 0px;
+        line-height: 0px;
+        display: block;
+        margin: 0px;
+        padding: 0px;
+        clear: both;
+        height: 0px;
+        width: auto;
+        }
+        #footer {
+        margin: 10px 0px 0px 0px;
+        text-align: center;
+        padding: 15px 0px 15px 0px;
+        background-color: #f1f1f1;
+        }
+        #footer p {
+        color: #999;
+        margin: 0px auto 0px auto;
+        padding: 0px;
+        }
+        #footer a:link, #footer a:visited, #footer a:active {
+        color: #999;
+        text-decoration: none;
+        }
+        #footer a:hover {
+        color: #ccc;
+        text-decoration: none;
+        } 
+</style>
 </head>
+
 <body>
-<h2><a href="/">PyTasks</a></h2>
-{% if user.is_authenticated %}
-<a href="/accounts/logout">logout</a> 
-{% endif %}
-<br><br>
-{% block content %}This is the default content{% endblock %}</body>
+<div id="wrapper">
+    <div id="header">
+        <h2><a href="/">PyTasks</a></h2>
+    </div>
+    <div id="container">
+        <div id="left">
+        <ul id="nav">
+            <li><a href="/" title="home">home</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="/task/browse/" title="tasks">tasks</a></li>
+                <li><a href="/user/notifications/" title="notifications">notifications</a></li>
+                <li><a href="/user/requests/" title="Requests">requests</a></li>
+                <br>
+                <li><a href="/accounts/logout/">logout</a></li>
+            {% else %}
+                <li><a href="/accounts/login/" title="login">login</a></li>
+            {% endif %}
+        </ul>
+        </div>
+        <div id="center">
+            {% block content %}This is the default content{% endblock %}
+        </div>
+        <div id="right">
+            <!--{% if user.is_authenticated %}
+            <a href="/accounts/logout">logout</a> 
+            {% endif %}-->
+        </div>
+        <div class="clearer">
+        </div>
+    </div>
+    <div id="footer">
+    </div>
+</div> 
+
+</body>
 </html>

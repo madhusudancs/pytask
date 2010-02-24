@@ -65,8 +65,6 @@ def view_my_profile(request,uid=None):
 @login_required
 def edit_my_profile(request):
     """ enables the user to edit his/her user profile """
-    if str(request.user) == 'AnonymousUser':
-        return show_msg('Please register yourself to activate the functionality')
     if request.method == 'POST':
         form = UserProfileEditForm(request.POST)
 #        if not form.is_valid():
