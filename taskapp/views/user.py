@@ -148,6 +148,9 @@ def process_request(request, rid, reply):
         reqs = user.request_sent_to.filter(is_replied=False).order_by('creation_date')
         req_obj = reqs[int(rid)]
         reply = True if reply == "yes" else False
+        req_obj.remarks = request.POST.get('remarks', "")
+        req_obj.save()
+
         reply_to_request(req_obj, reply, user)
         
         return show_msg("Your reply has been processed", browse_request_url, "view other requests")

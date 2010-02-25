@@ -137,6 +137,7 @@ class Request(models.Model):
     sent_by = models.ForeignKey(User, related_name = "%(class)s_sent_by", blank = False)
     role = models.CharField(max_length = 2, blank = False)
     reply = models.BooleanField(default = False)
+    remarks = models.TextField(default = "",blank = True)
     is_read = models.BooleanField(default = False)
     creation_date = models.DateTimeField()
     reply_date = models.DateTimeField()
