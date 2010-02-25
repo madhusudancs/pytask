@@ -15,7 +15,7 @@ def browse_tasks(request):
     """ display all the tasks """
     
     user = request.user
-    task_list = Task.objects.order_by('id').reverse()
+    task_list = Task.objects.exclude(status="UP").exclude(status="DL").order_by('creation_datetime').reverse()
     
     context = {'user':user,
                'task_list':task_list,
