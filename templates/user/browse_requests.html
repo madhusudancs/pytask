@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
     {% for req in reqs %}
-        <form><a href="/user/requests/rid={{req.pos}}">{{req.sent_by.username}}|{{req.role}}|
+        <form><a href="/user/requests/rid={{req.pos}}">
+        {% if not req.is_read %}<b>{% endif %}{{req.sent_by.username}}|{{req.role}}|
         {% ifequal req.role "PY" %}            
             {{req.task.title}}
-        {% endifequal %}</a><br /></form>
+        {% endifequal %}</a>
+        {% if not req.is_read %}</b>{% endif %}<br /></form>
     {% endfor %}
 {% endblock %}
