@@ -175,3 +175,10 @@ def removeTask(main_task, sub_task):
     mapobj = Map.objects.get(main=main_task)
     mapobj.subs.remove(sub_task)
     mapobj.save()
+
+def removeUser(main_task, rem_user):
+    """ right now, just remove the user from the list of assigned_users.
+    """
+
+    main_task.assigned_users.remove(rem_user)
+    main_task.save()

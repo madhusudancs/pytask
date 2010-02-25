@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim, Credit
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
+from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -301,7 +301,50 @@ def claim_task(request, tid):
     else:
         return show_msg('You are not logged in to view claims for this task', task_url, 'view the task')
     
+def rem_user(request, tid):
+    """ show a list of working users and ask for a message/reason for removing user.
+    """
     
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = request.user
+    task = getTask(tid)
+    
+    is_guest = True if not user.is_authenticated() else False
+    is_mentor = True if user in task.mentors.all() else False
+
+    if (not is_guest) and is_mentor:
+
+        assigned_users = task.assigned_users.all()
+        choices = [ (_.id,_.username) for _ in assigned_users ]
+        context = {
+            'user':user,
+            'task':task,
+        }
+
+        if assigned_users:
+            form = RemoveUserForm(choices)
+            context['form'] = form
+            if request.method == "POST":
+                data = request.POST
+                form = RemoveUserForm(choices, data)
+                if form.is_valid():
+                    data = form.cleaned_data
+                    uid = data['user']
+                    rem_user = User.objects.get(id=uid)
+                    removeUser(task, rem_user)
+                    print data['reason']
+                    return redirect(task_url)
+                else:
+                    context['form'] = form
+                    return render_to_response('task/remove_user.html', context)
+            else:
+                return render_to_response('task/remove_user.html',context)
+        else:
+            return show_msg("There is no one working on this task to be kicked off", task_url, "view the task")
+    else:
+        return show_msg("You are not authorised to do this", task_url, "view the task")
+
 def assign_task(request, tid):
     """ first get the status of the task and then assign it to one of claimed users
     generate list of claimed users by passing it as an argument to a function.

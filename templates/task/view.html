@@ -66,9 +66,11 @@
                 <a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
             {% endfor %}
             {% if is_mentor %}
-                <a href="/task/user/remove/">Remove an existing user</a>
+                <a href="/task/remuser/tid={{task.id}}">Remove an existing user</a>
             <br />
             {% endif %}
+        {% else %}
+            There are no users currently working on this task.<br />
         {% endif %}
         {% if can_assign_credits %}
             <a href="/task/assigncredits/tid={{task.id}}">Assign credits</a>
