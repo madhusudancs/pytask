@@ -46,3 +46,11 @@ def createSuUser(username,email,password,dob,gender):
     su_user.is_superuser = True
     su_user.save()
     return su_user
+
+def changeRole(role, user):
+    """ change the status of user to role.
+    """
+
+    user_profile = user.get_profile()
+    user_profile.rights = role
+    user_profile.save()

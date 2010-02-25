@@ -1,5 +1,6 @@
 from datetime import datetime
 from pytask.taskapp.events.task import addCredits, addMentor
+from pytask.taskapp.events.user import changeRole
 
 def reply_to_request(request_obj, reply, replied_by):
     """
@@ -18,6 +19,10 @@ def reply_to_request(request_obj, reply, replied_by):
 
         if request_obj.role == "PY":
             if reply:
+                ## note that we are not checking if he is stilla mentor
+                ## since we are not allowing removing mentors
+                ## if we allow, we have complications like removing unreplied requests made by this mentor and stuff.
+                ## but we check if this user is still an admin and put a notification if that you are no longer an admin and hence cannot do this.
                 addCredits(request_obj.task, request_obj.sent_by, request_obj.receiving_user, request_obj.pynts)
                 print "send yes notifications appropriately"
             else:
@@ -25,6 +30,8 @@ def reply_to_request(request_obj, reply, replied_by):
         elif request_obj.role == "MT":
             ## add him as a mentor to the task
             if reply:
+                ## check for the current rights of request_obj.sent_by
+                ## what if he is no more a mentor to the task
                 addMentor(request_obj.task, request_obj.replied_by)
                 ## pass on notification of request_obj.sent_by
             else:
@@ -33,9 +40,9 @@ def reply_to_request(request_obj, reply, replied_by):
 
         elif request_obj.role in ["AD", "MG", "DV"]:
             if reply:
-                pass
                 ## make him the role
-                ## changeRole(role=request_obj.role, made_by=request_obj.sent_by)
+                ## here we check for rights just in case to be fine with demoted users. we change only the user who made request has that rights.
+                changeRole(role=request_obj.role, user=request_obj.replied_by)
             else:
                 ## notify request_obj.sent_by that it has been rejected
                 pass

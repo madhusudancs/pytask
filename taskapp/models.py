@@ -10,7 +10,7 @@ from tagging.fields import TagField
 GENDER_CHOICES = (( 'M', 'Male'), ('F', 'Female'))
 RIGHTS_CHOICES = (
 	("AD", "Admin"),
-	("MN", "Manager"),
+	("MG", "Manager"),
 	("DV", "Developer"),
 	("CT", "Contributor"),)
 

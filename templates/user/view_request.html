@@ -16,6 +16,18 @@
     {% ifequal "MT" req.role %}
         <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested you to act as a mentor for the task
         <a href="/task/view/tid={{req.task.id}}">{{req.task.title}}</a><br />
+    {% else %}
+        You have been requested to act as 
+        {% ifequal "AD" req.role %}
+            an Admin
+        {% else %}
+            {% ifequal "MG" req.role %}
+                a Manager
+            {% else %}
+                a Developer
+            {% endifequal %}
+        {% endifequal %}
+        for the website by <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a>.<br />
     {% endifequal %}
     
     Please accept or reject the request.<br />
