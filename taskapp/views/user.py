@@ -171,3 +171,46 @@ def browse_notifications(request):
     }
 
     return render_to_response('user/browse_notifications.html', context)
+
+@login_required
+def view_notification(request, nid):
+    """ get the notification depending on nid.
+    Display it.
+    """
+
+    user = request.user
+    notifications = user.notification_to.filter(deleted=False).order_by('sent_date')
+    notification  = notifications[int(nid)]
+    notification.is_read = True
+    notification.save()
+
+    context = {
+        'user':user,
+        'notification':notification,
+    }
+
+    return render_to_response('user/view_notification.html', context)
+
+@login_required
+def edit_notification(request, nid, action):
+    """ if action is delete, set is_deleted.
+    if it is unread, unset is_read.
+    save the notification and redirect to browse_notifications.
+    """
+
+    user = request.user
+    notifications = user.notification_to.filter(deleted=False).order_by('sent_date')
+    notification = notifications[int(nid)]
+    notifications_url = "/user/notifications/"
+
+    if request.method == "POST":
+        if action == "delete":
+            notification.deleted = True
+        elif action == "unread":
+            notification.is_read = False
+        
+        notification.save()
+        return redirect(notifications_url)
+    else:
+        return show_msg('This is wrong', notification_url, "view the notification")
+   

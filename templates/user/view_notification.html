@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+    Subject: {{notification.sub}}<br />
+    Sent time: {{notification.sent_date}}<br />
+    {% autoescape off %}
+        {{notification.message}}
+    {% endautoescape %}
+    <form action="delete/" method="post"> <input type="submit" value="Delete"> </form>
+    <form action="unread/" method="post"> <input type="submit" value="Keep Unread"> </form>
+{% endblock %}
