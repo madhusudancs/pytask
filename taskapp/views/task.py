@@ -31,6 +31,9 @@ def view_task(request, tid):
     
     user = request.user
     task = getTask(tid)
+
+    if task.status == "DL":
+        return show_msg(user, 'This task no longer exists', '/task/browse/','browse the tasks')
     comments = Comment.objects.filter(task=task)
     mentors = task.mentors.all()
 
