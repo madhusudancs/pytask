@@ -4,7 +4,9 @@
 {% endblock %}
 {% block content %}
     {% if task_viewable %}
-        <a href="/task/edit/tid={{task.id}}">Edit task</a>
+        {% if is_mentor %}
+            <a href="/task/edit/tid={{task.id}}">Edit task</a>
+        {% endif %}
         <h3>{{ task.title }}</h3><br />
         <!-- we have to write our own datetime.strftime filter and use in the next line -->
         created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />

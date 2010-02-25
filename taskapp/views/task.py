@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim, Credit
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser
+from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser, assignCredits
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -408,6 +408,7 @@ def assign_credits(request, tid):
 
             context = {
                 'user':user,
+                'task':task,
                 'prev_credits':prev_credits,
                 'form':form,
             }
@@ -420,10 +421,7 @@ def assign_credits(request, tid):
                     uid = data['user']
                     points = data['points']
                     given_to = User.objects.get(id=uid)
-                    given_time = datetime.now()
-                    creditobj = Credit(task=task, given_by=user, given_to=given_to,points=points,given_time=given_time)
-                    ## remove the next line and add a request here
-                    creditobj.save()
+                    assignCredits(task=task, given_by=user, given_to=given_to, points=points)
                     return redirect('/task/assigncredits/tid=%s'%task.id)
                 else:
                     context['form'] = form

@@ -189,3 +189,21 @@ def completeTask(main_task):
 
     main_task.status = "CP"
     main_task.save()
+
+def assignCredits(task, given_by, given_to, points):
+    """ make a proper request object.
+    """
+    
+    addCredits(task, given_by, given_to, points)
+
+def addCredits(task, given_by, given_to, points):
+    """ add credit to the credits model.
+    """
+
+    creditobj = Credit()
+    creditobj.task = task
+    creditobj.given_by = given_by
+    creditobj.given_to = given_to
+    creditobj.points = points
+    creditobj.given_time = datetime.now()
+    creditobj.save()
