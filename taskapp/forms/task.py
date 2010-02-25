@@ -41,3 +41,10 @@ def AddTaskForm(task_choices, is_plain=False):
 
         task = forms.ChoiceField(choices=task_choices)
     return myForm()
+
+def AssignCreditForm(choices, instance=None):
+    
+    class myForm(forms.Form):
+        user = forms.ChoiceField(choices=choices, required=True)
+        points = forms.IntegerField(min_value=0,required=True)
+    return myForm(instance) if instance else myForm()

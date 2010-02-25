@@ -3,8 +3,8 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
-from pytask.taskapp.models import User, Task, Comment, Claim
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm
+from pytask.taskapp.models import User, Task, Comment, Claim, Credit
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm
 from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask
 from pytask.taskapp.views.user import show_msg
 
@@ -338,7 +338,60 @@ def assign_task(request, tid):
             return show_msg('Wait for ppl to claim dude... slow and steady wins the race :)', task_url, 'view the task')
     else:
         return show_msg('You are not authorised to perform this action', task_url, 'view the task')
-        
+
+def assign_credits(request, tid):
+    """ Check if the user is a mentor and credits can be assigned.
+    Then display all the approved credits.
+    Then see if mentor can assign credits to users also or only mentors.
+    Then put up a form for mentor to assign credits accordingly.
+    """
+    
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = request.user
+    task = getTask(tid)
+
+    is_guest = True if not user.is_authenticated() else False
+    is_mentor = True if (not is_guest) and user in task.mentors.all() else False
+
+    if is_mentor:
+        if task.status in ["OP", "WR"]:
+            choices = [(_.id,_.username) for _ in task.mentors.all()]
+            if task.status == "WR":
+                choices.extend([(_.id, _.username) for _  in task.assigned_users.all() ])
+            prev_credits = task.credit_set.all()
+            ## here we can ditchax credits model and use the request model
+            form = AssignCreditForm(choices)
+
+            context = {
+                'user':user,
+                'prev_credits':prev_credits,
+                'form':form,
+            }
+
+            if request.method == "POST":
+                data = request.POST
+                form = AssignCreditForm(choices, data)
+                if form.is_valid():
+                    data = form.cleaned_data
+                    uid = data['user']
+                    points = data['points']
+                    given_to = User.objects.get(id=uid)
+                    given_time = datetime.now()
+                    creditobj = Credit(task=task, given_by=user, given_to=given_to,points=points,given_time=given_time)
+                    ## remove the next line and add a request here
+                    creditobj.save()
+                    return redirect('/task/assigncredits/tid=%s'%task.id)
+                else:
+                    context['form'] = form
+                    return render_to_response('task/assigncredits.html', context)
+            else:
+                return render_to_response('task/assigncredits.html', context)
+        else:
+            return show_msg("Credits cannot be assigned at this stage", task_url, "view the task")
+    else:
+        return show_msg("You are not authorised to perform this action", task_url, "view the task")
+
 def edit_task(request, tid):
     """ see what are the attributes that can be edited depending on the current status
     and then give the user fields accordingly.

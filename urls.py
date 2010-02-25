@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     (r'^task/assign/tid=(\d+)$', taskViews.assign_task),
     (r'^task/addtask/tid=(\d+)$', taskViews.add_tasks),
     (r'^task/remtask/tid=(\d+)$', taskViews.remove_task),
+    (r'^task/assigncredits/tid=(\d+)$', taskViews.assign_credits),
     
     (r'^admin/', include(admin.site.urls)),
     

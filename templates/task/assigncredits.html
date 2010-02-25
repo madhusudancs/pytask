@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{task.title}}
+{% endblock %}
+{% block content %}
+        
+        {% if prev_credits %}
+            <hr />
+            <br/>Previous credits:<br />
+            {% for credit in prev_credits %}
+                {{credit.points}} pynts were given by <a href="/user/view/uid={{credit.given_by.id}}">{{credit.given_by.username}}</a> to
+                <a href="/user/view/uid={{credit.given_to.id}}">{{credit.given_to.username}}</a> at {{credit.given_time.ctime}}<br />
+            {% endfor %}
+        {% endif %}
+
+        <form action="" method="post">
+        {{form.as_p}}
+        <input type="submit" value="Submit">
+        </form>
+{% endblock %}
