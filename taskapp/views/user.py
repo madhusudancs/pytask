@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from pytask.taskapp.models import Task, Profile, Request
 from pytask.taskapp.events.user import createUser, updateProfile
 from pytask.taskapp.forms.user import UserProfileEditForm
+from pytask.taskapp.events.request import reply_to_request
 
 def show_msg(message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
@@ -123,6 +124,8 @@ def view_request(request, rid):
     user = request.user
     reqs = user.request_sent_to.filter(is_replied=False).order_by('creation_date')
     user_request = reqs[int(rid)]
+    user_request.is_read = True
+    user_request.save()
 
     context = {
         'user':user,
@@ -138,11 +141,14 @@ def process_request(request, rid, reply):
     if it is get, display a 404 error.
     """
 
+    user = request.user
+
     if request.method=="POST":
-        user = request.user
         browse_request_url= '/user/requests'
         reqs = user.request_sent_to.filter(is_replied=False).order_by('creation_date')
-        user_request = reqs[int(rid)]
+        req_obj = reqs[int(rid)]
+        reply = True if reply == "yes" else False
+        reply_to_request(req_obj, reply, user)
         
         return show_msg("Your reply has been processed", browse_request_url, "view other requests")
     else:

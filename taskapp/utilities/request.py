@@ -1,6 +1,6 @@
-from pytask.taskapp.models import Request, Profile
 from datetime import datetime
 from django.contrib.auth.models import User
+from pytask.taskapp.models import Request, Profile
 
 def create_request(sent_by,role,sent_to=None,task=None,receiving_user=None,pynts=0):
     """
@@ -29,20 +29,3 @@ def create_request(sent_by,role,sent_to=None,task=None,receiving_user=None,pynts
         req.sent_to.add(sent_to)
     req.save()
 
-def reply_to_request(request_obj, reply, replied_by):
-    """
-    makes a request replied with the given reply.
-    arguments:
-        request_obj - Request object for which change is intended
-        reply - a boolean value to be given as reply (True/False)
-        replied_by - the user object who replies to the request
-    """
-    if not request_obj.is_replied:
-        request_obj.reply = reply
-        request_obj.is_replied = True
-        request_obj.is_read = True
-        request_obj.reply_date = datetime.now()
-        request_obj.replied_by = replied_by
-        request_obj.save()
-        return True #Reply has been added successfully
-    return False #Already replied
