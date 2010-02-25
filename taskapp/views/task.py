@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim, Credit
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
-from pytask.taskapp.events.task import createTask, addMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser, assignCredits
+from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser, assignCredits
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -145,7 +145,7 @@ def add_mentor(request, tid):
         if request.method == "POST":
             uid = request.POST['mentor']
             new_mentor = User.objects.get(id=uid)
-            addMentor(task, new_mentor)
+            reqMentor(task, new_mentor, user)
             return redirect(task_url)
         else:
             return render_to_response('task/addmentor.html', {'form':form, 'errors':errors})

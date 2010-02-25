@@ -1,5 +1,5 @@
 from datetime import datetime
-from pytask.taskapp.events.task import addCredits
+from pytask.taskapp.events.task import addCredits, addMentor
 
 def reply_to_request(request_obj, reply, replied_by):
     """
@@ -24,7 +24,13 @@ def reply_to_request(request_obj, reply, replied_by):
                 print "send a no notificvaton"
         elif request_obj.role == "MT":
             ## add him as a mentor to the task
-            pass
+            if reply:
+                addMentor(request_obj.task, request_obj.replied_by)
+                ## pass on notification of request_obj.sent_by
+            else:
+                print "request for mentor rejected"
+                ## pass on notification to request_obj.sent_by
+
         elif request_obj.role in ["AD", "MG", "DV"]:
             if reply:
                 pass

@@ -75,6 +75,12 @@ def addDep(main_task, dependency):
     
     main_task.save()
 
+def reqMentor(task, mentor, req_by):
+    """ create a request object with role as MT.
+    """
+
+    create_request(sent_by=req_by, role="MT", sent_to=mentor, task=task) 
+
 def addMentor(task,mentor):
     """ add the mentor to mentors list of the task """
     
