@@ -153,3 +153,21 @@ def process_request(request, rid, reply):
         return show_msg("Your reply has been processed", browse_request_url, "view other requests")
     else:
         return show_msg("You are not authorised to do this", browse_request_url, "view other requests")
+
+@login_required
+def browse_notifications(request):
+    """ get the list of notifications that are not deleted and display in datetime order.
+    """
+
+    user = request.user
+
+    active_notifications = user.notification_to.filter(deleted=False).order_by('sent_date').reverse()
+    for pos, notification in enumerate(reversed(active_notifications)):
+        notification.pos = pos
+
+    context = {
+        'user':user,
+        'notifications':active_notifications,
+    }
+
+    return render_to_response('user/browse_notifications.html', context)

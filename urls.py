@@ -48,5 +48,7 @@ urlpatterns = patterns('',
     (r'^user/requests/$', userViews.browse_requests),
     (r'^user/requests/rid=(\d+)/$', userViews.view_request),
     (r'^user/requests/rid=(\d+)/(\w+)/$', userViews.process_request),
+
+    (r'^user/notifications/$', userViews.browse_notifications),
     
 )

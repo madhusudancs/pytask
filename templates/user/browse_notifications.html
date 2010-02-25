@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% for notification in notifications %}
+        <a href="/user/notifications/nid={{notification.pos}}">
+        {% if not notification.is_read %} <b> {% endif %}
+        {{notification.sub}}
+        {% if not notification.is_read %} </b> {% endif %}</a><br />
+    {% endfor %}
+{% endblock %}
