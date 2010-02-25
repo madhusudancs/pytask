@@ -182,3 +182,10 @@ def removeUser(main_task, rem_user):
 
     main_task.assigned_users.remove(rem_user)
     main_task.save()
+
+def completeTask(main_task):
+    """ set the status of task to CP.
+    """
+
+    main_task.status = "CP"
+    main_task.save()
