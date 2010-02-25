@@ -38,12 +38,16 @@ def homepage(request):
         user_profile = user.get_profile()
         is_mentor = True if user.task_mentors.all() else False
         can_create_task = False if user_profile.rights == u"CT" else True
+        notifications = user.notification_to.filter(deleted=False,is_read=False)
+        requests = user.request_sent_to.filter(is_replied=False)
         
         context = {'user':user,
                    'is_guest':is_guest,
                    'is_mentor':is_mentor,
                    'task_list':task_list,
                    'can_create_task':can_create_task,
+                   'notifications':notifications,
+                   'requests':requests,
                    }
                    
         return render_to_response('index.html', context)

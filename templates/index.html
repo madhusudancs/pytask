@@ -11,7 +11,52 @@
     {% else %}
         Logged in as {{ user.username }} <br />
     {% endif %}
+    
     {% if can_create_task %}
         <a href="/task/create/">Create a task</a><br />
+    {% endif %}
+    
+    {% if notifications.count %}
+        <br> {{ notifications.count }} unread <a href='/user/notifications/'>
+        {% ifnotequal notifications.count 1 %}
+        notifications</a>!!
+        {% else %}
+        notification</a>!!
+        {% endifnotequal %}
+    {% endif %}
+    
+    {% if requests.count %}
+        <br>{{ requests.count }} unreplied <a href='/user/requests/'>
+        {% ifnotequal requests.count 1 %}
+        requests</a>!
+        {% else %}
+        request</a>!
+        {% endifnotequal %}
+    {% endif %}
+    
+    {% if user.task_claimed_users.count %}
+        <br>{{ user.task_claimed_users.count }} <a href='/user/claimed/'>claimed</a>
+        {% ifnotequal user.task_claimed_users.count 1 %}
+        tasks!
+        {% else %}
+        task!
+        {% endifnotequal %}
+    {% endif %}
+    
+    {% if user.task_assigned_users.count %}
+        <br>You are currently <a href='/user/assigned/'>working</a> on {{ user.task_assigned_users.count }}
+        {% ifnotequal user.task_assigned_users.count 1 %}
+        tasks!
+        {% else %}
+        task!
+        {% endifnotequal %}
+    {% endif %}
+    
+    {% if user.task_mentors.count %}
+        <br><a href="/user/mentor/">Mentoring</a> {{ user.task_mentors.count }}
+        {% ifnotequal user.task_mentors.count 1 %}
+        tasks!
+        {% endifnotequal %}
+        task!
     {% endif %}
 {% endblock %}
