@@ -1,5 +1,6 @@
 from datetime import datetime
 from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim, Map
+from pytask.taskapp.utilities.request import create_request
 
 def publishTask(task):
     """ set the task status to open """
@@ -194,7 +195,7 @@ def assignCredits(task, given_by, given_to, points):
     """ make a proper request object.
     """
     
-    addCredits(task, given_by, given_to, points)
+    create_request(sent_by=given_by, role="PY", task=task, receiving_user=given_to, pynts=points ) 
 
 def addCredits(task, given_by, given_to, points):
     """ add credit to the credits model.

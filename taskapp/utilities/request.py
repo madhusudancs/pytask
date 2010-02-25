@@ -22,7 +22,7 @@ def create_request(sent_by,role,sent_to=None,task=None,receiving_user=None,pynts
     req.save()
     if role == 'PY':
         admin_profiles = Profile.objects.filter(rights='AD')
-        for admin in admin_profiles:
+        for admin_profile in admin_profiles:
             req.sent_to.add(admin_profile.user)
         req.receiving_user = receiving_user
     else:
