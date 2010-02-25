@@ -109,9 +109,9 @@ def create_task(request):
                 form = TaskCreateForm()
                 return render_to_response('task/create.html',{'form':form})
         else:
-            return show_msg('You are not authorised to create a task.')
+            return show_msg(user, 'You are not authorised to create a task.')
     else:
-        return show_msg('You are not authorised to create a task.')
+        return show_msg(user, 'You are not authorised to create a task.')
         
 def add_mentor(request, tid):
     """ check if the current user has the rights to edit the task and add him.
@@ -151,7 +151,7 @@ def add_mentor(request, tid):
             return render_to_response('task/addmentor.html', {'form':form, 'errors':errors})
         
     else:
-        return show_msg('You are not authorised to add mentors for this task', task_url, 'view the task')
+        return show_msg(user, 'You are not authorised to add mentors for this task', task_url, 'view the task')
     
 def add_tasks(request, tid):
     """ first display tasks which can be subtasks for the task and do the rest.
@@ -209,9 +209,9 @@ def add_tasks(request, tid):
         else:
             errors = ["The task cannot be added subtasks or dependencies in this state"]
 #            return render_to_response('task/add.html', {'form':form, 'errors':errors})
-            return show_msg('The task cannot be added subtasks or dependencies now', task_url, 'view the task')
+            return show_msg(user, 'The task cannot be added subtasks or dependencies now', task_url, 'view the task')
     else:
-        return show_msg('You are not authorised to add subtasks or dependencies for this task', task_url, 'view the task')
+        return show_msg(user, 'You are not authorised to add subtasks or dependencies for this task', task_url, 'view the task')
     
 def remove_task(request, tid):
     """ display a list of tasks and remove the selectes ones.
@@ -247,9 +247,9 @@ def remove_task(request, tid):
             else:
                 return render_to_response('task/removetask.html', {'user':user, 'form':form, 'errors':errors})
         else:
-            return show_msg("The task has no subtasks/dependencies to be removed", task_url, "view the task")
+            return show_msg(user, "The task has no subtasks/dependencies to be removed", task_url, "view the task")
     else:
-        return show_msg("You are not authorised to do this", task_url, "view the task")
+        return show_msg(user, "You are not authorised to do this", task_url, "view the task")
 
     
 def claim_task(request, tid):
@@ -299,7 +299,7 @@ def claim_task(request, tid):
         else:
             return render_to_response('task/claim.html', context)
     else:
-        return show_msg('You are not logged in to view claims for this task', task_url, 'view the task')
+        return show_msg(user, 'You are not logged in to view claims for this task', task_url, 'view the task')
     
 def rem_user(request, tid):
     """ show a list of working users and ask for a message/reason for removing user.
@@ -341,9 +341,9 @@ def rem_user(request, tid):
             else:
                 return render_to_response('task/remove_user.html',context)
         else:
-            return show_msg("There is no one working on this task to be kicked off", task_url, "view the task")
+            return show_msg(user, "There is no one working on this task to be kicked off", task_url, "view the task")
     else:
-        return show_msg("You are not authorised to do this", task_url, "view the task")
+        return show_msg(user, "You are not authorised to do this", task_url, "view the task")
 
 def assign_task(request, tid):
     """ first get the status of the task and then assign it to one of claimed users
@@ -376,11 +376,11 @@ def assign_task(request, tid):
             else:
                 return render_to_response('task/assign.html',{'form':form})
         elif assigned_users:
-            return show_msg('When the no of users you need for the task is more than the no of users willing to do the task, I\'d say please re consider the task :P',task_url, 'view the task')
+            return show_msg(user, 'When the no of users you need for the task is more than the no of users willing to do the task, I\'d say please re consider the task :P',task_url, 'view the task')
         else:
-            return show_msg('Wait for ppl to claim dude... slow and steady wins the race :)', task_url, 'view the task')
+            return show_msg(user, 'Wait for ppl to claim dude... slow and steady wins the race :)', task_url, 'view the task')
     else:
-        return show_msg('You are not authorised to perform this action', task_url, 'view the task')
+        return show_msg(user, 'You are not authorised to perform this action', task_url, 'view the task')
 
 def assign_credits(request, tid):
     """ Check if the user is a mentor and credits can be assigned.
@@ -429,9 +429,9 @@ def assign_credits(request, tid):
             else:
                 return render_to_response('task/assigncredits.html', context)
         else:
-            return show_msg("Credits cannot be assigned at this stage", task_url, "view the task")
+            return show_msg(user, "Credits cannot be assigned at this stage", task_url, "view the task")
     else:
-        return show_msg("You are not authorised to perform this action", task_url, "view the task")
+        return show_msg(user, "You are not authorised to perform this action", task_url, "view the task")
 
 def edit_task(request, tid):
     """ see what are the attributes that can be edited depending on the current status

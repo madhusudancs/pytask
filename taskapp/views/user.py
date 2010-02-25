@@ -10,7 +10,7 @@ from pytask.taskapp.events.user import createUser, updateProfile
 from pytask.taskapp.forms.user import UserProfileEditForm
 from pytask.taskapp.events.request import reply_to_request
 
-def show_msg(message, redirect_url=None, url_desc=None):
+def show_msg(user, message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
     
     return render_to_response('show_msg.html',{'message':message, 'redirect_url':redirect_url, 'url_desc':url_desc})
@@ -153,9 +153,9 @@ def process_request(request, rid, reply):
 
         reply_to_request(req_obj, reply, user)
         
-        return show_msg("Your reply has been processed", browse_request_url, "view other requests")
+        return show_msg(user, "Your reply has been processed", browse_request_url, "view other requests")
     else:
-        return show_msg("You are not authorised to do this", browse_request_url, "view other requests")
+        return show_msg(user, "You are not authorised to do this", browse_request_url, "view other requests")
 
 @login_required
 def browse_notifications(request):
@@ -215,5 +215,5 @@ def edit_notification(request, nid, action):
         notification.save()
         return redirect(notifications_url)
     else:
-        return show_msg('This is wrong', notification_url, "view the notification")
+        return show_msg(user, 'This is wrong', notification_url, "view the notification")
    
