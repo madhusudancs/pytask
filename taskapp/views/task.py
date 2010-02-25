@@ -22,6 +22,33 @@ def browse_tasks(request):
                }
     return render_to_response('task/browse.html', context)
 
+def publish_task(request, tid):
+    """ check if user is the mentor and also if the task status is UP.
+    """
+
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = request.user
+    task = getTask(tid)
+
+    is_guest = True if not user.is_authenticated() else False
+    is_mentor = True if user in task.mentors.all() else False
+
+    if user==task.created_by:
+        context = {
+            'user':user,
+        }
+
+        if request.method == "POST":
+            publishTask(task)
+            return show_msg(user, "The task has been published", task_url, "view the task")
+        else:
+            return render_to_response('task/publish.html', context)
+    else:
+        return show_msg(user, "You are not authorised to do this", '/task/browse/', "browse tasks")
+
+
+
 def view_task(request, tid):
     """ get the task depending on its tid and display accordingly if it is a get.
     check for authentication and add a comment if it is a post request.
@@ -54,6 +81,7 @@ def view_task(request, tid):
                'errors':errors,
               }
 
+    context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
     context['task_viewable'] = True if ( task.status not in ["UP", "DL"] ) or is_mentor else False
     context['task_claimable'] = True if task.status in ["OP", "WR"] else False
 

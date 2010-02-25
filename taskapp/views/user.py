@@ -13,7 +13,7 @@ from pytask.taskapp.events.request import reply_to_request
 def show_msg(user, message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
     
-    return render_to_response('show_msg.html',{'message':message, 'redirect_url':redirect_url, 'url_desc':url_desc})
+    return render_to_response('show_msg.html',{'user':user, 'message':message, 'redirect_url':redirect_url, 'url_desc':url_desc})
 
 def homepage(request):
     """ check for authentication and display accordingly. """

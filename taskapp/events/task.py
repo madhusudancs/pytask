@@ -14,6 +14,9 @@ def publishTask(task):
         task.status = "LO"
     else:
         task.status = "OP"
+
+    task.mentors.clear()
+    task.mentors.add(task.created_by)
     task.save()
     return task
 

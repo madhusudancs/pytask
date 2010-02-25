@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{task.title}}
+{% endblock %}
+{% block content %}
+    <b>Disclaimer:</b><br />
+    Publishing a task will make the task visible to every one.
+    All the existing mentors will be removed from the list of mentors and only you will have the rights to edit and mentor the task.
+    But mentors can be added by sending them a request later on.<br /><br />
+    Please confirm if you want to publish.
+    <form action="" method="post">
+        <input value="Publish" type="submit">
+    </form>
+{% endblock %}

@@ -4,20 +4,30 @@
 {% endblock %}
 {% block content %}
     {% if task_viewable %}
-        {% if is_mentor %}
-            <a href="/task/edit/tid={{task.id}}">Edit task</a>
-        {% endif %}
         <h3>{{ task.title }}</h3><br />
         <!-- we have to write our own datetime.strftime filter and use in the next line -->
         created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
-        Mentors:
+        {% if is_mentor %}
+            <a href="/task/edit/tid={{task.id}}">Edit task</a>
+            {% if can_publish %}|<a href="/task/publish/tid={{task.id}}">Publish task</a>{% endif %}
+            <br />
+        {% endif %}
+        
+        {% ifequal task.status "UP" %}
+            Task can be viewed by:
+        {% else %}
+            Mentors:
+        {% endifequal %}
         {% for mentor in mentors %}
             <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}|</a>
         {% endfor %}
         {% if can_mod_mentors %}
-            <a href="/task/addmentor/tid={{task.id}}">Add another Mentor to this task</a>
-            <br />
-            edit task goes here and it should contain all those add subs and add deps depending on availability<br />
+            <a href="/task/addmentor/tid={{task.id}}">
+            {% ifequal task.status "UP" %}
+                Request others to view/edit the task
+            {% else %}
+                Add another Mentor to this task
+            {% endifequal %}</a><br />
         {% endif %}
 
         {% if deps %}

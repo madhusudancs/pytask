@@ -32,7 +32,7 @@ def seed_db():
         task = taskEvents.createTask(title,desc,created_by,credits)
         if task:
             taskEvents.addMentor(task, defaultMentor)
-            taskEvents.publishTask(task)
+            if i%2==0:taskEvents.publishTask(task)
 
 class Command(NoArgsCommand):
     
