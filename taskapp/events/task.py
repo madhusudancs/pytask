@@ -175,3 +175,35 @@ def removeTask(main_task, sub_task):
     mapobj = Map.objects.get(main=main_task)
     mapobj.subs.remove(sub_task)
     mapobj.save()
+
+def removeUser(main_task, rem_user):
+    """ right now, just remove the user from the list of assigned_users.
+    """
+
+    main_task.assigned_users.remove(rem_user)
+    main_task.save()
+
+def completeTask(main_task):
+    """ set the status of task to CP.
+    """
+
+    main_task.status = "CP"
+    main_task.save()
+
+def assignCredits(task, given_by, given_to, points):
+    """ make a proper request object.
+    """
+    
+    addCredits(task, given_by, given_to, points)
+
+def addCredits(task, given_by, given_to, points):
+    """ add credit to the credits model.
+    """
+
+    creditobj = Credit()
+    creditobj.task = task
+    creditobj.given_by = given_by
+    creditobj.given_to = given_to
+    creditobj.points = points
+    creditobj.given_time = datetime.now()
+    creditobj.save()

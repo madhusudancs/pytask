@@ -4,7 +4,9 @@
 {% endblock %}
 {% block content %}
     {% if task_viewable %}
-        <a href="/task/edit/tid={{task.id}}">Edit task</a>
+        {% if is_mentor %}
+            <a href="/task/edit/tid={{task.id}}">Edit task</a>
+        {% endif %}
         <h3>{{ task.title }}</h3><br />
         <!-- we have to write our own datetime.strftime filter and use in the next line -->
         created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
@@ -66,15 +68,17 @@
                 <a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
             {% endfor %}
             {% if is_mentor %}
-                <a href="/task/user/remove/">Remove an existing user</a>
+                <a href="/task/remuser/tid={{task.id}}">Remove an existing user</a>
             <br />
             {% endif %}
+        {% else %}
+            There are no users currently working on this task.<br />
         {% endif %}
         {% if can_assign_credits %}
             <a href="/task/assigncredits/tid={{task.id}}">Assign credits</a>
         {% endif %}
         {% if not is_guest and task_claimable %}
-            <a href="/task/claim/tid={{task.id}}">View claims</a><br />
+            <a href="/task/claim/tid={{task.id}}">View claims for this task</a>.<br />
         {% endif %}
         
         {% if comments %}

@@ -48,3 +48,11 @@ def AssignCreditForm(choices, instance=None):
         user = forms.ChoiceField(choices=choices, required=True)
         points = forms.IntegerField(min_value=0,required=True)
     return myForm(instance) if instance else myForm()
+
+def RemoveUserForm(choices, instance=None):
+
+    class myForm(forms.Form):
+        user = forms.ChoiceField(choices=choices, required=True)
+        reason = forms.CharField(min_length=1, required=True)
+    return myForm(instance) if instance else myForm()
+

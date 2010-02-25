@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}
+    Remove users for {{task.title}}
+{% endblock %}
+{% block content %}
+    <a href="/task/view/tid={{task.id}}">Click here</a> to return to {{task.title}}
+    <form action="" method="post">
+        {{form.as_p}}
+    <input value="Submit" type="submit">
+    </form>
+{% endblock %}
