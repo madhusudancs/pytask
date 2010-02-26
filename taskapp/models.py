@@ -139,6 +139,7 @@ class Request(models.Model):
     reply = models.BooleanField(default = False)
     remarks = models.TextField(default = "",blank = True)
     is_read = models.BooleanField(default = False)
+    is_valid = models.BooleanField(default = True)
     creation_date = models.DateTimeField()
     reply_date = models.DateTimeField()
     is_replied = models.BooleanField(default = False)
