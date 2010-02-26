@@ -1,11 +1,13 @@
-import random
-import string
 import os
+
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.contrib.auth.models import User
+
 import tagging
 from tagging.fields import TagField
+
+from pytask.taskapp.utilities.helper import get_key
 
 GENDER_CHOICES = (( 'M', 'Male'), ('F', 'Female'))
 RIGHTS_CHOICES = (
@@ -26,12 +28,6 @@ STATUS_CHOICES = (
 IMAGES_DIR = "./images"
 UPLOADS_DIR = "./uploads"
 
-def get_key():
-    """ generate a 10 character name with random alphabets and digits.
-    """
-
-    name = ''.join([ random.choice(string.uppercase+string.digits) for i in range(10)])
-    return name
 
 class CustomImageStorage(FileSystemStorage):
 
@@ -60,7 +56,6 @@ class Profile(models.Model):
     credits = models.PositiveSmallIntegerField(default = 0)
     
     aboutme = models.TextField(blank = True)
-#    foss_comm = models.CharField(max_length = 80, blank = True, verbose_name = u"Foss Communities", help_text = u"Comma seperated list of foss communities you are involved in.")
     foss_comm = TagField()
     phonenum = models.CharField(max_length = 15, blank = True, verbose_name = u"Phone Number")
     homepage = models.URLField(blank = True, verbose_name = u"Homepage/Blog")
@@ -76,10 +71,11 @@ class Profile(models.Model):
 
 class Task(models.Model):
     
+    prim_key = models.AutoField(primary_key = True)
+    id = models.CharField(max_length = 10, unique = True)
     title = models.CharField(max_length = 100, unique = True, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
-#    tags = models.CharField(max_length = 200, blank = True)
     tags_field = TagField()
     
     credits = models.PositiveSmallIntegerField()
@@ -92,11 +88,6 @@ class Task(models.Model):
     
     creation_datetime = models.DateTimeField()
     sub_type = models.CharField(max_length=1, choices = (('D','Dependency'),('S','Subtask')), default = 'D')   
-    #is_claimable = models.BooleanField()
-    
-    ## not yet decided if attribs after this are to be included
-    ## tasktype = "" ## "bugfix"/"enhancement"
-    ## priority = "" ## "very urgent"/"urgent"
     
     def __unicode__(self):
         return unicode(self.title)
@@ -145,12 +136,15 @@ class Request(models.Model):
     role = models.CharField(max_length = 2, blank = False)
     reply = models.BooleanField(default = False, blank = False)
     remarks = models.TextField(default = "",blank = True)
+    
     is_read = models.BooleanField(default = False, blank = False)
     is_valid = models.BooleanField(default = True, blank = False)
+    
     creation_date = models.DateTimeField()
     reply_date = models.DateTimeField()
     is_replied = models.BooleanField(default = False)
     replied_by = models.ForeignKey(User, related_name = "%(class)s_replied_by", blank = True, null = True)
+    
     task = models.ForeignKey(Task,related_name = "%(class)s_task", blank = True, null = True)
     receiving_user = models.ForeignKey(User, related_name = "%(class)s_receiving_user", blank = True, null = True)
     pynts = models.PositiveIntegerField(default=0)

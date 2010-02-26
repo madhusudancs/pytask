@@ -1,6 +1,7 @@
 from datetime import datetime
 from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim, Map
 from pytask.taskapp.utilities.request import create_request
+from pytask.taskapp.utilities.helper import get_key
 
 def publishTask(task, rem_mentors=True, rem_comments=True):
     """ set the task status to open """
@@ -95,18 +96,30 @@ def addMentor(task,mentor):
     
     task.mentors.add(mentor)
     task.save()
-    return task    
-    
+    return task     
+
+
+
 def createTask(title,desc,created_by,credits):
     """ creates a bare minimum task with title, description and credits.
     the creator of the task will be assigned as a mentor for the task.
     """
 
+    while True:
+        id = get_key()
+        try:
+            task = Task.objects.get(id__iexact=id)
+            continue
+        except Task.DoesNotExist:
+            break
+
     try:
         task = Task.objects.get(title__iexact=title)
         return None
-    except Task.DoesNotExist:
+    except:
         task = Task(title=title)
+
+    task.id = id 
     task.desc = desc
     task.created_by = created_by
     task.credits = credits
