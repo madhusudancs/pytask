@@ -222,9 +222,23 @@ def completeTask(task, marked_by):
     task.status = "CM"
     task.save()
 
-    task.request_task.filter(is_replied=False).update(is_valid=False)
+    pending_requests = task.request_task.filter(is_replied=False)
+    pending_requests.update(is_valid=False)
 
     ## generate notification appropriately using marked_by
     ## we also have to mark unread requests as invalid
+
+def closeTask(task, closed_by):
+    """ set the status of task as CD.
+    generate notifications accordingly.
+    """
+
+    task.status = "CD"
+    task.save()
+
+    pending_requests = task.request_task.filter(is_replied=False)
+    pending_requests.update(is_valid=False)
+
+    ## generate notifications here
 
 

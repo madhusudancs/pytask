@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, redirect
 from pytask.taskapp.models import User, Task, Comment, Claim, Credit
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
-from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask
+from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -83,7 +83,7 @@ def view_task(request, tid):
               }
 
     context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
-    context['task_viewable'] = True if ( task.status not in ["UP", "DL"] ) or is_mentor else False
+    context['task_viewable'] = True if ( task.status != "DL" ) or is_mentor else False
     context['task_claimable'] = True if task.status in ["OP", "WR"] else False
 
     context['can_mod_mentors'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_mentor else False
@@ -513,3 +513,38 @@ def complete_task(request, tid):
     else:
         return show_msg(user, "You are not authorised to do this", task_url, "view the task")
 
+def close_task(request, tid):
+    """ task can be closed only if task is published.
+    call the event close task if everything is fine.
+    """
+
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = request.user
+    task = getTask(tid)
+    
+    is_guest = True if not user.is_authenticated() else False
+    is_mentor = True if user in task.mentors.all() else False
+
+    if is_mentor:
+
+        context = {
+            'user':user,
+            'task':task,
+        }
+
+        if not task.status in ["UP", "CD", "DL", "CM"]:
+            if request.method == "POST":
+                data = request.POST
+                if not data.get("reason", None):
+                    context["error"] = "Please enter a reason for closing the task"
+                    return render_to_response('task/close.html', context)
+                else:
+                    closeTask(task, user)
+                    return show_msg(user, "The task has been closed.", task_url, "view the task.")
+            else:
+                return render_to_response('task/close.html', context)
+        else:
+            return show_msg(user, "The task is already closed or the task cannot be closed at this stage", task_url, "view the task")
+    else:
+        return show_msg(user, "You are not authorised to do this", task_url, "view the task")

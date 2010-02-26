@@ -7,10 +7,18 @@
         <h3>{{ task.title }}</h3><br />
         <!-- we have to write our own datetime.strftime filter and use in the next line -->
         created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
-        if task_editable ..<br />
+
         {% if is_mentor %}
-            <a href="/task/edit/tid={{task.id}}">Edit task</a>
-            {% if can_publish %}|<a href="/task/publish/tid={{task.id}}">Publish task</a>{% endif %}
+        
+            {% ifequal task.status "UP" %}
+                <a href="/task/edit/tid={{task.id}}">Edit task</a>
+            {% else %}
+                <a href="/task/close/tid={{task.id}}">Close this task</a>
+            {% endifequal %}
+            
+            {% if can_publish %}
+                <a href="/task/publish/tid={{task.id}}">Publish task</a>
+            {% endif %}
             <br />
         {% endif %}
         
@@ -86,10 +94,10 @@
                 There are no users currently working on this task.<br />
             {% endif %}
             {% if can_assign_credits %}
-                <a href="/task/assigncredits/tid={{task.id}}">Assign credits</a>
+                <a href="/task/assigncredits/tid={{task.id}}">View/Assign credits</a>
             {% endif %}
             {% if not is_guest and task_claimable %}
-                <a href="/task/claim/tid={{task.id}}">View claims for this task</a>.<br />
+                <a href="/task/claim/tid={{task.id}}">View claims</a><br />
             {% endif %}
         {% else %}
             {% ifequal task.status "CD" %}
