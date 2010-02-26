@@ -155,12 +155,15 @@ class Request(models.Model):
 
 class Notification(models.Model):
 
-    to = models.ManyToManyField(User, related_name = "%(class)s_to", blank = False)
-    is_read = models.BooleanField(default = False)
-    sent_date = models.DateTimeField()
+    sent_to = models.ManyToManyField(User, related_name = "%(class)s_sent_to", blank = False)
+    sent_from = models.ManyToManyField(User, related_name = "%(class)s_sent_from", blank = True)
+
     sub = models.CharField(max_length = 100)
     message = models.TextField()
-    deleted = models.BooleanField(default = False)
+
+    sent_date = models.DateTimeField()
+    is_read = models.BooleanField(default = False)
+    is_deleted = models.BooleanField(default = False)
     
 tagging.register(Profile)
 tagging.register(Task)

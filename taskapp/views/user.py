@@ -6,10 +6,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from pytask.taskapp.models import Task, Profile, Request
+
 from pytask.taskapp.events.user import createUser, updateProfile
-from pytask.taskapp.forms.user import UserProfileEditForm
 from pytask.taskapp.events.request import reply_to_request
+
+from pytask.taskapp.forms.user import UserProfileEditForm
+
 from pytask.taskapp.utilities.request import get_request
+from pytask.taskapp.utilities.notification import get_notification
 
 def show_msg(user, message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
@@ -40,7 +44,7 @@ def homepage(request):
         user_profile = user.get_profile()
         is_mentor = True if user.task_mentors.all() else False
         can_create_task = False if user_profile.rights == u"CT" else True
-        notifications = user.notification_to.filter(deleted=False,is_read=False)
+        notifications = user.notification_sent_to.filter(is_deleted=False,is_read=False)
         requests = user.request_sent_to.filter(is_replied=False)
         
         context = {'user':user,
@@ -168,9 +172,7 @@ def browse_notifications(request):
 
     user = request.user
 
-    active_notifications = user.notification_to.filter(deleted=False).order_by('sent_date').reverse()
-    for pos, notification in enumerate(reversed(active_notifications)):
-        notification.pos = pos
+    active_notifications = user.notification_sent_to.filter(is_deleted=False).order_by('sent_date').reverse()
 
     context = {
         'user':user,
@@ -186,8 +188,10 @@ def view_notification(request, nid):
     """
 
     user = request.user
-    notifications = user.notification_to.filter(deleted=False).order_by('sent_date')
-    notification  = notifications[int(nid)]
+    notification = get_notification(nid, user)
+    if not notification:
+        raise Http404
+
     notification.is_read = True
     notification.save()
 
@@ -206,13 +210,16 @@ def edit_notification(request, nid, action):
     """
 
     user = request.user
-    notifications = user.notification_to.filter(deleted=False).order_by('sent_date')
-    notification = notifications[int(nid)]
+    notification = get_notification(nid, user)
+
+    if not notification:
+        raise Http404
+
     notifications_url = "/user/notifications/"
 
     if request.method == "POST":
         if action == "delete":
-            notification.deleted = True
+            notification.is_deleted = True
         elif action == "unread":
             notification.is_read = False
         

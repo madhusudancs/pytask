@@ -4,7 +4,7 @@
         You have no notifications.
     {% else %}
         {% for notification in notifications %}
-            <a href="/user/notifications/nid={{notification.pos}}">
+            <a href="/user/notifications/nid={{notification.id}}">
             {% if not notification.is_read %} <b> {% endif %}
             {{notification.sub}}
             {% if not notification.is_read %} </b> {% endif %}</a><br />

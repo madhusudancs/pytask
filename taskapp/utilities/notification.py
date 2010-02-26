@@ -1,5 +1,6 @@
-from pytask.taskapp.models import Notification
 from datetime import datetime
+from django.contrib.auth.models import User
+from pytask.taskapp.models import Notification
 
 def create_notification(to,subject,message):
     """
@@ -10,7 +11,7 @@ def create_notification(to,subject,message):
     """
     notification = Notification(sent_date = datetime.now())
     notification.save()
-    notification.to = to
+    notification.sent_to = to
     notification.sub = subject
     notification.message = message
     notification.save()
@@ -39,6 +40,24 @@ def delete_notification(notification_id):
         notification = Notification.objects.get(id = notification_id)
     except Notification.DoesNotExist:
         return False
-    notification.deleted = True
+    notification.is_deleted = True
     notification.save()
     return True
+
+def get_notification(nid, user):
+    """ if notification exists, and belongs to the current user, return it.
+    else return None.
+    """
+
+    try:
+        notify_obj = Notification.objects.get(id=nid)
+    except Notification.DoesNotExist:
+        return None
+
+    try:
+        notify_obj.sent_to.get(id=user.id)
+    except User.DoesNotExist:
+        return None
+
+    if not notify_obj.is_deleted:
+        return notify_obj
