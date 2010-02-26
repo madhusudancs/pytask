@@ -54,5 +54,7 @@ urlpatterns = patterns('',
     (r'^user/notifications/$', userViews.browse_notifications),
     (r'^user/notifications/nid=(\d+)/$', userViews.view_notification),
     (r'^user/notifications/nid=(\d+)/(\w+)/$', userViews.edit_notification),
+
+    (r'^about/(\w+)/$', userViews.learn_more),
     
 )

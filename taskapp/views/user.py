@@ -15,6 +15,11 @@ from pytask.taskapp.forms.user import UserProfileEditForm
 from pytask.taskapp.utilities.request import get_request
 from pytask.taskapp.utilities.notification import get_notification
 
+about = {
+    "addmentors":"about/addmentors.html",
+    "mentor":"about/mentor.html",
+}
+
 def show_msg(user, message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
     
@@ -59,6 +64,17 @@ def homepage(request):
         context["unpublished_tasks"] = user.task_mentors.filter(status="UP")
                    
         return render_to_response('index.html', context)
+
+@login_required
+def learn_more(request, what):
+    """ depending on what was asked for, we render different pages.
+    """
+
+    disp_template = about.get(what, None)
+    if not disp_template:
+        raise Http404
+    else:
+        return render_to_response(disp_template)
 
 @login_required
 def view_my_profile(request,uid=None):
