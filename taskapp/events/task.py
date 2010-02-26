@@ -17,6 +17,10 @@ def publishTask(task):
 
     task.mentors.clear()
     task.mentors.add(task.created_by)
+
+    task.comment_set.update(is_deleted=True)
+    task.comment_set.update(deleted_by=task.created_by)
+
     task.save()
     return task
 

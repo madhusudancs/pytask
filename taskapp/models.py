@@ -107,7 +107,7 @@ class Comment(models.Model):
     created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
     creation_datetime = models.DateTimeField()
     deleted_by = models.ForeignKey(User, null = True, blank = True, related_name = "%(class)s_deleted_by")
-    deleted = models.BooleanField()
+    is_deleted = models.BooleanField()
     attachment = models.FileField(upload_to = UPLOADS_DIR, blank = True)
     
     def __unicode__(self):

@@ -61,7 +61,7 @@ def view_task(request, tid):
 
     if task.status == "DL":
         return show_msg(user, 'This task no longer exists', '/task/browse/','browse the tasks')
-    comments = Comment.objects.filter(task=task)
+    comments = task.comment_set.filter(is_deleted=False)
     mentors = task.mentors.all()
 
     deps, subs = task.deps, task.subs
