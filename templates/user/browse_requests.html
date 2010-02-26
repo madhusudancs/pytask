@@ -4,7 +4,7 @@
         You have no unreplied requests.
     {% else %}
         {% for req in reqs %}
-            <form><a href="/user/requests/rid={{req.pos}}">
+            <form><a href="/user/requests/rid={{req.id}}">
             {% if not req.is_read %}<b>{% endif %}{{req.sent_by.username}}|{{req.role}}|
             {% ifequal req.role "PY" %}            
                 {{req.task.title}}

@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from django.contrib.auth.models import User
 from pytask.taskapp.models import Request, Profile
 
@@ -29,3 +30,21 @@ def create_request(sent_by,role,sent_to=None,task=None,receiving_user=None,pynts
         req.sent_to.add(sent_to)
     req.save()
 
+def get_request(rid, user):
+    """ see if the request is replied or if he can not view the request,
+    raise 404 error. else return request.
+    """
+
+    try:
+        request_obj = Request.objects.get(id=rid)
+    except Request.DoesNotExist:
+        return None
+
+    if request_obj.is_replied == True:
+        return None
+    else:
+        try:
+            request_obj.sent_to.get(id=user.id)
+        except User.DoesNotExist:
+            return None
+        return request_obj

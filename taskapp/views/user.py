@@ -9,6 +9,7 @@ from pytask.taskapp.models import Task, Profile, Request
 from pytask.taskapp.events.user import createUser, updateProfile
 from pytask.taskapp.forms.user import UserProfileEditForm
 from pytask.taskapp.events.request import reply_to_request
+from pytask.taskapp.utilities.request import get_request
 
 def show_msg(user, message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
@@ -104,10 +105,9 @@ def edit_my_profile(request):
 def browse_requests(request):
     
     user = request.user
-    active_reqs = user.request_sent_to.filter(is_replied=False)
+    active_reqs = user.request_sent_to.filter(is_replied=False).exclude(is_valid=False)
     reqs = active_reqs.order_by('creation_date').reverse()
-    for pos, req in enumerate(reversed(reqs)):
-        req.pos = pos
+
     context = {
         'user':user,
         'reqs':reqs,
@@ -122,8 +122,10 @@ def view_request(request, rid):
     """
 
     user = request.user
-    reqs = user.request_sent_to.filter(is_replied=False).order_by('creation_date')
-    user_request = reqs[int(rid)]
+    user_request = get_request(rid, user)
+    if not user_request:
+        raise Http404
+
     user_request.is_read = True
     user_request.save()
 
@@ -142,11 +144,13 @@ def process_request(request, rid, reply):
     """
 
     user = request.user
+    browse_request_url= '/user/requests'
+    req_obj = get_request(rid, user)
+
+    if not req_obj:
+        return show_msg(user, "Your reply has been processed", browse_request_url, "view other requests")
 
     if request.method=="POST":
-        browse_request_url= '/user/requests'
-        reqs = user.request_sent_to.filter(is_replied=False).order_by('creation_date')
-        req_obj = reqs[int(rid)]
         reply = True if reply == "yes" else False
         req_obj.remarks = request.POST.get('remarks', "")
         req_obj.save()
