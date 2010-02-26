@@ -55,6 +55,8 @@ def homepage(request):
                    'notifications':notifications,
                    'requests':requests,
                    }
+
+        context["unpublished_tasks"] = user.task_mentors.filter(status="UP")
                    
         return render_to_response('index.html', context)
 

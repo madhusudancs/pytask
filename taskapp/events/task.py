@@ -25,7 +25,7 @@ def publishTask(task, rem_mentors=True, rem_comments=True):
         task.comment_set.update(is_deleted=True)
         task.comment_set.update(deleted_by=task.created_by)
 
-    task.published_datetime = datetime.datetime.now()
+    task.published_datetime = datetime.now()
 
     task.save()
     return task

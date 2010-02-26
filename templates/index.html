@@ -55,8 +55,17 @@
     {% if user.task_mentors.count %}
         <br><a href="/user/mentor/">Mentoring</a> {{ user.task_mentors.count }}
         {% ifnotequal user.task_mentors.count 1 %}
-        tasks!
+            tasks!
+        {% else %}
+            task!
         {% endifnotequal %}
-        task!
+        <br />
+    {% endif %}
+    
+    {% if unpublished_tasks %}
+    <br />Unpublished tasks:<br />
+        {% for a_task in unpublished_tasks %}
+            <a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a>&nbsp;&nbsp;&nbsp;
+        {% endfor %}
     {% endif %}
 {% endblock %}
