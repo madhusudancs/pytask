@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim, Credit
+from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
-from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser, assignCredits, completeTask
+from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all

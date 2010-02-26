@@ -1,5 +1,6 @@
 from datetime import datetime
 from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim, Map
+from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.utilities.request import create_request
 from pytask.taskapp.utilities.helper import get_key
 
@@ -150,34 +151,6 @@ def assignTask(task, user):
         task.status = "WR"
     task.save()
 
-def getTask(tid):
-    """ retreive the task from database.
-    if the task has deps or subs, update its status correspondingly.
-    """
-
-    task = Task.objects.get(id=tid)
-    try:
-        mapobj = Map.objects.get(main=task)
-    except Map.DoesNotExist:
-        mapobj = Map()
-        mapobj.main = task
-        mapobj.save()
-        
-    task_subs = mapobj.subs.all()
-
-    if task.sub_type == "D":
-        task.deps, task.subs = task_subs, []
-    elif task.sub_type == "S":
-        task.subs, task.deps = task_subs, []
-
-    deps, subs = task.deps, task.subs
-    if deps and task.status in ["OP", "LO"]:
-        task.status = "OP" if all(map(lambda t:t.status=="CM",deps)) else "LO"
-    if subs and task.status in ["OP", "LO", "CM"]:
-        task.status = "CM" if all(map(lambda t:t.status=="CM",subs)) else "LO"
-
-    task.save()
-    return task
 
 def updateTask(task, title=None, desc=None, credits=None, tags_field=None):
     """ update the property accordingly.
