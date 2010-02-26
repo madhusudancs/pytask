@@ -87,6 +87,7 @@ class Task(models.Model):
     assigned_users = models.ManyToManyField(User, blank = True, related_name = "%(class)s_assigned_users")
     
     creation_datetime = models.DateTimeField()
+    published_datetime = models.DateTimeField()
     sub_type = models.CharField(max_length=1, choices = (('D','Dependency'),('S','Subtask')), default = 'D')   
     
     def __unicode__(self):

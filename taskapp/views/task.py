@@ -16,7 +16,7 @@ def browse_tasks(request):
     """ display all the tasks """
     
     user = request.user
-    task_list = Task.objects.exclude(status="UP").exclude(status="DL").order_by('creation_datetime').reverse()
+    task_list = Task.objects.exclude(status="UP").exclude(status="DL").order_by('published_datetime').reverse()
     
     context = {'user':user,
                'task_list':task_list,
@@ -35,20 +35,20 @@ def publish_task(request, tid):
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in task.mentors.all() else False
 
-    if user==task.created_by:
+    if user == task.created_by:
         context = {
             'user':user,
         }
-
-        if request.method == "POST":
-            publishTask(task)
-            return show_msg(user, "The task has been published", task_url, "view the task")
+        if task.status == "UP":
+            if request.method == "POST":
+                publishTask(task)
+                return show_msg(user, "The task has been published", task_url, "view the task")
+            else:
+                return render_to_response('task/publish.html', context)
         else:
-            return render_to_response('task/publish.html', context)
+            return show_msg(user, "The task is already published", task_url, "view the task")
     else:
         return show_msg(user, "You are not authorised to do this", '/task/browse/', "browse tasks")
-
-
 
 def view_task(request, tid):
     """ get the task depending on its tid and display accordingly if it is a get.
@@ -283,7 +283,6 @@ def remove_task(request, tid):
     else:
         return show_msg(user, "You are not authorised to do this", task_url, "view the task")
 
-    
 def claim_task(request, tid):
     """ display a list of claims for get and display submit only if claimable """
 
