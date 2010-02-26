@@ -2,7 +2,7 @@ from datetime import datetime
 from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim, Map
 from pytask.taskapp.utilities.request import create_request
 
-def publishTask(task):
+def publishTask(task, rem_mentors=True, rem_comments=True):
     """ set the task status to open """
 
     if task.sub_type == 'D':
@@ -15,11 +15,13 @@ def publishTask(task):
     else:
         task.status = "OP"
 
-    task.mentors.clear()
-    task.mentors.add(task.created_by)
+    if rem_mentors:
+        task.mentors.clear()
+        task.mentors.add(task.created_by)
 
-    task.comment_set.update(is_deleted=True)
-    task.comment_set.update(deleted_by=task.created_by)
+    if rem_comments:
+        task.comment_set.update(is_deleted=True)
+        task.comment_set.update(deleted_by=task.created_by)
 
     task.save()
     return task
