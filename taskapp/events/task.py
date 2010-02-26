@@ -233,6 +233,8 @@ def completeTask(task, marked_by):
     task.status = "CM"
     task.save()
 
+    task.request_task.filter(is_replied=False).update(is_valid=False)
+
     ## generate notification appropriately using marked_by
     ## we also have to mark unread requests as invalid
 
