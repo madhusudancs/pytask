@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim, Credit
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
-from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser, assignCredits
+from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, getTask, updateTask, removeTask, removeUser, assignCredits, completeTask
 from pytask.taskapp.views.user import show_msg
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
@@ -470,3 +470,46 @@ def edit_task(request, tid):
     """
     
     task = Task.objects.get(id=tid) 
+
+def complete_task(request, tid):
+
+    """ call the event called complete task.
+    and also pass it the current user to know who marked it as complete. 
+    """
+
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = request.user
+    task = getTask(tid)
+    
+    is_guest = True if not user.is_authenticated() else False
+    is_mentor = True if user in task.mentors.all() else False
+
+    claimed_users = task.claimed_users.all()
+    assigned_users = task.assigned_users.all()
+
+    assign_credits_url = '/task/assigncredits/tid=%s'%task.id
+    task_assigned_credits = task.credit_set.all()
+
+
+    if is_mentor:
+        if task.status in ["OP", "WR"]:
+
+            context = {
+                'user':user,
+                'task':task,
+            }
+
+            if task_assigned_credits:
+                if request.method=="POST":
+                    completeTask(task, user)
+                    return redirect(task_url)
+                else:
+                    return render_to_response('task/complete.html', context)
+            else:
+                return show_msg(user, "Nobody has been credited for doing this task.", assign_credits_url, "assign credits")
+        else:
+            return show_msg(user, "The task cannot be marked as completed at this stage", task_url, "view the task")
+    else:
+        return show_msg(user, "You are not authorised to do this", task_url, "view the task")
+

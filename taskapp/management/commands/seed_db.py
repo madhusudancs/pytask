@@ -12,6 +12,8 @@ def seed_db():
     """ a method to seed the database with random data """
     
     defaultMentor = userEvents.createSuUser("admin", "admin@example.com", "123456", datetime.now(), "M")
+    mentor_profile = defaultMentor.get_profile()
+    userEvents.updateProfile(mentor_profile, {'rights':"AD"})
     
     for i in range(1,10):
         

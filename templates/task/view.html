@@ -7,6 +7,7 @@
         <h3>{{ task.title }}</h3><br />
         <!-- we have to write our own datetime.strftime filter and use in the next line -->
         created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
+        if task_editable ..<br />
         {% if is_mentor %}
             <a href="/task/edit/tid={{task.id}}">Edit task</a>
             {% if can_publish %}|<a href="/task/publish/tid={{task.id}}">Publish task</a>{% endif %}
@@ -71,25 +72,32 @@
         <br />{{ task.desc }}<br />
         <hr>
         
-        status of task is {{task.status}}<br />
-        {% if assigned_users %}
-            Users working on this task:
-            {% for user in assigned_users %}
-                <a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
-            {% endfor %}
-            {% if is_mentor %}
-                <a href="/task/remuser/tid={{task.id}}">Remove an existing user</a>
-            <br />
+        {% ifnotequal task.status "CM" %}
+            {% if assigned_users %}
+                Users working on this task:
+                {% for user in assigned_users %}
+                    <a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
+                {% endfor %}
+                {% if is_mentor %}
+                    <a href="/task/remuser/tid={{task.id}}">Remove an existing user</a>
+                <br />
+                {% endif %}
+            {% else %}
+                There are no users currently working on this task.<br />
+            {% endif %}
+            {% if can_assign_credits %}
+                <a href="/task/assigncredits/tid={{task.id}}">Assign credits</a>
+            {% endif %}
+            {% if not is_guest and task_claimable %}
+                <a href="/task/claim/tid={{task.id}}">View claims for this task</a>.<br />
             {% endif %}
         {% else %}
-            There are no users currently working on this task.<br />
-        {% endif %}
-        {% if can_assign_credits %}
-            <a href="/task/assigncredits/tid={{task.id}}">Assign credits</a>
-        {% endif %}
-        {% if not is_guest and task_claimable %}
-            <a href="/task/claim/tid={{task.id}}">View claims for this task</a>.<br />
-        {% endif %}
+            {% ifequal task.status "CD" %}
+                The task has been closed by .. due to ..
+            {% else %}
+                The task is complete.
+            {% endifequal %}
+        {% endifnotequal %}
         
         {% if comments %}
             <hr />
@@ -101,12 +109,14 @@
         {% endif %}
 
         {% if not is_guest %}
-            <br />Add comment:<br />
-            <form action="" method="post">
-            <!-- we might even want to use forms here -->
-            <textarea  name="data"></textarea><br />
-            <input type="submit" value="Submit">
-            </form>
+            {% ifnotequal task.status "CM" %}
+                <br />Add comment:<br />
+                <form action="" method="post">
+                <!-- we might even want to use forms here -->
+                <textarea  name="data"></textarea><br />
+                <input type="submit" value="Submit">
+                </form>
+            {% endifnotequal %}
         {% endif %}
     {% else %}
         You are not authorised to view this task. <a href="/task/browse/">click here</a> to return to browsing the tasks.

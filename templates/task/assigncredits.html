@@ -11,6 +11,7 @@
                 {{credit.points}} pynts were given by <a href="/user/view/uid={{credit.given_by.id}}">{{credit.given_by.username}}</a> to
                 <a href="/user/view/uid={{credit.given_to.id}}">{{credit.given_to.username}}</a> at {{credit.given_time.ctime}}<br />
             {% endfor %}
+            <a href="/task/complete/tid={{task.id}}">Mark task as complete.</a>
         {% endif %}
 
         <form action="" method="post">

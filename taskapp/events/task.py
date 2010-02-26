@@ -223,3 +223,17 @@ def addCredits(task, given_by, given_to, points):
     creditobj.points = points
     creditobj.given_time = datetime.now()
     creditobj.save()
+
+def completeTask(task, marked_by):
+    """ set the status of task as completed.
+    We dont have to inform parent tasks.
+    That part is taken care by getTask method.
+    """
+
+    task.status = "CM"
+    task.save()
+
+    ## generate notification appropriately using marked_by
+    ## we also have to mark unread requests as invalid
+
+
