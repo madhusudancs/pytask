@@ -24,7 +24,7 @@ def seed_db():
         gender = "M"
         userEvents.createUser(username,email,password,dob,gender)
 
-    for i in range(1,6):
+    for i in range(1,21):
         
         title = "Task "+str(i)
         desc = "I am "+title
