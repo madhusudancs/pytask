@@ -26,6 +26,13 @@ STATUS_CHOICES = (
 IMAGES_DIR = "./images"
 UPLOADS_DIR = "./uploads"
 
+def get_key():
+    """ generate a 10 character name with random alphabets and digits.
+    """
+
+    name = ''.join([ random.choice(string.uppercase+string.digits) for i in range(10)])
+    return name
+
 class CustomImageStorage(FileSystemStorage):
 
     def path(self, name):
@@ -39,10 +46,10 @@ class CustomImageStorage(FileSystemStorage):
         """
     
         root, ext = os.path.splitext(name)
-        name = ''.join([ random.choice(string.uppercase+string.digits) for i in range(10)])+ext
-        while self.exists(name):
-            name = ''.join([ random.choice(string.uppercase+string.digits) for i in range(10)])+ext
-        return name
+        file_name = get_key() + ext
+        while self.exists(file_name):
+            file_name = get_key() + ext
+        return file_name
 
 class Profile(models.Model):
     
