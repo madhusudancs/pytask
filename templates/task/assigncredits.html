@@ -12,6 +12,8 @@
         {% if prev_credits %}
             <a href="/task/complete/tid={{task.id}}">Mark task as complete.</a>
             <hr />
+        {% endif %}
+        {% if credit_requests %}
             <br/>Previous credits:<br />
             {% for req in credit_requests %}
             <hr />
@@ -34,5 +36,7 @@
                     status: Request pending
                 {% endif %}
             {% endfor %}
+        {% else %}
+            No assigning of pynts has been made for this task.
         {% endif %}
 {% endblock %}

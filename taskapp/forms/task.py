@@ -46,7 +46,7 @@ def AssignCreditForm(choices, instance=None):
     
     class myForm(forms.Form):
         user = forms.ChoiceField(choices=choices, required=True)
-        points = forms.IntegerField(min_value=0,required=True)
+        pynts = forms.IntegerField(min_value=0, required=True, help_text="Choose wisely since it cannot be undone.")
     return myForm(instance) if instance else myForm()
 
 def RemoveUserForm(choices, instance=None):

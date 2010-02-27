@@ -433,8 +433,7 @@ def assign_credits(request, tid):
             choices = [(_.id,_.username) for _ in task.mentors.all()]
             if task.status == "WR":
                 choices.extend([(_.id, _.username) for _  in task.assigned_users.all() ])
-            prev_credits = task.credit_set.all()
-            ## here we can ditchax credits model and use the request model
+            prev_credits = task.request_task.filter(role="PY",is_valid=True,is_replied=True,reply=True).count()
             credit_requests = task.request_task.filter(role="PY",is_valid=True).order_by('creation_date').reverse()
             form = AssignCreditForm(choices)
 
@@ -452,7 +451,7 @@ def assign_credits(request, tid):
                 if form.is_valid():
                     data = form.cleaned_data
                     uid = data['user']
-                    points = data['points']
+                    points = data['pynts']
                     given_to = User.objects.get(id=uid)
                     assignCredits(task=task, given_by=user, given_to=given_to, points=points)
                     return redirect('/task/assigncredits/tid=%s'%task.id)
