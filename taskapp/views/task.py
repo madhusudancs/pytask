@@ -8,6 +8,7 @@ from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
 from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask
 from pytask.taskapp.views.user import show_msg
+from pytask.taskapp.utilities.user import get_user
 
 ## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
 ## do not create su user thro syncdb
@@ -15,7 +16,7 @@ from pytask.taskapp.views.user import show_msg
 def browse_tasks(request):
     """ display all the tasks """
     
-    user = request.user
+    user = get_user(request.user)
     task_list = Task.objects.exclude(status="UP").exclude(status="DL").order_by('published_datetime').reverse()
     
     context = {'user':user,
@@ -29,7 +30,7 @@ def publish_task(request, tid):
 
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
 
     is_guest = True if not user.is_authenticated() else False
@@ -57,7 +58,7 @@ def view_task(request, tid):
     
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
 
     if task.status == "DL":
@@ -109,7 +110,7 @@ def create_task(request):
     if user cannot create a task, redirect to homepage.
     """
     
-    user = request.user
+    user = get_user(request.user)
     is_guest = True if not user.is_authenticated() else False
     
     if not is_guest:
@@ -151,7 +152,7 @@ def add_mentor(request, tid):
     
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
     errors = []
     
@@ -191,7 +192,7 @@ def add_tasks(request, tid):
     
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
 
     deps, subs = task.deps, task.subs
@@ -251,7 +252,7 @@ def remove_task(request, tid):
 
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
 
     is_guest = True if not user.is_authenticated() else False
@@ -294,7 +295,7 @@ def claim_task(request, tid):
     
     errors = []
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
     claims = Claim.objects.filter(task=task)
 
@@ -338,7 +339,7 @@ def rem_user(request, tid):
     
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
@@ -383,7 +384,7 @@ def assign_task(request, tid):
     
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
@@ -422,7 +423,7 @@ def assign_credits(request, tid):
     
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
 
     is_guest = True if not user.is_authenticated() else False
@@ -480,7 +481,7 @@ def complete_task(request, tid):
 
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
@@ -521,7 +522,7 @@ def close_task(request, tid):
 
     task_url = "/task/view/tid=%s"%tid
     
-    user = request.user
+    user = get_user(request.user)
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False

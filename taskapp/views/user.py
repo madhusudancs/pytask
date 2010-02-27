@@ -71,29 +71,33 @@ def learn_more(request, what):
     """ depending on what was asked for, we render different pages.
     """
 
+    user = get_user(request.user)
     disp_template = about.get(what, None)
     if not disp_template:
         raise Http404
     else:
-        return render_to_response(disp_template)
+        return render_to_response(disp_template, {'user':user})
 
 @login_required
 def view_my_profile(request,uid=None):
     """ allows the user to view the profiles of users """
+    user = get_user(request.user)
     if uid == None:
         edit_profile = True
         profile = Profile.objects.get(user = request.user)
-        return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':request.user})
+        return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':user})
     edit_profile = True if request.user == User.objects.get(pk=uid) else False
     try:
         profile = Profile.objects.get(user = User.objects.get(pk=uid))
     except Profile.DoesNotExist:
         raise Http404
-    return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':request.user})
+    return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':user})
 
 @login_required
 def edit_my_profile(request):
     """ enables the user to edit his/her user profile """
+
+    user = get_user(request.user)
     if request.method == 'POST':
         form = UserProfileEditForm(request.POST)
 #        if not form.is_valid():
@@ -122,12 +126,12 @@ def edit_my_profile(request):
     else:
         profile = Profile.objects.get(user = request.user)
         edit_profile_form = UserProfileEditForm(instance = profile)
-        return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form, 'user':request.user})
+        return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form, 'user':user})
 
 @login_required
 def browse_requests(request):
     
-    user = request.user
+    user = get_user(request.user)
     active_reqs = user.request_sent_to.filter(is_replied=False).exclude(is_valid=False)
     reqs = active_reqs.order_by('creation_date').reverse()
 
@@ -144,7 +148,7 @@ def view_request(request, rid):
     our app request is called user_request.
     """
 
-    user = request.user
+    user = get_user(request.user)
     newest, newer, user_request, older, oldest = get_request(rid, user)
     if not user_request:
         raise Http404
@@ -170,7 +174,7 @@ def process_request(request, rid, reply):
     if it is get, display a 404 error.
     """
 
-    user = request.user
+    user = get_user(request.user)
     browse_request_url= '/user/requests'
     newest, newer, req_obj, older, oldest = get_request(rid, user)
 
@@ -197,7 +201,7 @@ def browse_notifications(request):
     """ get the list of notifications that are not deleted and display in datetime order.
     """
 
-    user = request.user
+    user = get_user(request.user)
 
     active_notifications = user.notification_sent_to.filter(is_deleted=False).order_by('sent_date').reverse()
 
@@ -214,7 +218,7 @@ def view_notification(request, nid):
     Display it.
     """
 
-    user = request.user
+    user = get_user(request.user)
     newest, newer, notification, older, oldest = get_notification(nid, user)
     if not notification:
         raise Http404
@@ -240,7 +244,7 @@ def edit_notification(request, nid, action):
     save the notification and redirect to browse_notifications.
     """
 
-    user = request.user
+    user = get_user(request.user)
     newest, newer, notification, older, oldest = get_notification(nid, user)
 
     if not notification:
