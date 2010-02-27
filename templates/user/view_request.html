@@ -19,7 +19,7 @@
         <a href="/user/view/uid={{to_user.id}}">{{to_user.username}}</a>&nbsp;
     {% endfor %}
     <br />
-    sent at {{req.creation_date}}<br />
+    sent on {{notification.sent_date|date:"D d M Y"}} at {{notification.sent_date|time:"H:i"}}<br />
     Message: <br />
     {% ifequal "PY" req.role %}
         <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> assigned {{req.pynts}} pynts to 

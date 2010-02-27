@@ -6,7 +6,8 @@
     {% if task_viewable %}
         <h3>{{ task.title }}</h3><br />
         <!-- we have to write our own datetime.strftime filter and use in the next line -->
-        created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a> on {{ task.creation_datetime.ctime }}<br />
+        created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a>
+        on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
 
         {% if is_mentor %}
         

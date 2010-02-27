@@ -17,7 +17,7 @@
     <form action="delete/" method="post"> <input type="submit" value="Delete"> </form>
     <form action="unread/" method="post"> <input type="submit" value="Keep Unread"> </form>
     <br />
-    sent at {{notification.sent_date}}<br />
+    sent on {{notification.sent_date|date:"D d M Y"}} at {{notification.sent_date|time:"H:i"}}<br />
     Sub: {{notification.sub}}<br />
     <br />
         {{notification.message|safe}}
