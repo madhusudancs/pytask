@@ -25,6 +25,20 @@ STATUS_CHOICES = (
     ("DL", "Deleted"),
     ("CM", "Completed"))
 
+NOTIFY_CHOICES = (
+    ("MT", "Add Mentor"),
+    ("DV", "Developer"),
+    ("MG", "Manager"),
+    ("AD", "Admin"),
+    ("PY", "Assign credits"),
+    ("CM", "Task completed"),
+    ("CD", "Task closed"),
+    ("DL", "Task deleted"),
+    ("KD", "Kicked off"),
+    ("MS", "Message"),
+)
+
+
 IMAGES_DIR = "./images"
 UPLOADS_DIR = "./uploads"
 
@@ -156,11 +170,15 @@ class Request(models.Model):
 
 class Notification(models.Model):
 
-    sent_to = models.ManyToManyField(User, related_name = "%(class)s_sent_to", blank = False)
-    sent_from = models.ManyToManyField(User, related_name = "%(class)s_sent_from", blank = True)
+    role = models.CharField(max_length = 2, choices = NOTIFY_CHOICES, blank = False)
+    sent_to = models.ForeignKey(User, related_name = "%(class)s_sent_to", blank = False)
+    sent_from = models.ForeignKey(User, related_name = "%(class)s_sent_from", blank = True)
+    task = models.ForeignKey(Task, related_name = "%(class)s_sent_for", blank = False)
+
 
     sub = models.CharField(max_length = 100)
     message = models.TextField()
+    remark = models.CharField(max_length = 100)
 
     sent_date = models.DateTimeField()
     is_read = models.BooleanField(default = False)
