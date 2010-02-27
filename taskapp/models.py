@@ -35,7 +35,8 @@ NOTIFY_CHOICES = (
     ("CD", "Task closed"),
     ("DL", "Task deleted"),
     ("KD", "Kicked off"),
-    ("MS", "Message"),
+    ("NU", "New User"),
+    ("NT", "New Mentor"),
 )
 
 

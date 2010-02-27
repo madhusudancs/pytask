@@ -3,6 +3,7 @@ from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim, Map
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.utilities.request import create_request
 from pytask.taskapp.utilities.helper import get_key
+from pytask.taskapp.utilities.notification import create_notification
 
 def publishTask(task, rem_mentors=True, rem_comments=True):
     """ set the task status to open """

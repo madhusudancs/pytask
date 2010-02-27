@@ -180,7 +180,7 @@ def add_mentor(request, tid):
             reqMentor(task, new_mentor, user)
             return redirect(task_url)
         else:
-            return render_to_response('task/addmentor.html', {'form':form, 'errors':errors})
+            return render_to_response('task/addmentor.html', {'user':user,'form':form, 'errors':errors})
         
     else:
         return show_msg(user, 'You are not authorised to add mentors for this task', task_url, 'view the task')

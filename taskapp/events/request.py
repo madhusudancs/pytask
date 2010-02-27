@@ -27,20 +27,27 @@ def reply_to_request(request_obj, reply, replied_by):
             for a_mentor in task.mentors.all():
                 if reply:
                     addCredits(task, request_obj.sent_by, request_obj.receiving_user, pynts)
-                    create_notification(request_obj.role, a_mentor, replied_by, True, task, receiving_user, pynts, requested_by)
+                    create_notification(request_obj.role, a_mentor, replied_by, True, task, request_obj.remarks, requested_by, receiving_user, pynts)
                 else:
-                    create_notification(request_obj.role, a_mentor, replied_by, False, task, receiving_user, pynts, requested_by, request_obj.remarks)
+                    create_notification(request_obj.role, a_mentor, replied_by, False, task, request_obj.remarks, requested_by, receiving_user, pynts)
 
         elif request_obj.role == "MT":
-            ## add him as a mentor to the task
+            task = request_obj.task
+            requested_by = request_obj.sent_by
             if reply:
-                ## check for the current rights of request_obj.sent_by
-                ## what if he is no more a mentor to the task
-                addMentor(request_obj.task, request_obj.replied_by)
-                ## pass on notification of request_obj.sent_by
+                ## tell the replied user that he is mentor for this task and give him learn more link
+                create_notification("NT", request_obj.replied_by, task=task) 
+
+                ## alert all the mentors including who made request and all assigned users
+                for a_mentor in task.mentors.all():
+                    create_notification(request_obj.role, a_mentor, replied_by, True, task, request_obj.remarks, requested_by)
+                for a_user in task.assigned_users.all():
+                    create_notification(request_obj.role, a_user, replied_by, True, task, request_obj.remarks, requested_by)
+
+                addMentor(task, request_obj.replied_by)
             else:
-                print "request for mentor rejected"
-                ## pass on notification to request_obj.sent_by
+                ## tell the requested user that his request was rejected due to these reasons.
+                create_notification(request_obj.role, requested_by, replied_by, False, task, request_obj.remarks, requested_by)
 
         elif request_obj.role in ["AD", "MG", "DV"]:
             if reply:

@@ -2,12 +2,22 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from pytask.taskapp.models import Notification
 
-def create_notification(role, sent_to, sent_from=None, reply=None, task=None, receiving_user=None, pynts=None, requested_by=None, remarks=None):
+def create_notification(role, sent_to, sent_from=None, reply=None, task=None, remarks=None, requested_by=None, receiving_user=None, pynts=None):
     """
     creates a notification based on the passed arguments.
-        to - a list of users to which the notification is to be sent
-        subject - subject of the notification message to be sent
-        message - message body of the notification
+        role: role of the notification - look at choices in models 
+        sent_to: a user to which the notification is to be sent
+        sent_from : a user from which the message has originated
+            A user who approves/rejects in case of request
+            A mentor who closes/complets the task
+        reply: A boolean
+        task: a task if applicable
+        requested_by: a user makes the request
+            A mentor who assigns credits in case of pynts
+            A mentor who requests to act as a mentor
+        remarks: any remarks for rejecting
+        receiving_user: user receiving pynts
+        pynts: the obvious
     """
 
     notification = Notification(sent_date = datetime.now())
@@ -28,19 +38,60 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         user_url = '<a href="/user/view/uid=%s">%s</a>'%(receiving_user.id, receiving_user.username)
 
         if reply:
-            notification.sub = "Approved request for assign of credits"
+            notification.sub = "Approved request for assign of credits for %s"%task.title[:20]
             notification.message  = """ Request made by %s to assign %s pynts to %s for the task %s has been approved by %s<br />
                                     %s if you want the view/assign pynts page of the task.<br />"""%(mentor_url, pynts, user_url, task_url, admin_url, credits_url)
 
         else:
-            notification.sub = "Rejected request for assign of credits"
+            notification.sub = "Rejected request for assign of credits for %s"%task.title[:20]
             notification.message = """ Request made by %s to assign %s pynts to %s for the task %s has been rejected by %s.<br /> """%(mentor_url, pynts, user_url, task_url, admin_url)
             if remarks:
                 notification.remarks = remarks
                 notification.message += "Reason: %s<br />"%remarks
             notification.message += "<br />"
 
-        notification.save()
+    elif role == "MT":
+
+        task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
+        requested_mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
+        new_mentor = sent_from
+        new_mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(new_mentor.id, new_mentor.username)
+        
+        if reply:
+            notification.sub = "New mentor for the task %s"%task.title[:20]
+            notification.message = "%s has accepted the request made by %s, asking him act as a mentor for the task %s<br />"%(new_mentor_url, requested_mentor_url, task_url)
+            notification.message += "He can be contacted on %s"%new_mentor.email
+
+        else:
+            notification.sub = "Rejected request to act as a mentor for %s"%task.title[:20]
+            notification.message = "%s has rejected your request asking him to act as a mentor for %s.<br />"%(new_mentor_url, task_url)
+            if remarks:
+                notification.message += "Remarks: %s<br />"%remarks
+
+
+    elif role == "NT":
+
+        new_mentor = sent_to
+        mentor_learn_url = '<sup><a href="/about/mentor">learn more</a></sup>'
+        task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
+
+        notification.sub = "You are mentoring the task %s"%task.title[:20]
+        notification.message = "You have accepted to act as a mentor%s for the task %s.<br />"%(mentor_learn_url, task_url)
+        notification.message += " Here is a list of other mentors and their email addresses.<br /> <ul>"
+
+        for a_mentor in task.mentors.exclude(id=new_mentor.id):
+            notification.message += "<li> %s - %s </li>"%(a_mentor.username, a_mentor.email)
+        notification.message += "</ul> List of users working on the task.<br />"
+
+        working_users = task.assigned_users.all()
+        if working_users:
+            notification_message += "<ul>"
+            for a_user in working_users:
+                notification.message += "<li> %s - %s </li>"%(a_user.username, a_user.email)
+            notification.message += "</ul><br />"
+        notification.message += "Happy Mentoring."
+
+    notification.save()
 
 
 def mark_notification_read(notification_id):
