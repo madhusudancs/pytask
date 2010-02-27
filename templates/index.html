@@ -12,60 +12,69 @@
         Logged in as {{ user.username }} <br />
     {% endif %}
     
-    {% if can_create_task %}
-        <a href="/task/create/">Create a task</a><br />
-    {% endif %}
-    
     {% if notifications.count %}
-        <br> {{ notifications.count }} unread <a href='/user/notifications/'>
+        You have {{ notifications.count }} <a href='/user/notifications/'>unread</a>
         {% ifnotequal notifications.count 1 %}
-        notifications</a>!!
+        notifications
         {% else %}
-        notification</a>!!
-        {% endifnotequal %}
+        notification
+        {% endifnotequal %}<br />
     {% endif %}
     
     {% if requests.count %}
-        <br>{{ requests.count }} unreplied <a href='/user/requests/'>
+        You have {{ requests.count }}  <a href='/user/requests/'>unreplied</a>
         {% ifnotequal requests.count 1 %}
-        requests</a>!
+        requests
         {% else %}
-        request</a>!
-        {% endifnotequal %}
+        request
+        {% endifnotequal %}<br />
     {% endif %}
     
     {% if user.task_claimed_users.count %}
-        <br>{{ user.task_claimed_users.count }} <a href='/user/claimed/'>claimed</a>
+        {{ user.task_claimed_users.count }} <a href='/user/claimed/'>claimed</a>
         {% ifnotequal user.task_claimed_users.count 1 %}
-        tasks!
+        tasks
         {% else %}
-        task!
-        {% endifnotequal %}
+        task
+        {% endifnotequal %}<br />
     {% endif %}
     
     {% if user.task_assigned_users.count %}
-        <br>You are currently <a href='/user/assigned/'>working</a> on {{ user.task_assigned_users.count }}
+        You are currently <a href='/user/assigned/'>working</a> on {{ user.task_assigned_users.count }}
         {% ifnotequal user.task_assigned_users.count 1 %}
-        tasks!
+        tasks
         {% else %}
-        task!
-        {% endifnotequal %}
+        task
+        {% endifnotequal %}<br />
     {% endif %}
     
     {% if user.task_mentors.count %}
-        <br><a href="/user/mentor/">Mentoring</a> {{ user.task_mentors.count }}
+        <a href="/user/mentor/">Mentoring {{ user.task_mentors.count }}
         {% ifnotequal user.task_mentors.count 1 %}
-            tasks!
+            tasks
         {% else %}
-            task!
-        {% endifnotequal %}
+            task
+        {% endifnotequal %}</a>
         <br />
     {% endif %}
     
     {% if unpublished_tasks %}
-    <br />Unpublished tasks:<br />
+    <br />Unpublished tasks viewable by you:<br />
         {% for a_task in unpublished_tasks %}
             <a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a>&nbsp;&nbsp;&nbsp;
         {% endfor %}
     {% endif %}
+    <br /><br />
+    {% ifnotequal user.get_profile.rights "CT" %}
+        <a href="/task/create/">Create a task</a><br />
+    {% endifnotequal %}
+    {% ifequal user.get_profile.rights "MG" %}
+        <a href="/user/make/dv/">Request another to be a Developer</a>
+        <a href="/user/make/mg/">Request another user to act as manager</a><br />
+    {% endifequal %}
+    {% ifequal user.get_profile.rights "AD" %}
+        <a href="/user/make/dv/">Request another to be a Developer</a><br />
+        <a href="/user/make/mg/">Request another user to act as a Manager</a><br />
+        <a href="/user/make/ad">Request another user to act as an Admin</a><br />
+    {% endifequal %}
 {% endblock %}

@@ -32,7 +32,7 @@ def seed_db():
             create_request(defaultMentor, "DV", user)
         elif i%2==0:
             create_request(defaultMentor, "AD", user)
-        elif i in ["7", "13"]:
+        elif i in [7, 13]:
             user.is_active = False
             user.save()
 
