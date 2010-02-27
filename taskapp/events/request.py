@@ -1,4 +1,5 @@
 from datetime import datetime
+from pytask.taskapp.models import Profile
 from pytask.taskapp.events.task import addCredits, addMentor
 from pytask.taskapp.events.user import changeRole
 from pytask.taskapp.utilities.notification import create_notification
@@ -49,13 +50,36 @@ def reply_to_request(request_obj, reply, replied_by):
                 ## tell the requested user that his request was rejected due to these reasons.
                 create_notification(request_obj.role, requested_by, replied_by, False, task, request_obj.remarks, requested_by)
 
-        elif request_obj.role in ["AD", "MG", "DV"]:
+        elif request_obj.role == "DV":
             if reply:
-                ## make him the role
-                ## here we check for rights just in case to be fine with demoted users. we change only the user who made request has that rights.
+                ## tell only the user who made him a DV
+                ## drop a welcome message to that fucker
                 changeRole(role=request_obj.role, user=request_obj.replied_by)
+                create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
             else:
-                ## notify request_obj.sent_by that it has been rejected
-                pass
+                create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, remarks=request_obj.remarks, requested_by=request_obj.sent_by)
+
+        elif request_obj.role == "MG":
+            if reply:
+                ## tell all the MG and AD
+                ## drop a welcome message to that fucker
+                changeRole(role=request_obj.role, user=request_obj.replied_by)
+                alerting_users = Profile.objects.filter(user__is_active=True).exclude(rights="CT").exclude(rights="DV")
+                for a_profile in alerting_users:
+                    create_notification(request_obj.role, a_profile.user, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
+            else:
+                create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, remarks=request_obj.remarks, requested_by=request_obj.sent_by)
+
+        elif request_obj.role == "AD":
+            if reply:
+                ## tell all the AD
+                ## drop a welcome message to that fucker
+                changeRole(role=request_obj.role, user=request_obj.replied_by)
+                alerting_users = Profile.objects.filter(user__is_active=True).filter(rights="AD")
+                for a_profile in alerting_users:
+                    create_notification(request_obj.role, a_profile.user, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
+            else:
+                create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, remarks=request_obj.remarks, requested_by=request_obj.sent_by)
+
         return True #Reply has been added successfully
     return False #Already replied

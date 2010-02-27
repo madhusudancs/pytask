@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.contrib.auth.models import User
-from pytask.taskapp.models import Notification
+from pytask.taskapp.models import Notification, RIGHTS_CHOICES
 
 def create_notification(role, sent_to, sent_from=None, reply=None, task=None, remarks=None, requested_by=None, receiving_user=None, pynts=None):
     """
@@ -68,6 +68,23 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             if remarks:
                 notification.message += "Remarks: %s<br />"%remarks
 
+    elif role in ["DV", "MG", "AD"]:
+
+        accepting_user = sent_from
+        user_url = '<a href="/user/view/uid=%s">%s</a>'%(accepting_user.id,accepting_user.username) ## i mean the user who has accepted it
+        requested_by_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id,requested_by.username)
+        role_rights = dict(RIGHTS_CHOICES)[role]
+        role_learn_url = "/about/%s"%role_rights.lower()
+        a_or_an = "an" if role == "AD" else "a"
+
+        if reply:
+            notification.sub = "New %s for the site"%role_rights
+            notification.message = "%s has accepted request made by %s asking him to act as %s %s for the website.<br />"%(user_url, requested_by_url, a_or_an,  role_rights)
+        else:
+            notification.sub = "Rejected your request to act as %s"%role_rights
+            notification.message = "%s has rejected your request asking him to act as %s %s for the website.<br />"%(user_url, a_or_an, role_rights)
+            if remarks:
+                notification.message += "Remarks: %s<br />"%remarks
 
     elif role == "NT":
 

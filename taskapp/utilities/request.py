@@ -6,7 +6,7 @@ from pytask.taskapp.models import Request, Profile
 def create_request(sent_by,role,sent_to=None,task=None,receiving_user=None,pynts=0):
     """
     creates an unreplied request, based on the passed arguments
-        sent_to - a list of users to which the notification is to be sent
+        sent_to - a list of users to which the request is to be sent
         sent_by - sender of request
         role - a two character field which represents the role requested, if role = 'PY' then sent to all admins
         task - a requesting task (useful for sending admins a request to give Pynts to the user)
