@@ -3,19 +3,36 @@
     {{task.title}}
 {% endblock %}
 {% block content %}
-        <a href="/task/view/tid={{task.id}}">Click here</a> to return to the task.
-        {% if prev_credits %}
-            <hr />
-            <br/>Previous credits:<br />
-            {% for credit in prev_credits %}
-                {{credit.points}} pynts were given by <a href="/user/view/uid={{credit.given_by.id}}">{{credit.given_by.username}}</a> to
-                <a href="/user/view/uid={{credit.given_to.id}}">{{credit.given_to.username}}</a> at {{credit.given_time.ctime}}<br />
-            {% endfor %}
-            <a href="/task/complete/tid={{task.id}}">Mark task as complete.</a>
-        {% endif %}
+        <a href="/task/view/tid={{task.id}}">Click here</a> to return to the task.<br />
 
         <form action="" method="post">
         {{form.as_p}}
         <input type="submit" value="Submit">
         </form>
+        {% if prev_credits %}
+            <a href="/task/complete/tid={{task.id}}">Mark task as complete.</a>
+            <hr />
+            <br/>Previous credits:<br />
+            {% for req in credit_requests %}
+            <hr />
+                <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested assigning of {{req.pynts}} pynts to
+                <a href="/user/view/uid={{req.receiving_user.id}}">{{req.receiving_user.username}}</a>
+                on {{req.creation_date|date:"D d M Y"}} at {{req.creation_date|time:"H:i"}}<br />
+                {% if req.is_replied %}
+                    status: 
+                    {% if req.reply %}
+                        Approved by <a href="/user/view/uid={{req.replied_by.id}}">{{req.replied_by.username}}</a>
+                        on {{req.reply_date|date:"D d M Y"}} at {{req.reply_date|time:"H:i"}}<br />
+                    {% else %}
+                        Rejected by <a href="/user/view/uid={{req.replied_by.id}}">{{req.replied_by.username}}</a>
+                        on {{req.reply_date|date:"D d M Y"}} at {{req.reply_date|time:"H:i"}}<br />
+                        {% if req.remarks %}
+                            Reason: {{req.remarks}}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    status: Request pending
+                {% endif %}
+            {% endfor %}
+        {% endif %}
 {% endblock %}

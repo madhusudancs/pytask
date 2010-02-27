@@ -435,12 +435,14 @@ def assign_credits(request, tid):
                 choices.extend([(_.id, _.username) for _  in task.assigned_users.all() ])
             prev_credits = task.credit_set.all()
             ## here we can ditchax credits model and use the request model
+            credit_requests = task.request_task.filter(role="PY",is_valid=True).order_by('creation_date').reverse()
             form = AssignCreditForm(choices)
 
             context = {
                 'user':user,
                 'task':task,
                 'prev_credits':prev_credits,
+                'credit_requests':credit_requests,
                 'form':form,
             }
 
