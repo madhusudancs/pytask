@@ -35,16 +35,28 @@ def get_request(rid, user):
     raise 404 error. else return request.
     """
 
-    try:
-        request_obj = Request.objects.get(id=rid)
-    except Request.DoesNotExist:
-        return None
+    active_requests = user.request_sent_to.filter(is_valid=True, is_replied=False).order_by('creation_date')
+    current_requests = active_requests.filter(id=rid)
+    if current_requests:
+        current_request = current_requests[0]
 
-    if request_obj.is_replied == True:
-        return None
-    else:
         try:
-            request_obj.sent_to.get(id=user.id)
-        except User.DoesNotExist:
-            return None
-        return request_obj
+            newer_request = current_request.get_next_by_creation_date(sent_to=user, is_replied=False, is_valid=True)
+            newest_request = active_requests.reverse()[0]
+            if newer_request == newest_request:
+                newest_request = None
+        except Request.DoesNotExist:
+            newer_request, newest_request = None, None
+
+        try:
+            older_request = current_request.get_previous_by_creation_date(sent_to=user, is_replied=False, is_valid=True)
+            oldest_request = active_requests[0]
+            if oldest_request == older_request:
+                oldest_request = None
+        except Request.DoesNotExist:
+            older_request, oldest_request = None, None
+
+        return newest_request, newer_request, current_request, older_request, oldest_request 
+
+    else:
+        return None, None, None, None, None

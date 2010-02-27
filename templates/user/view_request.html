@@ -1,11 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% if newest %}
+        <a href="/user/requests/rid={{newest.id}}">&lt;&lt;newest</a>
+    {% endif %}
+    {% if newer %}
+        <a href="/user/requests/rid={{newer.id}}">&lt;newer</a>
+    {% endif %}
+    {% if older %}
+        <a href="/user/requests/rid={{older.id}}">older&gt;</a>
+    {% endif %}
+    {% if oldest %}
+        <a href="/user/requests/rid={{oldest.id}}">oldest&gt;&gt;</a>
+    {% endif %}
+    <br />
     From:&nbsp; <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a><br />
     To: 
     {% for to_user in sent_users %}
-        <a href="/user/view/uid={{to_user.id}}">{{to_user.username}}</a>,&nbsp;
+        <a href="/user/view/uid={{to_user.id}}">{{to_user.username}}</a>&nbsp;
     {% endfor %}
     <br />
+    sent at {{req.creation_date}}<br />
     Message: <br />
     {% ifequal "PY" req.role %}
         <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> assigned {{req.pynts}} pynts to 

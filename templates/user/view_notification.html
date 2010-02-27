@@ -1,10 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-    sent at {{notification.sent_date}}<br />
-    Sub: {{notification.sub}}<br />
-    
+    {% if newest %}
+        <a href="/user/notifications/nid={{newest.id}}">&lt;&lt;newest</a>
+    {% endif %}
+    {% if newer %}
+        <a href="/user/notifications/nid={{newer.id}}">&lt;newer</a>
+    {% endif %}
+    {% if older %}
+        <a href="/user/notifications/nid={{older.id}}">older&gt;</a>
+    {% endif %}
+    {% if oldest %}
+        <a href="/user/notifications/nid={{oldest.id}}">oldest&gt;&gt;</a>
+    {% endif %}
     <br />
-        {{notification.message|safe}}
+        
     <form action="delete/" method="post"> <input type="submit" value="Delete"> </form>
     <form action="unread/" method="post"> <input type="submit" value="Keep Unread"> </form>
+    <br />
+    sent at {{notification.sent_date}}<br />
+    Sub: {{notification.sub}}<br />
+    <br />
+        {{notification.message|safe}}
 {% endblock %}

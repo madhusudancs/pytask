@@ -144,7 +144,7 @@ def view_request(request, rid):
     """
 
     user = request.user
-    user_request = get_request(rid, user)
+    newest, newer, user_request, older, oldest = get_request(rid, user)
     if not user_request:
         raise Http404
 
@@ -154,7 +154,11 @@ def view_request(request, rid):
     context = {
         'user':user,
         'req':user_request,
-        'sent_users':user_request.sent_to.all()
+        'sent_users':user_request.sent_to.all(),
+        'newest':newest,
+        'newer':newer,
+        'older':older,
+        'oldest':oldest,
     }
 
     return render_to_response('user/view_request.html', context)
@@ -167,7 +171,7 @@ def process_request(request, rid, reply):
 
     user = request.user
     browse_request_url= '/user/requests'
-    req_obj = get_request(rid, user)
+    newest, newer, req_obj, older, oldest = get_request(rid, user)
 
     if not req_obj:
         return show_msg(user, "Your reply has been processed", browse_request_url, "view other requests")
@@ -178,7 +182,11 @@ def process_request(request, rid, reply):
         req_obj.save()
 
         reply_to_request(req_obj, reply, user)
-        
+
+        if older:
+            return redirect('/user/requests/rid=%s'%older.id)
+        else:
+            return redirect(browse_request_url)
         return show_msg(user, "Your reply has been processed", browse_request_url, "view other requests")
     else:
         return show_msg(user, "You are not authorised to do this", browse_request_url, "view other requests")
@@ -206,7 +214,7 @@ def view_notification(request, nid):
     """
 
     user = request.user
-    notification = get_notification(nid, user)
+    newest, newer, notification, older, oldest = get_notification(nid, user)
     if not notification:
         raise Http404
 
@@ -216,6 +224,10 @@ def view_notification(request, nid):
     context = {
         'user':user,
         'notification':notification,
+        'newest':newest,
+        'newer':newer,
+        'older':older,
+        'oldest':oldest,
     }
 
     return render_to_response('user/view_notification.html', context)
@@ -228,7 +240,7 @@ def edit_notification(request, nid, action):
     """
 
     user = request.user
-    notification = get_notification(nid, user)
+    newest, newer, notification, older, oldest = get_notification(nid, user)
 
     if not notification:
         raise Http404
@@ -242,7 +254,10 @@ def edit_notification(request, nid, action):
             notification.is_read = False
         
         notification.save()
-        return redirect(notifications_url)
+        if older:
+            return redirect('/user/notifications/nid=%s'%older.id)
+        else:
+            return redirect(notifications_url)
     else:
         return show_msg(user, 'This is wrong', notification_url, "view the notification")
    
