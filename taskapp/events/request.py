@@ -27,12 +27,9 @@ def reply_to_request(request_obj, reply, replied_by):
             for a_mentor in task.mentors.all():
                 if reply:
                     addCredits(task, request_obj.sent_by, request_obj.receiving_user, pynts)
-                    print "send yes notifications appropriately"
-                    #def create_notification(role, sent_to, sent_from=None, reply=None, task=None, remark=None, receiving_user=None, pynts=None, requested_by):
-                    create_notification("PY", a_mentor, replied_by, True, task, receiving_user, pynts, requested_by)
+                    create_notification(request_obj.role, a_mentor, replied_by, True, task, receiving_user, pynts, requested_by)
                 else:
-                    print "send a no notificvaton"
-                    create_notification("PY", a_mentor, replied_by, False, task, receiving_user, pynts, requested_by, request_obj.remarks)
+                    create_notification(request_obj.role, a_mentor, replied_by, False, task, receiving_user, pynts, requested_by, request_obj.remarks)
 
         elif request_obj.role == "MT":
             ## add him as a mentor to the task

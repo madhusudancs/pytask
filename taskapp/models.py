@@ -183,6 +183,9 @@ class Notification(models.Model):
     sent_date = models.DateTimeField()
     is_read = models.BooleanField(default = False)
     is_deleted = models.BooleanField(default = False)
+
+    def __unicode__(self):
+        return u"%s %s"%(self.sent_to, self.sent_date.ctime())
     
 tagging.register(Profile)
 tagging.register(Task)
