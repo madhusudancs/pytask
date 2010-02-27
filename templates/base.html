@@ -131,8 +131,20 @@
             <li><a href="/" title="home">home</a></li>
             {% if user.is_authenticated %}
                 <li><a href="/task/browse/" title="tasks">tasks</a></li>
-                <li><a href="/user/notifications/" title="notifications">notifications</a></li>
-                <li><a href="/user/requests/" title="Requests">requests</a></li>
+                <li><a href="/user/notifications/" title="notifications">
+                {% if user.unread_notifications %}
+                    notifications({{user.unread_notifications}})
+                {% else %}
+                    notifications
+                {% endif %}
+                </a></li>
+                <li><a href="/user/requests/" title="Requests">
+                {% if user.unread_requests %}
+                    requests({{user.unread_requests}})
+                {% else %}
+                    requests
+                {% endif %}
+                </a></li>
                 <br>
                 <li><a href="/user/view/uid={{user.id}}">my profile</a></li>
                 <li><a href="/accounts/logout/">logout</a></li>

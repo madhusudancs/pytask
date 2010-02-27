@@ -14,6 +14,7 @@ from pytask.taskapp.forms.user import UserProfileEditForm
 
 from pytask.taskapp.utilities.request import get_request
 from pytask.taskapp.utilities.notification import get_notification
+from pytask.taskapp.utilities.user import get_user
 
 about = {
     "addmentors":"about/addmentors.html",
@@ -27,8 +28,8 @@ def show_msg(user, message, redirect_url=None, url_desc=None):
 
 def homepage(request):
     """ check for authentication and display accordingly. """
-    
-    user = request.user
+   
+    user = get_user(request.user)
     is_guest = False
     is_mentor = False
     can_create_task = False
@@ -43,7 +44,7 @@ def homepage(request):
         else:
             task_list = Task.objects.order_by('id').reverse()[:10]
             
-        return render_to_response('index.html', {'is_guest':is_guest, 'task_list':task_list})
+        return render_to_response('index.html', {'user':user, 'is_guest':is_guest, 'task_list':task_list})
         
     else:
         user_profile = user.get_profile()
