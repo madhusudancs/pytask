@@ -378,26 +378,30 @@ def rem_user(request, tid):
             'user':user,
             'task':task,
         }
-
-        if assigned_users:
-            form = RemoveUserForm(choices)
-            context['form'] = form
-            if request.method == "POST":
-                data = request.POST
-                form = RemoveUserForm(choices, data)
-                if form.is_valid():
-                    data = form.cleaned_data
-                    uid = data['user']
-                    rem_user = User.objects.get(id=uid)
-                    removeUser(task, rem_user, user)
-                    return redirect(task_url)
+        
+        if task.status in ["OP", "WR"]:
+            if assigned_users:
+                form = RemoveUserForm(choices)
+                context['form'] = form
+                if request.method == "POST":
+                    data = request.POST
+                    form = RemoveUserForm(choices, data)
+                    if form.is_valid():
+                        data = form.cleaned_data
+                        uid = data['user']
+                        reason = data['reason']
+                        rem_user = User.objects.get(id=uid)
+                        removeUser(task, rem_user, user, reason)
+                        return redirect(task_url)
+                    else:
+                        context['form'] = form
+                        return render_to_response('task/remove_user.html', context)
                 else:
-                    context['form'] = form
-                    return render_to_response('task/remove_user.html', context)
+                    return render_to_response('task/remove_user.html',context)
             else:
-                return render_to_response('task/remove_user.html',context)
+                return show_msg(user, "There is no one working on this task to be kicked off", task_url, "view the task")
         else:
-            return show_msg(user, "There is no one working on this task to be kicked off", task_url, "view the task")
+            return show_msg(user, "This is not the stage to remove users", task_url, "view the task")
     else:
         return show_msg(user, "You are not authorised to do this", task_url, "view the task")
 
@@ -454,6 +458,7 @@ def assign_credits(request, tid):
     task = getTask(tid)
 
     ## the moment we see that user had requested credits, it means he had worked and hence we change the status to WR
+    ## we have to discuss on this since, credits may also be given to mentor
     task.status = "WR"
     task.save()
 

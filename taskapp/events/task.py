@@ -146,6 +146,8 @@ def addClaim(task, message, user):
     claim.user = user
     claim.creation_datetime = datetime.now()
     claim.save()
+
+    user.request_sent_to.filter(is_replied=False, is_valid=True, role="MT", task=task).update(is_valid=False)
     
 def assignTask(task, user, assigned_by):
     """ check for the status of task and assign it to the particular user """
@@ -183,12 +185,17 @@ def removeTask(main_task, sub_task):
     mapobj.subs.remove(sub_task)
     mapobj.save()
 
-def removeUser(main_task, rem_user, removed_by):
+def removeUser(main_task, rem_user, removed_by, reason=None):
     """ right now, just remove the user from the list of assigned_users.
     """
 
     main_task.assigned_users.remove(rem_user)
     main_task.save()
+
+    ## TODiscuss : when a user is kicked off, his pending requests for pynts is made invalid
+    rem_user.request_receiving_user.filter(task=main_task,role="PY",is_valid=True,is_replied=False).update(is_valid=False)
+
+    ## TODO : create notification to the victim
 
 def assignCredits(task, given_by, given_to, points):
     """ make a proper request object.
