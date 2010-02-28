@@ -27,8 +27,10 @@ def getTask(tid):
     deps, subs = task.deps, task.subs
     if deps and task.status in ["OP", "LO"]:
         task.status = "OP" if all(map(lambda t:t.status=="CM",deps)) else "LO"
-    if subs and task.status in ["OP", "LO", "CM"]:
-        task.status = "CM" if all(map(lambda t:t.status=="CM",subs)) else "LO"
+
+    ## a task with subs will remain in "LO" and will be made "OP" only if all subs are removed.
+    if subs and task.status in ["OP", "LO"]:
+        task.status = "LO"
 
     task.save()
     return task

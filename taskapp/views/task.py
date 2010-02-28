@@ -63,12 +63,10 @@ def view_task(request, tid):
 
     if task.status == "DL":
         return show_msg(user, 'This task no longer exists', '/task/browse/','browse the tasks')
-    comments = task.comment_set.filter(is_deleted=False)
+    comments = task.comment_set.filter(is_deleted=False).order_by('creation_datetime')
     mentors = task.mentors.all()
 
     deps, subs = task.deps, task.subs
-    
-    errors = []
     
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if user in task.mentors.all() else False
@@ -80,11 +78,10 @@ def view_task(request, tid):
                'deps':deps,
                'is_guest':is_guest,
                'is_mentor':is_mentor,
-               'errors':errors,
               }
 
     context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
-    context['task_viewable'] = True if ( task.status != "DL" ) or is_mentor else False
+    context['task_viewable'] = True if ( task.status != "UP" ) or is_mentor else False
     context['task_claimable'] = True if task.status in ["OP", "WR"] else False
 
     context['can_mod_mentors'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_mentor else False
