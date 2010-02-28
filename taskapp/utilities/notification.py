@@ -82,7 +82,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.message = "%s has accepted request made by %s asking him to act as %s %s for the website.<br />"%(user_url, requested_by_url, a_or_an, role_rights)
         else:
             notification.sub = "Rejected your request to act as %s"%role_rights
-            notification.message = "%s has rejected your request asking him to act as a %s.<br />"%(new_mentor_url, task_url)
+            notification.message = "%s has rejected your request asking him to act as a %s.<br />"%(user_url, role_rights)
             if remarks:
                 notification.message += "Remarks: %s<br />"%remarks
 

@@ -279,7 +279,7 @@ def change_rights(request, role):
     user_profile = user.get_profile()
     user_rights = user_profile.rights
 
-    user_can_view = True if user_rights == "AD" or ( user_rights == "MG" and role in ["mg", "dv"] ) else False
+    user_can_view = True if user_rights == "AD" or ( user_rights == "MG" and role in ["MG", "DV"] ) else False
 
     if user_can_view:
         if role == "DV":
