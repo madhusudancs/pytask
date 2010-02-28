@@ -382,8 +382,7 @@ def rem_user(request, tid):
                     data = form.cleaned_data
                     uid = data['user']
                     rem_user = User.objects.get(id=uid)
-                    removeUser(task, rem_user)
-                    print data['reason']
+                    removeUser(task, rem_user, user)
                     return redirect(task_url)
                 else:
                     context['form'] = form
@@ -421,7 +420,7 @@ def assign_task(request, tid):
             if request.method == "POST":
                 uid = request.POST['choice']
                 assigned_user = User.objects.get(id=uid)
-                assignTask(task, assigned_user)
+                assignTask(task, assigned_user, user)
                 return redirect(task_url)
             else:
                 return render_to_response('task/assign.html',{'form':form})

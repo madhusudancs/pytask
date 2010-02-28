@@ -144,7 +144,7 @@ def addClaim(task, message, user):
     claim.creation_datetime = datetime.now()
     claim.save()
     
-def assignTask(task, user):
+def assignTask(task, user, assigned_by):
     """ check for the status of task and assign it to the particular user """
     
     if task.status in ['OP', 'WR']:
@@ -180,7 +180,7 @@ def removeTask(main_task, sub_task):
     mapobj.subs.remove(sub_task)
     mapobj.save()
 
-def removeUser(main_task, rem_user):
+def removeUser(main_task, rem_user, removed_by):
     """ right now, just remove the user from the list of assigned_users.
     """
 
