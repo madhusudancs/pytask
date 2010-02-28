@@ -132,15 +132,15 @@
             {% if user.is_authenticated %}
                 <li><a href="/task/browse/" title="tasks">tasks</a></li>
                 <li><a href="/user/notifications/" title="notifications">
-                {% if user.unread_notifications %}
-                    notifications({{user.unread_notifications}})
+                {% if user.unread_notifications.count %}
+                    notifications({{user.unread_notifications.count}})
                 {% else %}
                     notifications
                 {% endif %}
                 </a></li>
                 <li><a href="/user/requests/" title="Requests">
-                {% if user.unread_requests %}
-                    requests({{user.unread_requests}})
+                {% if user.unread_requests.count %}
+                    requests({{user.unread_requests.count}})
                 {% else %}
                     requests
                 {% endif %}

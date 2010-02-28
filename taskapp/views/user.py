@@ -13,7 +13,7 @@ from pytask.taskapp.events.request import reply_to_request
 from pytask.taskapp.forms.user import UserProfileEditForm, UserChoiceForm
 
 from pytask.taskapp.utilities.request import get_request, create_request
-from pytask.taskapp.utilities.notification import get_notification
+from pytask.taskapp.utilities.notification import get_notification, create_notification
 from pytask.taskapp.utilities.user import get_user
 
 about = {
@@ -51,16 +51,12 @@ def homepage(request):
         user_profile = user.get_profile()
         is_mentor = True if user.task_mentors.all() else False
         can_create_task = False if user_profile.rights == u"CT" else True
-        notifications = user.notification_sent_to.filter(is_deleted=False,is_read=False)
-        requests = user.request_sent_to.filter(is_replied=False)
         
         context = {'user':user,
                    'is_guest':is_guest,
                    'is_mentor':is_mentor,
                    'task_list':task_list,
                    'can_create_task':can_create_task,
-                   'notifications':notifications,
-                   'requests':requests,
                    }
 
         context["unpublished_tasks"] = user.task_mentors.filter(status="UP")
@@ -150,6 +146,7 @@ def view_request(request, rid):
     """
 
     user = get_user(request.user)
+    user_rights = user.get_profile().rights
     newest, newer, user_request, older, oldest = get_request(rid, user)
     if not user_request:
         raise Http404
@@ -166,6 +163,15 @@ def view_request(request, rid):
         'older':older,
         'oldest':oldest,
     }
+
+    ## see if user has already accepted such request and is a high previleged user
+    ## made_invalid = if ( user_request.role == "DV" and user_rights in ["DV", "MG", "AD"] ) or \
+            ## ( user_request.role == "MG" and user_rights in ["MG", "AD"] ) or \
+            ## ( user_request.role == "AD" and user_rights == "AD" ) or \
+            ## ( user_request.role == "MT" and user.task_mentors.filter(task=request.task) else False
+
+                       ## create_notification(user_request.role, user_request.sent_by, user, False, remarks = "User has accepted a similar request and is same or higher privileged than the request", requested_by = user_request.sent_by )
+##def create_notification(role, sent_to, sent_from=None, reply=None, task=None, remarks=None, requested_by=None, receiving_user=None, pynts=None):
 
     return render_to_response('user/view_request.html', context)
 
@@ -189,10 +195,6 @@ def process_request(request, rid, reply):
 
         reply_to_request(req_obj, reply, user)
 
-        if older:
-            return redirect('/user/requests/rid=%s'%older.id)
-        else:
-            return redirect(browse_request_url)
         return show_msg(user, "Your reply has been processed", browse_request_url, "view other requests")
     else:
         return show_msg(user, "You are not authorised to do this", browse_request_url, "view other requests")

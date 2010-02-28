@@ -39,6 +39,14 @@ def reply_to_request(request_obj, reply, replied_by):
                 ## tell the replied user that he is mentor for this task and give him learn more link
                 create_notification("NT", request_obj.replied_by, task=task) 
 
+                ## now check if there are such similar requests and mark them as invalid
+                ## they cannot be of type PY and so we can use the replied_by to get requests
+                pending_requests = replied_by.request_sent_to.filter(is_valid=True, is_replied=False, role="MT",task=task)
+                for req in pending_requests:
+                       create_notification("MT", req.sent_by, replied_by, False, task=req.task, remarks = "User has already accepted one such request and is a mentor.", requested_by = req.sent_by)
+                       req.is_valid = False
+                       req.save()
+
                 ## alert all the mentors including who made request and all assigned users
                 for a_mentor in task.mentors.all():
                     create_notification(request_obj.role, a_mentor, replied_by, True, task, request_obj.remarks, requested_by)

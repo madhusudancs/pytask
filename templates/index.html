@@ -12,18 +12,18 @@
         Logged in as {{ user.username }} <br />
     {% endif %}
     
-    {% if notifications.count %}
-        You have {{ notifications.count }} <a href='/user/notifications/'>unread</a>
-        {% ifnotequal notifications.count 1 %}
+    {% if user.unread_notifications.count %}
+        You have {{ user.unread_notifications.count }} <a href='/user/notifications/'>unread</a>
+        {% ifnotequal user.unread_notifications.count 1 %}
         notifications
         {% else %}
         notification
         {% endifnotequal %}<br />
     {% endif %}
     
-    {% if requests.count %}
-        You have {{ requests.count }}  <a href='/user/requests/'>unreplied</a>
-        {% ifnotequal requests.count 1 %}
+    {% if user.unread_requests.count %}
+        You have {{ user.unread_requests.count }}  <a href='/user/requests/'>unreplied</a>
+        {% ifnotequal user.unread_requests.count 1 %}
         requests
         {% else %}
         request
