@@ -71,14 +71,14 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
     elif role in ["DV", "MG", "AD"]:
 
         accepting_user = sent_from
-        user_url = "/user/view/uid=%s"%(accepting_user.id) ## i mean the user who has accepted it
-        requested_by_url = "/user/view/uid=%s"%(requested_by.id)
+        user_url = '<a href="/user/view/uid=%s">%s</a>'%(accepting_user.id, accepting_user.username) ## i mean the user who has accepted it
+        requested_by_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
         role_rights = dict(RIGHTS_CHOICES)[role]
         role_learn_url = "/about/%s"%role_rights.lower()
 
         if reply:
             notification.sub = "New %s for the site"%role_rights
-            notification.message = "%s has accepted request made by %s asking him to act as a %s for the website.<br />"(user_url, requested_by_url, role_rights)
+            notification.message = "%s has accepted request made by %s asking him to act as a %s for the website.<br />"%(user_url, requested_by_url, role_rights)
         else:
             notification.sub = "Rejected your request to act as %s"%role_rights
             notification.message = "%s has rejected your request asking him to act as a %s.<br />"%(new_mentor_url, task_url)

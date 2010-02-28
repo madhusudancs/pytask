@@ -65,9 +65,9 @@
         {% endfor %}
     {% endif %}
     <br /><br />
-    {% ifnotequal user.get_profile.rights "CT" %}
+    {% if can_create_task %}
         <a href="/task/create/">Create a task</a><br />
-    {% endifnotequal %}
+    {% endif %}
     {% ifequal user.get_profile.rights "MG" %}
         <a href="/user/make/dv/">Request another to be a Developer</a>
         <a href="/user/make/mg/">Request another user to act as manager</a><br />

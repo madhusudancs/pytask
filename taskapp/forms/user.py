@@ -2,11 +2,10 @@
 
 from django import forms
 from pytask.taskapp.models import GENDER_CHOICES, Profile
-from django.forms import ModelForm
 from registration.forms import RegistrationFormUniqueEmail
 from registration.models import RegistrationProfile
 
-class UserProfileEditForm(ModelForm):
+class UserProfileEditForm(forms.ModelForm):
     """Form used to edit the profile of a user"""
     
     class Meta:
@@ -26,3 +25,11 @@ class RegistrationFormCustom(RegistrationFormUniqueEmail):
         new_profile.save()
         
         return new_user
+
+def UserChoiceForm(choices, instance=None):
+    """ take a list of users and return a choice form.
+    """
+
+    class myForm(forms.Form):
+        user = forms.ChoiceField(choices, required=True)
+    return myForm(instance) if instance else myForm()

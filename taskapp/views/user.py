@@ -10,9 +10,9 @@ from pytask.taskapp.models import Task, Profile, Request
 from pytask.taskapp.events.user import createUser, updateProfile
 from pytask.taskapp.events.request import reply_to_request
 
-from pytask.taskapp.forms.user import UserProfileEditForm
+from pytask.taskapp.forms.user import UserProfileEditForm, UserChoiceForm
 
-from pytask.taskapp.utilities.request import get_request
+from pytask.taskapp.utilities.request import get_request, create_request
 from pytask.taskapp.utilities.notification import get_notification
 from pytask.taskapp.utilities.user import get_user
 
@@ -29,7 +29,7 @@ def show_msg(user, message, redirect_url=None, url_desc=None):
 def homepage(request):
     """ check for authentication and display accordingly. """
    
-    user = get_user(request.user)
+    user = request.user
     is_guest = False
     is_mentor = False
     can_create_task = False
@@ -47,6 +47,7 @@ def homepage(request):
         return render_to_response('index.html', {'user':user, 'is_guest':is_guest, 'task_list':task_list})
         
     else:
+        user = get_user(request.user)
         user_profile = user.get_profile()
         is_mentor = True if user.task_mentors.all() else False
         can_create_task = False if user_profile.rights == u"CT" else True
@@ -265,4 +266,60 @@ def edit_notification(request, nid, action):
             return redirect(notifications_url)
     else:
         return show_msg(user, 'This is wrong', notification_url, "view the notification")
-   
+ 
+@login_required
+def change_rights(request, role):
+    """ check if the current user has privileges to do this.
+    """
+    
+    user = get_user(request.user)
+    role = role.upper()
+    user_profile = user.get_profile()
+    user_rights = user_profile.rights
+
+    user_can_view = True if user_rights == "AD" or ( user_rights == "MG" and role in ["mg", "dv"] ) else False
+
+    if user_can_view:
+        if role == "DV":
+            choices = [ (_.user.id,_.user.username ) for _ in Profile.objects.filter(rights="CT",user__is_active=True) ]
+        elif role == "MG":
+            choices = [ (_.user.id,_.user.username ) for _ in Profile.objects.exclude(rights="MG",user__is_active=True).exclude(rights="AD") ]
+        elif role == "AD":
+            choices = [ (_.user.id,_.user.username ) for _ in Profile.objects.exclude(rights="AD",user__is_active=True) ]
+
+        form = UserChoiceForm(choices)
+
+        context = {
+            'user':user,
+            'form':form,
+        }
+
+        if request.method=="POST":
+            data = request.POST
+            form = UserChoiceForm(choices, data)
+            if form.is_valid():
+                user_to_change = User.objects.get(id=form.cleaned_data['user'])
+                create_request(sent_by=user, role=role, sent_to=user_to_change)
+                return show_msg(user, "A request has been sent", "/", "return to home page")
+            else:
+                raise Http404
+        else:
+            return render_to_response('user/changerole.html', context)
+    else:
+        raise Http404
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
