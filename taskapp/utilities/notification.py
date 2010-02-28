@@ -52,6 +52,9 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
     elif role == "MT":
 
+        notification.task = task
+        notification.sent_from = sent_from
+
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
         requested_mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
         new_mentor = sent_from
@@ -69,6 +72,8 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
                 notification.message += "Remarks: %s<br />"%remarks
 
     elif role in ["DV", "MG", "AD"]:
+
+        notification.sent_from = sent_from
 
         accepting_user = sent_from
         user_url = '<a href="/user/view/uid=%s">%s</a>'%(accepting_user.id, accepting_user.username) ## i mean the user who has accepted it
@@ -88,6 +93,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
     elif role == "NT":
 
+        notification.task = task
         new_mentor = sent_to
         mentor_learn_url = '<sup><a href="/about/mentor">learn more</a></sup>'
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
@@ -110,6 +116,12 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         notification.message += "Happy Mentoring."
 
     elif role in ["CM", "CD"]:
+
+        notification.sent_from = sent_from
+        notification.role = role
+        notification.task = task
+        notification.remarks = remarks
+
         mentor = sent_from
         mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)

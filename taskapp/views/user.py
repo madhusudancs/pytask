@@ -38,12 +38,7 @@ def homepage(request):
     if not user.is_authenticated():
         is_guest = True
         disp_num = 10
-        tasks_count = Task.objects.count()
-        if tasks_count <= disp_num:
-            task_list = Task.objects.order_by('id').reverse()
-        else:
-            task_list = Task.objects.order_by('id').reverse()[:10]
-            
+        task_list = Task.objects.exclude(status="UP").order_by('published_datetime').reverse()[:10]
         return render_to_response('index.html', {'user':user, 'is_guest':is_guest, 'task_list':task_list})
         
     else:

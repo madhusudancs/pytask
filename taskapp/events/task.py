@@ -27,8 +27,11 @@ def publishTask(task, rem_mentors=True, rem_comments=True):
         task.comment_set.update(deleted_by=task.created_by)
 
     task.published_datetime = datetime.now()
-
     task.save()
+
+    pending_requests = task.request_task.filter(is_valid=True, is_replied=False)
+    pending_requests.update(is_valid=False)
+
     return task
 
 def addSubTask(main_task, sub_task):
@@ -233,12 +236,12 @@ def closeTask(task, closed_by, reason=None):
     ## generate notifications here
 
     for a_user in task.assigned_users.all():
-        create_notification(role="CD", sent_to=a_user, sent_from=marked_by, task=task)
+        create_notification(role="CD", sent_to=a_user, sent_from=closed_by, task=task, remarks=reason)
 
     for a_user in task.claimed_users.all():
-        create_notification(role="CD", sent_to=a_user, sent_from=marked_by, task=task)
+        create_notification(role="CD", sent_to=a_user, sent_from=closed_by, task=task, remarks=reason)
 
     for a_mentor in task.mentors.all():
-        create_notification(role="CD", sent_to=a_mentor, sent_from=marked_by, task=task)
+        create_notification(role="CD", sent_to=a_mentor, sent_from=closed_by, task=task, remarks=reason)
 
 

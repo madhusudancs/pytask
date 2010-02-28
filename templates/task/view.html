@@ -5,40 +5,46 @@
 {% block content %}
     {% if task_viewable %}
         <h3>{{ task.title }}</h3><br />
-        <!-- we have to write our own datetime.strftime filter and use in the next line -->
-        created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a>
-        on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
 
-        {% if is_mentor %}
-        
-            {% ifequal task.status "UP" %}
-                <a href="/task/edit/tid={{task.id}}">Edit task</a>
-            {% else %}
-                <a href="/task/close/tid={{task.id}}">Close this task</a>
-            {% endifequal %}
-            
-            {% if can_publish %}
-                <a href="/task/publish/tid={{task.id}}">Publish task</a>
-            {% endif %}
-            <br />
+        {% if can_edit %}
+            <a href="/task/edit/tid={{task.id}}">Edit task</a>
         {% endif %}
+        
+        {% if can_close %}
+            <a href="/task/close/tid={{task.id}}">Close this task</a>
+        {% endif %}
+                    
+        {% if can_publish %}
+            <a href="/task/publish/tid={{task.id}}">Publish task</a>
+        {% endif %}
+
+        <hr />created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a>
+        on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
         
         {% ifequal task.status "UP" %}
             Task can be viewed by:
         {% else %}
             Mentors:
         {% endifequal %}
+        
         {% for mentor in mentors %}
-            <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}|</a>
+            <a href="/user/view/uid={{mentor.id}}">{{mentor.username}}</a>
         {% endfor %}
+        
         {% if can_mod_mentors %}
             <a href="/task/addmentor/tid={{task.id}}">
             {% ifequal task.status "UP" %}
                 Request others to view/edit the task
             {% else %}
                 Add another Mentor to this task
-            {% endifequal %}</a><br />
+            {% endifequal %}</a>
         {% endif %}
+        <br />
+        
+        <hr />
+        <b>Description:</b><br />
+        {{ task.desc }}
+        <hr />
 
         {% if deps %}
         
@@ -75,51 +81,55 @@
             {% endif %}
         {% endif %}
         
+        {% ifequal task.status "CD" %}
+            Task has been closed by <a href="/user/view={{closing_notification.sent_from.id}}">{{closing_notification.sent_from.username}}</a>
+            on {{closing_notification.sent_date|date:"D d M Y"}} at {{closing_notification.sent_date|time:"H:i"}}<br />
+            <b>Reason: </b>{{closing_notification.remarks}}<br />
+        {% endifequal %}
         
-        <hr>
-        <br />Description:<br />
-        <br />{{ task.desc }}<br />
-        <hr>
+        {% ifequal task.status "CM" %}
+            Task has been marked complete by <a href="/user/view={{completed_notification.sent_from.id}}">
+            {{completed_notification.sent_from.username}}</a>
+            on {{completed_notification.sent_date|date:"D d M Y"}} at {{completed_notification.sent_date|time:"H:i"}}<br />
+        {% endifequal %}
+            
+        {% ifequal task.status "OP" %}
+            <br />There are no users working on this task.<br />
+        {% endifequal %}
+            
+        {% if assigned_users %}
+            Users working on this task:
+            {% for user in assigned_users %}
+                <a href="/user/view/uid={{user.id}}">{{user.username}}</a>
+            {% endfor %}
+            {% if is_mentor %}
+                <a href="/task/remuser/tid={{task.id}}">Remove an existing user</a>
+            {% endif %}
+            <br />
+        {% endif %}
         
-        {% ifnotequal task.status "CM" %}
-            {% if assigned_users %}
-                Users working on this task:
-                {% for user in assigned_users %}
-                    <a href="/user/view/uid={{user.id}}">{{user.username}}</a>|
-                {% endfor %}
-                {% if is_mentor %}
-                    <a href="/task/remuser/tid={{task.id}}">Remove an existing user</a>
-                <br />
-                {% endif %}
-            {% else %}
-                There are no users currently working on this task.<br />
-            {% endif %}
-            {% if can_assign_credits %}
-                <a href="/task/assigncredits/tid={{task.id}}">View/Assign credits</a>
-            {% endif %}
-            {% if not is_guest and task_claimable %}
-                <a href="/task/claim/tid={{task.id}}">View claims</a><br />
-            {% endif %}
-        {% else %}
-            {% ifequal task.status "CD" %}
-                The task has been closed by .. due to ..
-            {% else %}
-                The task is complete.
-            {% endifequal %}
-        {% endifnotequal %}
+        {% if can_assign_credits %}
+            <a href="/task/assigncredits/tid={{task.id}}">View/Assign credits</a>
+        {% endif %}
+        
+        {% if task_claimable %}
+            <a href="/task/claim/tid={{task.id}}">View claims</a>
+        {% endif %}
         
         {% if comments %}
             <hr />
-            <br/>comments:<br />
+            comments:<br /><br />
             {% for comment in comments %}
-                <br /><a href="/user/view/uid={{comment.created_by.id}}">{{ comment.created_by.username }}</a> at {{ comment.creation_datetime.ctime }} wrote:<br />
-            {{ comment.data }}<br />
+                <a href="/user/view/uid={{comment.created_by.id}}">{{ comment.created_by.username }}</a> 
+                on {{ comment.creation_datetime|date:"D d M Y"}} at {{comment.creation_datetime|time:"H:i"}} wrote:<br />
+            {{ comment.data }}<br /><br />
             {% endfor %}
         {% endif %}
 
         {% if not is_guest %}
+        <hr />
             {% ifnotequal task.status "CM" %}
-                <br />Add comment:<br />
+                Add comment:<br />
                 <form action="" method="post">
                 <!-- we might even want to use forms here -->
                 <textarea  name="data"></textarea><br />

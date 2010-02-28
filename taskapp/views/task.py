@@ -3,7 +3,7 @@ from datetime import datetime
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect
 
-from pytask.taskapp.models import User, Task, Comment, Claim, Request
+from pytask.taskapp.models import User, Task, Comment, Claim, Request, Notification
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
 from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask
@@ -80,15 +80,24 @@ def view_task(request, tid):
                'is_mentor':is_mentor,
               }
 
-    context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
     context['task_viewable'] = True if ( task.status != "UP" ) or is_mentor else False
-    context['task_claimable'] = True if task.status in ["OP", "WR"] else False
+
+    context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
+    context['can_edit'] = True if task.status in ["UP", "LO", "OP"] and is_mentor else False
+    context['can_close'] = True if task.status not in ["UP", "CD", "CM"] and is_mentor else False
 
     context['can_mod_mentors'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_mentor else False
     context['can_mod_tasks'] = True if task.status in ["UP", "OP", "LO"] and is_mentor else False
+
     context['can_assign_credits'] = True if task.status in ["OP", "WR"] and is_mentor else False
-    
-    context['assigned_users'] = task.assigned_users.all()
+    context['task_claimable'] = True if task.status in ["OP", "WR"] and not is_guest else False
+
+    if task.status == "CD":
+        context['closing_notification'] =  Notification.objects.filter(task=task,role="CD")[0]
+    elif task.status == "CM":
+        context['completed_notification'] =  Notifications.objects.filter(task=task,role="CM")[0]
+    elif task.status == "WR":
+        context['assigned_users'] = task.assigned_users.all()
    
     if request.method == 'POST':
         if not is_guest:
@@ -182,6 +191,7 @@ def add_mentor(request, tid):
 
         context = {
             'user':user,
+            'task':task,
             'pending_requests':pending_requests,
             'form':form,
         }
@@ -420,7 +430,7 @@ def assign_task(request, tid):
                 assignTask(task, assigned_user, user)
                 return redirect(task_url)
             else:
-                return render_to_response('task/assign.html',{'form':form})
+                return render_to_response('task/assign.html',{'user':user, 'task':task,'form':form})
         elif assigned_users:
             return show_msg(user, 'When the no of users you need for the task is more than the no of users willing to do the task, I\'d say please re consider the task :P',task_url, 'view the task')
         else:
