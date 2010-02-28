@@ -127,17 +127,6 @@ class Comment(models.Model):
     def __unicode__(self):
         return unicode(self.task.title)
 
-class Credit(models.Model):
-    
-    task = models.ForeignKey('Task')
-    given_by = models.ForeignKey(User, related_name = "%(class)s_given_by")
-    given_to = models.ForeignKey(User, related_name = "%(class)s_given_to")
-    points = models.PositiveSmallIntegerField()
-    given_time = models.DateTimeField()
-    
-    def __unicode__(self):
-        return unicode(self.task.title)
-        
 class Claim(models.Model):
     
     task = models.ForeignKey('Task')

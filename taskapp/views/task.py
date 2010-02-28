@@ -3,7 +3,7 @@ from datetime import datetime
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect
 
-from pytask.taskapp.models import User, Task, Comment, Claim, Credit, Request
+from pytask.taskapp.models import User, Task, Comment, Claim, Request
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
 from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask
@@ -492,9 +492,7 @@ def edit_task(request, tid):
     task = Task.objects.get(id=tid) 
     user = get_user(request.user) if request.user.is_authenticated() else request.user
 
-
 def complete_task(request, tid):
-
     """ call the event called complete task.
     and also pass it the current user to know who marked it as complete. 
     """
@@ -562,7 +560,7 @@ def close_task(request, tid):
                     context["error"] = "Please enter a reason for closing the task"
                     return render_to_response('task/close.html', context)
                 else:
-                    closeTask(task, user)
+                    closeTask(task, user, data['reason'])
                     return show_msg(user, "The task has been closed.", task_url, "view the task.")
             else:
                 return render_to_response('task/close.html', context)

@@ -1,5 +1,5 @@
 from datetime import datetime
-from pytask.taskapp.models import Profile, Task, Comment, Credit, Claim, Map
+from pytask.taskapp.models import Profile, Task, Comment, Claim, Map
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.utilities.request import create_request
 from pytask.taskapp.utilities.helper import get_key
@@ -102,8 +102,6 @@ def addMentor(task,mentor):
     task.save()
     return task     
 
-
-
 def createTask(title,desc,created_by,credits):
     """ creates a bare minimum task with title, description and credits.
     the creator of the task will be assigned as a mentor for the task.
@@ -189,30 +187,11 @@ def removeUser(main_task, rem_user):
     main_task.assigned_users.remove(rem_user)
     main_task.save()
 
-def completeTask(main_task):
-    """ set the status of task to CP.
-    """
-
-    main_task.status = "CP"
-    main_task.save()
-
 def assignCredits(task, given_by, given_to, points):
     """ make a proper request object.
     """
     
     create_request(sent_by=given_by, role="PY", task=task, receiving_user=given_to, pynts=points ) 
-
-def addCredits(task, given_by, given_to, points):
-    """ add credit to the credits model.
-    """
-
-    creditobj = Credit()
-    creditobj.task = task
-    creditobj.given_by = given_by
-    creditobj.given_to = given_to
-    creditobj.points = points
-    creditobj.given_time = datetime.now()
-    creditobj.save()
 
 def completeTask(task, marked_by):
     """ set the status of task as completed.
@@ -229,7 +208,18 @@ def completeTask(task, marked_by):
     ## generate notification appropriately using marked_by
     ## we also have to mark unread requests as invalid
 
-def closeTask(task, closed_by):
+    for a_user in task.assigned_users.all():
+        create_notification(role="CM", sent_to=a_user, sent_from=marked_by, task=task)
+
+    for a_user in task.claimed_users.all():
+        create_notification(role="CM", sent_to=a_user, sent_from=marked_by, task=task)
+
+    for a_mentor in task.mentors.all():
+        create_notification(role="CM", sent_to=a_mentor, sent_from=marked_by, task=task)
+
+
+
+def closeTask(task, closed_by, reason=None):
     """ set the status of task as CD.
     generate notifications accordingly.
     """
@@ -241,5 +231,14 @@ def closeTask(task, closed_by):
     pending_requests.update(is_valid=False)
 
     ## generate notifications here
+
+    for a_user in task.assigned_users.all():
+        create_notification(role="CD", sent_to=a_user, sent_from=marked_by, task=task)
+
+    for a_user in task.claimed_users.all():
+        create_notification(role="CD", sent_to=a_user, sent_from=marked_by, task=task)
+
+    for a_mentor in task.mentors.all():
+        create_notification(role="CD", sent_to=a_mentor, sent_from=marked_by, task=task)
 
 

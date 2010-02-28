@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from pytask.taskapp.models import Profile, Task, Comment, Credit
+from pytask.taskapp.models import Profile, Task, Comment
 
 """ A collection of helper methods. note that there is no validation done here.
 we take care of validation and others checks in methods that invoke these methods.

@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytask.taskapp.models import Profile
-from pytask.taskapp.events.task import addCredits, addMentor
+from pytask.taskapp.events.task import  addMentor
 from pytask.taskapp.events.user import changeRole
 from pytask.taskapp.utilities.notification import create_notification
 
@@ -25,12 +25,9 @@ def reply_to_request(request_obj, reply, replied_by):
             pynts = request_obj.pynts
             receiving_user = request_obj.receiving_user
             requested_by = request_obj.sent_by
-            for a_mentor in task.mentors.all():
-                if reply:
-                    addCredits(task, request_obj.sent_by, request_obj.receiving_user, pynts)
-                    create_notification(request_obj.role, a_mentor, replied_by, True, task, request_obj.remarks, requested_by, receiving_user, pynts)
-                else:
-                    create_notification(request_obj.role, a_mentor, replied_by, False, task, request_obj.remarks, requested_by, receiving_user, pynts)
+            create_notification(request_obj.role, receiving_user, replied_by, reply, task, request_obj.remarks, requested_by, receiving_user, pynts)
+            if receiving_user != requested_by:
+                create_notification(request_obj.role, requested_by, replied_by, reply, task, request_obj.remarks, requested_by, receiving_user, pynts)
 
         elif request_obj.role == "MT":
             task = request_obj.task

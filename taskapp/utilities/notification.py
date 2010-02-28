@@ -102,12 +102,29 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
         working_users = task.assigned_users.all()
         if working_users:
-            notification_message += "List of users working on the task.<br />"
-            notification_message += "<ul>"
+            notification.message += "List of users working on the task.<br />"
+            notification.message += "<ul>"
             for a_user in working_users:
                 notification.message += "<li> %s - %s </li>"%(a_user.username, a_user.email)
             notification.message += "</ul><br />"
         notification.message += "Happy Mentoring."
+
+    elif role in ["CM", "CD"]:
+        mentor = sent_from
+        mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
+        task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
+        
+        if role == "CM":
+            notification.sub = "%s has been marked complete"%task.title
+            notification.message = "The task %s has been marked complete by %s.<br />"%(task_url, mentor_url)
+
+        elif role == "CD":
+            notification.sub = "%s has been closed"%task.title
+            notification.message = "The task %s has been closed by %s.<br />"%(task_url, mentor_url)
+
+        if remarks:
+            notification.message += "<b>Remarks:</b> %s"%remarks
+
 
     notification.save()
 
