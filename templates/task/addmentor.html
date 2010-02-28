@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+    <a href="/task/view/tid={{task.id}}">Click here</a> to return to the task.
     <form action="" method="post">
     {{form.as_table}}
     <input type="submit" value="submit">

@@ -12,7 +12,7 @@ def AddMentorForm(choices,instance=None):
     
     class myform(forms.Form):
         mentor = forms.ChoiceField(choices=choices, required=True)
-    form = myform(instance=instance) if instance else myform()
+    form = myform(instance) if instance else myform()
     return form
 
 class ClaimTaskForm(forms.ModelForm):
@@ -20,12 +20,12 @@ class ClaimTaskForm(forms.ModelForm):
         model = Claim
         fields = ['message']
 
-def ChoiceForm(choices):
+def ChoiceForm(choices, instance=None):
     """ return a form object with appropriate choices """
     
     class myform(forms.Form):
         choice = forms.ChoiceField(choices=choices, required=True)
-    form = myform()
+    form = myform(instance) if instance else myform()
     return form
 
 def AddTaskForm(task_choices, is_plain=False):

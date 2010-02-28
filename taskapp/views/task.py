@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim, Credit, Request
@@ -177,18 +177,30 @@ def add_mentor(request, tid):
         for req in user_pending_requests:
             user_list.remove(req.sent_to.all()[0])
             
-        non_mentors = ((_.id,_.username) for _ in user_list)
+        non_mentors = ((_.id, _.username) for _ in user_list)
+        non_mentor_ids = [ str(a_user.id) for a_user in user_list ]
         ## code till must be made elegant and not brute force like above
 
         form = AddMentorForm(non_mentors)
+
+        context = {
+            'user':user,
+            'pending_requests':pending_requests,
+            'form':form,
+        }
+
         if request.method == "POST":
-            uid = request.POST['mentor']
-            new_mentor = User.objects.get(id=uid)
-            reqMentor(task, new_mentor, user)
-            return redirect(task_url)
+            data = request.POST
+            uid = data.get('mentor', None)
+            if uid in non_mentor_ids:
+                new_mentor = User.objects.get(id=int(uid))
+                reqMentor(task, new_mentor, user)
+                return redirect('/task/addmentor/tid=%s'%task.id)
+            else:
+                ## bogus post request
+                raise Http404
         else:
-            return render_to_response('task/addmentor.html', {'user':user,'pending_requests':pending_requests,'form':form, 'errors':errors})
-        
+            return render_to_response('task/addmentor.html', context)
     else:
         return show_msg(user, 'You are not authorised to add mentors for this task', task_url, 'view the task')
     
