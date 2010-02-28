@@ -3,7 +3,7 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
-from pytask.taskapp.models import User, Task, Comment, Claim, Credit
+from pytask.taskapp.models import User, Task, Comment, Claim, Credit, Request
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
 from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask
@@ -159,7 +159,10 @@ def add_mentor(request, tid):
     is_guest = True if not user.is_authenticated() else False
     
     if (not is_guest) and user in task.mentors.all():
-        
+
+        pending_requests = Request.objects.filter(is_replied=False,is_valid=True,role="MT",task=task).order_by('creation_date').reverse()
+        user_pending_requests = pending_requests.filter(sent_by=user)
+
         ## now iam going for a brute force method
         user_list = list(User.objects.filter(is_active=True))
         for mentor in task.mentors.all():
@@ -170,10 +173,13 @@ def add_mentor(request, tid):
 
         for a_user in task.assigned_users.all():
             user_list.remove(a_user)
+
+        for req in user_pending_requests:
+            user_list.remove(req.sent_to.all()[0])
             
         non_mentors = ((_.id,_.username) for _ in user_list)
         ## code till must be made elegant and not brute force like above
-        
+
         form = AddMentorForm(non_mentors)
         if request.method == "POST":
             uid = request.POST['mentor']
@@ -181,7 +187,7 @@ def add_mentor(request, tid):
             reqMentor(task, new_mentor, user)
             return redirect(task_url)
         else:
-            return render_to_response('task/addmentor.html', {'user':user,'form':form, 'errors':errors})
+            return render_to_response('task/addmentor.html', {'user':user,'pending_requests':pending_requests,'form':form, 'errors':errors})
         
     else:
         return show_msg(user, 'You are not authorised to add mentors for this task', task_url, 'view the task')

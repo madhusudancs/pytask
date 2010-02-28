@@ -1,8 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-    Form here
     <form action="" method="post">
     {{form.as_table}}
     <input type="submit" value="submit">
     </form>
+    {% if pending_requests %}
+        Pending requests:<br />
+        {% for req in pending_requests %}
+            <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested 
+            {% for a_user in req.sent_to.all %}
+                <a href="/user/view/uid={{a_user.id}}">{{a_user.username}}</a> to act as a mentor
+            {% endfor %}
+            on {{req.creation_date|date:"D d M Y"}} at {{req.creation_date|time:"H:i"}}<br />
+        {% endfor %}
+    {% endif %}
 {% endblock %}
