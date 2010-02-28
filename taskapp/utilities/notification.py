@@ -63,7 +63,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.message += "He can be contacted on %s"%new_mentor.email
 
         else:
-            notification.sub = "Rejected request to act as a mentor for %s"%task.title[:20]
+            notification.sub = "%s rejected request to act as a mentor"%new_mentor.username
             notification.message = "%s has rejected your request asking him to act as a mentor for %s.<br />"%(new_mentor_url, task_url)
             if remarks:
                 notification.message += "Remarks: %s<br />"%remarks
