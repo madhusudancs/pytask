@@ -98,10 +98,11 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
         for a_mentor in task.mentors.exclude(id=new_mentor.id):
             notification.message += "<li> %s - %s </li>"%(a_mentor.username, a_mentor.email)
-        notification.message += "</ul> List of users working on the task.<br />"
+        notification.message += "</ul>"
 
         working_users = task.assigned_users.all()
         if working_users:
+            notification_message += "List of users working on the task.<br />"
             notification_message += "<ul>"
             for a_user in working_users:
                 notification.message += "<li> %s - %s </li>"%(a_user.username, a_user.email)
