@@ -283,11 +283,41 @@ def change_rights(request, role):
 
     if user_can_view:
         if role == "DV":
-            choices = [ (_.user.id,_.user.username ) for _ in Profile.objects.filter(rights="CT",user__is_active=True) ]
+            current_contributors = list(User.objects.filter(is_active=True,profile__rights="CT"))
+            pending_requests = user.request_sent_by.filter(is_replied=False,is_valid=True)
+            pending_dv_requests = pending_requests.filter(role="DV")
+
+            ## one cannot make same request many times
+            for req in pending_dv_requests:
+                current_contributors.remove(req.sent_to.all()[0])
+
+            choices = [ (_.id,_.username ) for _ in current_contributors ]
+
         elif role == "MG":
-            choices = [ (_.user.id,_.user.username ) for _ in Profile.objects.exclude(rights="MG",user__is_active=True).exclude(rights="AD") ]
+            active_users = User.objects.filter(is_active=True)
+            dv_ct_users = list(active_users.filter(profile__rights="CT") | active_users.filter(profile__rights="DV"))
+            pending_requests = user.request_sent_by.filter(is_replied=False,is_valid=True)
+            pending_mg_requests = pending_requests.filter(role="MG")
+
+            ## same logic here. you cannot make another request exactly the same.
+            ## but iam still not decided whether someone who requests a user to be admin,
+            ## can be given a chance to request the same user to be a manager or developer
+            for req in pending_mg_requests:
+                dv_ct_users.remove(req.sent_to.all()[0])
+
+            choices = [ (_.id, _.username ) for _ in dv_ct_users ]
+
         elif role == "AD":
-            choices = [ (_.user.id,_.user.username ) for _ in Profile.objects.exclude(rights="AD",user__is_active=True) ]
+            active_users = User.objects.filter(is_active=True)
+            non_ad_users = list(active_users.exclude(profile__rights="AD"))
+            pending_requests = user.request_sent_by.filter(is_replied=False,is_valid=True)
+            pending_ad_requests = pending_requests.filter(role="AD")
+
+            ## we filter out users who have already been requested by the user to be an admin
+            for req in pending_ad_requests:
+                non_ad_users.remove(req.sent_to.all()[0])
+
+            choices = [ (_.id,_.username ) for _ in non_ad_users ]
 
         form = UserChoiceForm(choices)
 
