@@ -164,15 +164,6 @@ def view_request(request, rid):
         'oldest':oldest,
     }
 
-    ## see if user has already accepted such request and is a high previleged user
-    ## made_invalid = if ( user_request.role == "DV" and user_rights in ["DV", "MG", "AD"] ) or \
-            ## ( user_request.role == "MG" and user_rights in ["MG", "AD"] ) or \
-            ## ( user_request.role == "AD" and user_rights == "AD" ) or \
-            ## ( user_request.role == "MT" and user.task_mentors.filter(task=request.task) else False
-
-                       ## create_notification(user_request.role, user_request.sent_by, user, False, remarks = "User has accepted a similar request and is same or higher privileged than the request", requested_by = user_request.sent_by )
-##def create_notification(role, sent_to, sent_from=None, reply=None, task=None, remarks=None, requested_by=None, receiving_user=None, pynts=None):
-
     return render_to_response('user/view_request.html', context)
 
 @login_required
@@ -195,6 +186,7 @@ def process_request(request, rid, reply):
 
         reply_to_request(req_obj, reply, user)
 
+        return redirect('/user/requests/')
         return show_msg(user, "Your reply has been processed", browse_request_url, "view other requests")
     else:
         return show_msg(user, "You are not authorised to do this", browse_request_url, "view other requests")

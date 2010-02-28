@@ -68,12 +68,13 @@
     {% if can_create_task %}
         <a href="/task/create/">Create a task</a><br />
     {% endif %}
+    <br />
     {% ifequal user.get_profile.rights "MG" %}
         <a href="/user/make/dv/">Request another user to be a Developer</a><br />
         <a href="/user/make/mg/">Request another user to act as manager</a><br />
     {% endifequal %}
     {% ifequal user.get_profile.rights "AD" %}
-        <a href="/user/make/dv/">Request another user to be a Developer</a><br /><br />
+        <a href="/user/make/dv/">Request another user to be a Developer</a><br />
         <a href="/user/make/mg/">Request another user to act as a Manager</a><br />
         <a href="/user/make/ad">Request another user to act as an Admin</a><br />
     {% endifequal %}
