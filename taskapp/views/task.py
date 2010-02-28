@@ -420,21 +420,24 @@ def assign_task(request, tid):
     task_claimed = True if claimed_users else False
     
     if (not is_guest) and is_mentor:
-        if task_claimed:
-            user_list = ((user.id,user.username) for user in claimed_users)
-            form = ChoiceForm(user_list)
-    
-            if request.method == "POST":
-                uid = request.POST['choice']
-                assigned_user = User.objects.get(id=uid)
-                assignTask(task, assigned_user, user)
-                return redirect(task_url)
+        if task.status in ["OP", "WR"]:
+            if task_claimed:
+                user_list = ((user.id,user.username) for user in claimed_users)
+                form = ChoiceForm(user_list)
+        
+                if request.method == "POST":
+                    uid = request.POST['choice']
+                    assigned_user = User.objects.get(id=uid)
+                    assignTask(task, assigned_user, user)
+                    return redirect(task_url)
+                else:
+                    return render_to_response('task/assign.html',{'user':user, 'task':task,'form':form})
+            elif assigned_users:
+                return show_msg(user, 'When the no of users you need for the task is more than the no of users willing to do the task, I\'d say please re consider the task :P',task_url, 'view the task')
             else:
-                return render_to_response('task/assign.html',{'user':user, 'task':task,'form':form})
-        elif assigned_users:
-            return show_msg(user, 'When the no of users you need for the task is more than the no of users willing to do the task, I\'d say please re consider the task :P',task_url, 'view the task')
-        else:
-            return show_msg(user, 'Wait for ppl to claim dude... slow and steady wins the race :)', task_url, 'view the task')
+                return show_msg(user, 'Wait for ppl to claim dude... slow and steady wins the race :)', task_url, 'view the task')
+        else: 
+            return show_msg(user, "The task cannot be assigned to users at this stage", task_url, 'view the task')
     else:
         return show_msg(user, 'You are not authorised to perform this action', task_url, 'view the task')
 
@@ -449,6 +452,10 @@ def assign_credits(request, tid):
     
     user = get_user(request.user) if request.user.is_authenticated() else request.user
     task = getTask(tid)
+
+    ## the moment we see that user had requested credits, it means he had worked and hence we change the status to WR
+    task.status = "WR"
+    task.save()
 
     is_guest = True if not user.is_authenticated() else False
     is_mentor = True if (not is_guest) and user in task.mentors.all() else False
