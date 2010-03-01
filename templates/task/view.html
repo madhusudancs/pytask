@@ -61,8 +61,8 @@
         {% else %}
         
             {% if subs %}
-            
-                <br />The task has following sub tasks.<br />
+                This task cannot be claimed.. It exists only to show all of its sub tasks in one place.<br />
+                The task has following sub tasks.<br />
                 {% for sub in subs %}
                     <a href="/task/view/tid={{sub.id}}">{{sub.title}}</a><br />
                 {% endfor %}

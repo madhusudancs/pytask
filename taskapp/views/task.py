@@ -283,29 +283,41 @@ def remove_task(request, tid):
     is_guest = True if not user.is_authenticated() else False
     if (not is_guest) and user in task.mentors.all():
 
-        deps, subs = task.deps, task.subs
-        task_list = deps if task.sub_type == "D" else subs
+        if task.status in ["UP", "LO", "OP"]:
+            
+            deps, subs = task.deps, task.subs
+            task_list = deps if task.sub_type == "D" else subs
 
-        if task_list:
-            choices = [(_.id,_.title) for _ in task_list ]
-            form = ChoiceForm(choices)
+            if task_list:
+                choices = [(_.id,_.title) for _ in task_list ]
+                form = ChoiceForm(choices)
 
-            errors = []
+                errors = []
+                
+                context = {
+                    'user':user,
+                    'task':task,
+                    'form':form,
+                }
 
-            if request.method == "POST":
-                data = request.POST
-                if not data.get('choice', None): errors.append("Please choose a task to remove.")
-                if not errors:
-                    tid = data['choice']
-                    sub_task = getTask(tid)
-                    removeTask(task, sub_task)
-                    return redirect(task_url)
+                if request.method == "POST":
+                    data = request.POST
+                    if not data.get('choice', None):
+                        errors.append("Please choose a task to remove.")
+                        context['errors'] = errors
+                    if not errors:
+                        tid = data['choice']
+                        sub_task = getTask(tid)
+                        removeTask(task, sub_task)
+                        return redirect(task_url)
+                    else:
+                        return render_to_response('task/removetask.html', context)
                 else:
-                    return render_to_response('task/removetask.html', {'user':user, 'form':form, 'errors':errors})
+                    return render_to_response('task/removetask.html', context)
             else:
-                return render_to_response('task/removetask.html', {'user':user, 'form':form, 'errors':errors})
+                return show_msg(user, "The task has no subtasks/dependencies to be removed", task_url, "view the task")
         else:
-            return show_msg(user, "The task has no subtasks/dependencies to be removed", task_url, "view the task")
+            return show_msg(user, "subtasks/dependencies cannot be removed at this stage", task_url, "view the task")
     else:
         return show_msg(user, "You are not authorised to do this", task_url, "view the task")
 
@@ -583,6 +595,6 @@ def close_task(request, tid):
             else:
                 return render_to_response('task/close.html', context)
         else:
-            return show_msg(user, "The task is already closed or the task cannot be closed at this stage", task_url, "view the task")
+            return show_msg(user, "The task is either already closed or cannot be closed at this stage", task_url, "view the task")
     else:
         return show_msg(user, "You are not authorised to do this", task_url, "view the task")

@@ -13,9 +13,9 @@
             There are no claims for this task yet.<br />
             Be the first to claim the task.<br />
         {% else %}
-            This task cannot be claimed right now.
+            The task cannot be claimed at this stage.<br />
         {% endif %}
-        <a href="/task/view/tid={{task.id}}">Click here</a> to return to the task.<br />
+        <a href="/task/view/tid={{task.id}}">Click here</a> to view the task.<br />
     {% endif %}
     {% if task_claimed and is_mentor %}
         <a href="/task/assign/tid={{task.id}}">Select a user to assign the work.</a>

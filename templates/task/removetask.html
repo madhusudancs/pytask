@@ -3,6 +3,7 @@
     Remove tasks for {{task.title}}
 {% endblock %}
 {% block content %}
+    <a href="/task/view/tid={{task.id}}">Click here</a> to return to task.<br />
     {% if errors %}
         Please correct the following errors.<br />
         {% for err in errors %}
