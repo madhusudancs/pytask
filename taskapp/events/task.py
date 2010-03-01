@@ -230,8 +230,6 @@ def completeTask(task, marked_by):
     for a_mentor in task.mentors.all():
         create_notification(role="CM", sent_to=a_mentor, sent_from=marked_by, task=task)
 
-
-
 def closeTask(task, closed_by, reason=None):
     """ set the status of task as CD.
     generate notifications accordingly.
@@ -254,4 +252,16 @@ def closeTask(task, closed_by, reason=None):
     for a_mentor in task.mentors.all():
         create_notification(role="CD", sent_to=a_mentor, sent_from=closed_by, task=task, remarks=reason)
 
+def deleteTask(task, deleted_by, reason=None):
+    """ set the task status as DL
+    notify all its other viewers about the deleting of task.
+    """
 
+    task.status = "DL"
+    task.save()
+
+    pending_requests = task.request_task.filter(is_replied=False,is_valid=True)
+    pending_requests.update(is_valid=False)
+
+    for a_mentor in task.mentors.exclude(id=deleted_by.id):
+        create_notification("DL", sent_to=a_mentor, sent_from=deleted_by, task=task, remarks=reason)

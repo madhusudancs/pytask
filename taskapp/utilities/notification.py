@@ -169,6 +169,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
     elif role == "AU":
 
         notification.task = task
+        notification.sent_from = sent_from
         added_user = sent_to
         mentor = sent_from
         assigned_by_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
@@ -194,6 +195,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
     elif role == "RU":
 
         notification.task = task
+        notification.sent_from = sent_from
         removed_user = sent_to
         mentor = sent_from
         removed_by_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
@@ -207,6 +209,18 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.remarks = remarks
             notification.message += "<b>Reason: </b>%s"%(remarks)
 
+    elif role == "DL":
+
+        notification.sent_from = sent_from
+        notification.task = task
+        deleted_by_url = '<a href="/user/view/uid=%s">%s</a>'%(sent_from.id, sent_from.username)
+
+        notification.sub = "Task deleted"
+        notification.message = 'The unpublished task "%s" viewable by you has been deleted by its creator %s.<br />'%(task.title, deleted_by_url)
+
+        if remarks:
+            notification.remarks = remarks
+            notification.message += "<b>Reason: </b>%s"%remarks
 
     notification.save()
 

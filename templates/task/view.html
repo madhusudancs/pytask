@@ -10,12 +10,16 @@
             <a href="/task/edit/tid={{task.id}}">Edit task</a>
         {% endif %}
         
+        {% if can_publish %}
+            <a href="/task/publish/tid={{task.id}}">Publish task</a>
+        {% endif %}
+        
         {% if can_close %}
             <a href="/task/close/tid={{task.id}}">Close this task</a>
         {% endif %}
-                    
-        {% if can_publish %}
-            <a href="/task/publish/tid={{task.id}}">Publish task</a>
+        
+        {% if can_delete %}
+            <a href="/task/delete/tid={{task.id}}">Delete task</a>
         {% endif %}
 
         <hr />created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a>

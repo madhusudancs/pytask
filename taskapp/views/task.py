@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, redirect
 from pytask.taskapp.models import User, Task, Comment, Claim, Request, Notification
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm, EditTaskForm
-from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addMentor
+from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addMentor, deleteTask
 from pytask.taskapp.views.user import show_msg
 from pytask.taskapp.utilities.user import get_user
 
@@ -85,8 +85,9 @@ def view_task(request, tid):
     context['task_viewable'] = True if ( task.status != "UP" ) or is_mentor else False
 
     context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
-    context['can_edit'] = True if ( not claimed_users ) and task.status in ["UP", "LO", "OP"] and is_mentor else False
+    context['can_edit'] = True if task.status == "UP" and is_mentor else False
     context['can_close'] = True if task.status not in ["UP", "CD", "CM"] and is_mentor else False
+    context['can_delete'] = True if task.status == "UP" and user == task.created_by else False
 
     context['can_mod_mentors'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_mentor else False
     context['can_mod_tasks'] = True if task.status in ["UP", "OP", "LO"] and is_mentor else False
@@ -632,3 +633,30 @@ def close_task(request, tid):
             return show_msg(user, "The task is either already closed or cannot be closed at this stage", task_url, "view the task")
     else:
         return show_msg(user, "You are not authorised to do this", task_url, "view the task")
+
+
+def delete_task(request, tid):
+    """ mark the task status as DL.
+    take a reason from the user and pass on to all the other mentors.
+    """
+
+    task_url = "/task/view/tid=%s"%tid
+
+    task = getTask(tid)
+    user = get_user(request.user) if request.user.is_authenticated() else request.user
+
+    if task.status == "DL":
+        return show_msg(user, "This task no longer exists", '/task/browse/', "to browse other tasks")
+
+    can_delete = True if task.status == "UP" and task.created_by == user else False
+
+    if can_delete:
+        if request.method == "POST":
+            data = request.POST
+            reason = data.get('reason', None)
+            deleteTask(task, user, reason)
+            return show_msg(user, "The task is deleted", '/', "to return to home page")
+        else:
+            return render_to_response('task/delete.html',{'user':user,})
+    else:
+        return show_msg(user, "You are not authorised to do this at this stage", task_url, "view the task")

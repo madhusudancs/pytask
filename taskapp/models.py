@@ -43,10 +43,8 @@ NOTIFY_CHOICES = (
     ("RU", "Remove user"), ## remove from working users list in task
 )
 
-
 IMAGES_DIR = "./images"
 UPLOADS_DIR = "./uploads"
-
 
 class CustomImageStorage(FileSystemStorage):
 
@@ -87,7 +85,6 @@ class Profile(models.Model):
     def __unicode__(self):
         return unicode(self.user.username)
 
-
 class Task(models.Model):
     
     prim_key = models.AutoField(primary_key = True)
@@ -116,7 +113,6 @@ class Map(models.Model):
 
     main = models.ForeignKey('Task', related_name = "%(class)s_main")
     subs = models.ManyToManyField('Task', blank = True, null = True, related_name = "%(class)s_subs")
-
 
 class Comment(models.Model):
     
@@ -168,7 +164,6 @@ class Notification(models.Model):
     sent_to = models.ForeignKey(User, related_name = "%(class)s_sent_to", blank = False)
     sent_from = models.ForeignKey(User, related_name = "%(class)s_sent_from", null = True, blank = True)
     task = models.ForeignKey(Task, related_name = "%(class)s_sent_for", null = True, blank = True)
-
 
     sub = models.CharField(max_length = 100)
     message = models.TextField()
