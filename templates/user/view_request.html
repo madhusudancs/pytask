@@ -25,24 +25,26 @@
         <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> assigned {{req.pynts}} pynts to 
         <a href="/user/view/uid={{req.receiving_user.id}}">{{req.receiving_user.username}}</a> for the task
         <a href="/task/view/tid={{req.task.id}}">{{req.task.title}}</a><br />
-    {% endifequal %}    
+    {% else %}    
     
-    {% ifequal "MT" req.role %}
-        <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested you to act as a mentor for the task
-        <a href="/task/view/tid={{req.task.id}}">{{req.task.title}}</a><br />
-    {% else %}
-        You have been requested to act as 
-        {% ifequal "AD" req.role %}
-            an Admin
+        {% ifequal "MT" req.role %}
+            <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested you to act as a mentor for the task
+            <a href="/task/view/tid={{req.task.id}}">{{req.task.title}}</a><br />
         {% else %}
-            {% ifequal "MG" req.role %}
-                a Manager
+            You have been requested to act as 
+            {% ifequal "AD" req.role %}
+                an Admin
             {% else %}
-                a Developer
+                {% ifequal "MG" req.role %}
+                    a Manager
+                {% else %}
+                    a Developer
+                {% endifequal %}
             {% endifequal %}
+            for the website by <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a>.<br />
         {% endifequal %}
-        for the website by <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a>.<br />
     {% endifequal %}
+    <br />
     
     Please accept or reject the request.<br />
     <form action="yes/" method="post">

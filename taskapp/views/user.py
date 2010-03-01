@@ -19,6 +19,14 @@ from pytask.taskapp.utilities.user import get_user
 about = {
     "addmentors":"about/addmentors.html",
     "mentor":"about/mentor.html",
+    ## "claimtask":
+    ## "edittask": - contains both about up and pub states
+    ## "mentorrights":
+    ## "assigntask":
+    ## "developer":
+    ## "manager":
+    ## "admin":
+    ## "request": - also contains about automatic rejection of requests
 }
 
 def show_msg(user, message, redirect_url=None, url_desc=None):

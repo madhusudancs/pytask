@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response, redirect
 from pytask.taskapp.models import User, Task, Comment, Claim, Request, Notification
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
-from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask
+from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addMentor
 from pytask.taskapp.views.user import show_msg
 from pytask.taskapp.utilities.user import get_user
 
