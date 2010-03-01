@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{task.title}}
+{% endblock %}
+{% block content %}
+    Are you sure you want to delete the task. This action cannot be undone.<br />
+    
+    <form action="" method="post">
+        Reason: <input type="text" name="reason">
+        <input value="Delete" type="submit">
+    </form>
+{% endblock %}
