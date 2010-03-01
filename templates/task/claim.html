@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% if user_can_claim %}
+        Propose a claim to work on this task.<sup><a href="/about/claimtask/" target="_blank">learn more</a></sup><br /><br />
+    {% endif %}
     {% if claims %}
         List of all the claims for the task <a href="/task/view/tid={{task.id}}">{{task.title}}</a><br />
         {% for claim in claims %}
@@ -20,7 +23,7 @@
         <a href="/task/view/tid={{task.id}}">Click here</a> to view the task.<br />
     {% endif %}
     {% if task_claimed and is_mentor %}
-        <a href="/task/assign/tid={{task.id}}">Select a user to assign the work.</a>
+        <a href="/task/assign/tid={{task.id}}">Select a user to assign the work.</a><sup><a href="/about/assigntask/" target="_blank">learn more</a></sup>
     {% endif %}
     {% if user_can_claim %}
         {% if errors %}
@@ -30,11 +33,11 @@
         {% endif %}
         
         <hr />
-        Please note that you can claim only once and so write your proposal carefully.<br />
         Claim proposal:<br />
             <form action="" method="post">
             <textarea name="message"></textarea><br />
-            <input type="submit" value="Submit Claim">
+            <input type="submit" value="Submit Claim"><br />
+            Please note that you can claim only once and so write your proposal carefully.<br />
             </form>
     {% endif %}
 {% endblock %}
