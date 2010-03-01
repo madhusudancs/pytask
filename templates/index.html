@@ -9,27 +9,46 @@
             <a href="/task/view/tid={{ task.id }}">{{ task.title }}</a><br />
         {% endfor %}
     {% else %}
-        Logged in as {{ user.username }} <br />
+        Logged in as {{ user.username }} <br /><br />
     {% endif %}
-    
+
+    {% if can_create_task %}
+        <a href="/task/create/">Create a task</a><br />
+    {% endif %}
+    <br />
+    {% ifequal user.get_profile.rights "MG" %}
+        <a href="/user/make/dv/">Request another user to be a Developer</a><br />
+        <a href="/user/make/mg/">Request another user to act as manager</a><br />
+    {% endifequal %}
+    {% ifequal user.get_profile.rights "AD" %}
+        <a href="/user/make/dv/">Request another user to be a Developer</a><br />
+        <a href="/user/make/mg/">Request another user to act as a Manager</a><br />
+        <a href="/user/make/ad">Request another user to act as an Admin</a><br />
+    {% endifequal %}
+    <br />
+
     {% if user.unread_notifications.count %}
         You have {{ user.unread_notifications.count }} <a href='/user/notifications/'>unread</a>
         {% ifnotequal user.unread_notifications.count 1 %}
         notifications
         {% else %}
         notification
-        {% endifnotequal %}<br />
+        {% endifnotequal %}
+    <br />
     {% endif %}
-    
+
     {% if user.unread_requests.count %}
-        You have {{ user.unread_requests.count }}  <a href='/user/requests/'>unreplied</a>
+        You have {{ user.unread_requests.count }}  <a href='/user/requests/'>unread</a>
         {% ifnotequal user.unread_requests.count 1 %}
         requests
         {% else %}
         request
-        {% endifnotequal %}<br />
+        {% endifnotequal %}
+    <br />
     {% endif %}
+    <br />
     
+<!--
     {% if user.task_claimed_users.count %}
         {{ user.task_claimed_users.count }} <a href='/user/claimed/'>claimed</a>
         {% ifnotequal user.task_claimed_users.count 1 %}
@@ -58,24 +77,38 @@
         <br />
     {% endif %}
     
+    -->
+    
     {% if unpublished_tasks %}
-    <br />Unpublished tasks viewable by you:<br />
+    Unpublished tasks viewable by you:<br />
         {% for a_task in unpublished_tasks %}
             <a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a>&nbsp;&nbsp;&nbsp;
         {% endfor %}
-    {% endif %}
     <br /><br />
-    {% if can_create_task %}
-        <a href="/task/create/">Create a task</a><br />
     {% endif %}
-    <br />
-    {% ifequal user.get_profile.rights "MG" %}
-        <a href="/user/make/dv/">Request another user to be a Developer</a><br />
-        <a href="/user/make/mg/">Request another user to act as manager</a><br />
-    {% endifequal %}
-    {% ifequal user.get_profile.rights "AD" %}
-        <a href="/user/make/dv/">Request another user to be a Developer</a><br />
-        <a href="/user/make/mg/">Request another user to act as a Manager</a><br />
-        <a href="/user/make/ad">Request another user to act as an Admin</a><br />
-    {% endifequal %}
+
+    {% if mentored_tasks %}
+    Tasks you are mentoring:<br />
+        {% for a_task in mentored_tasks %}
+            <a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a>&nbsp;&nbsp;&nbsp;
+        {% endfor %}
+    <br /><br >
+    {% endif %}
+
+    {% if working_tasks %}
+    Tasks that have been assigned to you:<br />
+        {% for a_task in working_tasks %}
+            <a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a>&nbsp;&nbsp;&nbsp;
+        {% endfor %}
+    <br /><br />
+    {% endif %}
+
+    {% if claimed_tasks %}
+    Tasks claimed but still not assigned to you:<br />
+        {% for a_task in claimed_tasks %}
+            <a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a>&nbsp;&nbsp;&nbsp;
+        {% endfor %}
+    <br /><br />
+    {% endif %}
+
 {% endblock %}

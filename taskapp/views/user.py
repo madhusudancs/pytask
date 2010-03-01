@@ -46,7 +46,7 @@ def homepage(request):
     if not user.is_authenticated():
         is_guest = True
         disp_num = 10
-        task_list = Task.objects.exclude(status="UP").order_by('published_datetime').reverse()[:10]
+        task_list = Task.objects.exclude(status="UP").exclude(status="CD").exclude("CM").order_by('published_datetime').reverse()[:10]
         return render_to_response('index.html', {'user':user, 'is_guest':is_guest, 'task_list':task_list})
         
     else:
@@ -63,6 +63,9 @@ def homepage(request):
                    }
 
         context["unpublished_tasks"] = user.task_mentors.filter(status="UP")
+        context["mentored_tasks"] = user.task_mentors.exclude(status="UP").exclude(status="CM").exclude(status="CD").exclude(status="DL")
+        context["claimed_tasks"] = user.task_claimed_users.exclude(status="UP").exclude(status="CM").exclude(status="CD").exclude(status="DL")
+        context["working_tasks"] = user.task_assigned_users.filter(status="WR")
                    
         return render_to_response('index.html', context)
 
