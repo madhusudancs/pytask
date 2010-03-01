@@ -69,12 +69,12 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.sub = "%s rejected request to act as a mentor"%new_mentor.username
             notification.message = "%s has rejected your request asking him to act as a mentor for %s.<br />"%(new_mentor_url, task_url)
             if remarks:
+                notification.remarks = remarks
                 notification.message += "Remarks: %s<br />"%remarks
 
     elif role in ["DV", "MG", "AD"]:
 
         notification.sent_from = sent_from
-
         accepting_user = sent_from
         user_url = '<a href="/user/view/uid=%s">%s</a>'%(accepting_user.id, accepting_user.username) ## i mean the user who has accepted it
         requested_by_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
@@ -89,6 +89,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.sub = "Rejected your request to act as %s"%role_rights
             notification.message = "%s has rejected your request asking him to act as %s %s.<br />"%(user_url, a_or_an, role_rights)
             if remarks:
+                notification.remarks = remarks
                 notification.message += "Remarks: %s<br />"%remarks
 
     elif role == "NT":
@@ -162,7 +163,49 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.message = "The task %s has been closed by %s.<br />"%(task_url, mentor_url)
 
         if remarks:
+            notification.remarks = remarks
             notification.message += "<b>Remarks:</b> %s"%remarks
+
+    elif role == "AU":
+
+        notification.task = task
+        added_user = sent_to
+        mentor = sent_from
+        assigned_by_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
+        task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
+
+        notification.sub = "Your claim for the task %s accepted."%task.title[:20]
+        notification.message = "You have been selected to work on the task %s by %s.<br />"%(task_url, assigned_by_url)
+        notification.message += "You can now start working on the task and will be credited by the mentors for your work.<br />"
+
+        notification.message += " Here is a list of mentors for the task and their email addresses.<br /> <ul>"
+        for a_mentor in task.mentors.all():
+            notification.message += "<li> %s - %s </li>"%(a_mentor.username, a_mentor.email)
+        notification.message += "</ul>"
+
+        working_users = task.assigned_users.exclude(id=added_user.id)
+        if working_users:
+            notification.message += "List of other users working on the task.<br />"
+            notification.message += "<ul>"
+            for a_user in working_users:
+                notification.message += "<li> %s - %s </li>"%(a_user.username, a_user.email)
+            notification.message += "</ul><br />"
+
+    elif role == "RU":
+
+        notification.task = task
+        removed_user = sent_to
+        mentor = sent_from
+        removed_by_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
+        task_url = '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
+        claim_url = '<a href="/task/claim/tid=%s">%s</a>'%(task.id, "clicking here")
+
+        notification.sub = "You have been removed from working users of %s"%task.title[:20]
+        notification.message = "%s has removed you from the working users list of %s.<br />"%(removed_by_url, task_url)
+        notification.message += "if you want to work on the task again, you can claim the task by %s.<br />"%claim_url
+        if remarks:
+            notification.remarks = remarks
+            notification.message += "<b>Reason: </b>%s"%(remarks)
 
 
     notification.save()

@@ -393,7 +393,7 @@ def rem_user(request, tid):
             'task':task,
         }
         
-        if task.status in ["OP", "WR"]:
+        if task.status in ["WR"]:
             if assigned_users:
                 form = RemoveUserForm(choices)
                 context['form'] = form

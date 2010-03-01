@@ -34,9 +34,13 @@ NOTIFY_CHOICES = (
     ("CM", "Task completed"),
     ("CD", "Task closed"),
     ("DL", "Task deleted"),
-    ("KD", "Kicked off"),
     ("NU", "New User"),
     ("NT", "New Mentor"),
+    ("ND", "New Developer"),
+    ("NG", "New Manager"),
+    ("NA", "New Admin"),
+    ("AU", "Assign user"), ## i mean assign the task
+    ("RU", "Remove user"), ## remove from working users list in task
 )
 
 

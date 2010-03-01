@@ -149,14 +149,16 @@ def addClaim(task, message, user):
 
     user.request_sent_to.filter(is_replied=False, is_valid=True, role="MT", task=task).update(is_valid=False)
     
-def assignTask(task, user, assigned_by):
+def assignTask(task, added_user, assigned_by):
     """ check for the status of task and assign it to the particular user """
     
     if task.status in ['OP', 'WR']:
-        task.assigned_users.add(user)
-        task.claimed_users.remove(user)
+        task.assigned_users.add(added_user)
+        task.claimed_users.remove(added_user)
         task.status = "WR"
     task.save()
+
+    create_notification("AU", added_user, assigned_by, task=task)
 
 
 def updateTask(task, title=None, desc=None, credits=None, tags_field=None):
@@ -195,6 +197,7 @@ def removeUser(main_task, rem_user, removed_by, reason=None):
     ## TODiscuss : when a user is kicked off, his pending requests for pynts is made invalid
     rem_user.request_receiving_user.filter(task=main_task,role="PY",is_valid=True,is_replied=False).update(is_valid=False)
 
+    create_notification("RU", rem_user, removed_by, task=main_task, remarks=reason)
     ## TODO : create notification to the victim
 
 def assignCredits(task, given_by, given_to, points):

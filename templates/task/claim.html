@@ -11,7 +11,9 @@
     {% else %}
         {% if task_claimable %}
             There are no claims for this task yet.<br />
-            Be the first to claim the task.<br />
+            {% if user_can_claim %}
+                Be the first to claim the task.<br />
+            {% endif %}
         {% else %}
             The task cannot be claimed at this stage.<br />
         {% endif %}
