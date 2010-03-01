@@ -48,7 +48,14 @@
         <hr />
         <b>Description:</b><br />
         {{ task.desc|linebreaksbr }}
-        <hr />
+        <br /><br /><hr />
+        {% if task.tags.count %}
+            Tags: 
+            {% for tag in task.tags %}
+                tag
+            {% endfor %}
+            <hr />
+        {% endif %}
 
         {% if deps %}
         
@@ -65,7 +72,6 @@
         {% else %}
         
             {% if subs %}
-                This task cannot be claimed.. It exists only to show all of its sub tasks in one place.<br />
                 The task has following sub tasks.<br />
                 {% for sub in subs %}
                     <a href="/task/view/tid={{sub.id}}">{{sub.title}}</a><br />
@@ -100,6 +106,10 @@
         {% ifequal task.status "OP" %}
             <br />There are no users working on this task.<br />
         {% endifequal %}
+        
+        {% if subs %}
+            <br />This task cannot be claimed.. It exists only to show all of its sub tasks in one place.<br />
+        {% endif %}
             
         {% if assigned_users %}
             Users working on this task:
