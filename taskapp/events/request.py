@@ -57,11 +57,6 @@ def reply_to_request(request_obj, reply, replied_by):
 
         elif request_obj.role == "DV":
             if reply:
-                ## tell only the user who made him a DV
-                ## drop a welcome message to that fucker
-                changeRole(role=request_obj.role, user=request_obj.replied_by)
-                create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
-
                 ## here we look for requests that are similar => requesting for DV and make them invalid
                 ## also we drop a notification to user who made request
                 pending_requests = request_obj.replied_by.request_sent_to.filter(is_valid=True,is_replied=False,role="DV")
@@ -71,14 +66,19 @@ def reply_to_request(request_obj, reply, replied_by):
                     create_notification(role = req.role, sent_to = req.sent_by, sent_from = replied_by, reply = False, \
                                         remarks = "User has accepted a similar request and has rights same or higher privileged than the request", \
                                         requested_by = req.sent_by )
+
+                ## tell only the user who made him a DV
+                ## drop a welcome message to that fucker
+                create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
+                create_notification("ND", request_obj.replied_by, requested_by=request_obj.sent_by)
+                changeRole(role=request_obj.role, user=request_obj.replied_by)
+
             else:
                 create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, remarks=request_obj.remarks, requested_by=request_obj.sent_by)
 
         elif request_obj.role == "MG":
             if reply:
                 ## tell all the MG and AD
-                ## drop a welcome message to that fucker
-                changeRole(role=request_obj.role, user=request_obj.replied_by)
                 alerting_users = Profile.objects.filter(user__is_active=True).exclude(rights="CT").exclude(rights="DV")
                 for a_profile in alerting_users:
                     create_notification(request_obj.role, a_profile.user, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
@@ -93,17 +93,16 @@ def reply_to_request(request_obj, reply, replied_by):
                     create_notification(role = req.role, sent_to = req.sent_by, sent_from = replied_by, reply = False, \
                                         remarks = "User has accepted a similar request and has rights same or higher privileged than the request", \
                                         requested_by = req.sent_by )
+
+                ## drop a welcome message to that fucker
+                create_notification("NG", request_obj.replied_by, requested_by=request_obj.sent_by)
+                changeRole(role=request_obj.role, user=request_obj.replied_by)
+
             else:
                 create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, remarks=request_obj.remarks, requested_by=request_obj.sent_by)
 
         elif request_obj.role == "AD":
             if reply:
-                ## tell all the AD
-                ## drop a welcome message to that fucker
-                changeRole(role=request_obj.role, user=request_obj.replied_by)
-                alerting_users = Profile.objects.filter(user__is_active=True).filter(rights="AD")
-                for a_profile in alerting_users:
-                    create_notification(request_obj.role, a_profile.user, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
 
                 ## here we look for requests that less or similar => requesting for DV or MG or AD and make them invalid
                 ## also we drop a notification to user who made request
@@ -115,6 +114,15 @@ def reply_to_request(request_obj, reply, replied_by):
                     create_notification(role = req.role, sent_to = req.sent_by, sent_from = replied_by, reply = False, \
                                         remarks = "User has accepted a similar request and has rights same or higher privileged than the request", \
                                         requested_by = req.sent_by )
+                ## tell all the AD
+                alerting_users = Profile.objects.filter(user__is_active=True).filter(rights="AD")
+                for a_profile in alerting_users:
+                    create_notification(request_obj.role, a_profile.user, request_obj.replied_by, reply, requested_by=request_obj.sent_by)
+
+                ## drop a welcome message to that fucker
+                create_notification("NA", request_obj.replied_by, requested_by=request_obj.sent_by)
+                changeRole(role=request_obj.role, user=request_obj.replied_by)
+
             else:
                 create_notification(request_obj.role, request_obj.sent_by, request_obj.replied_by, reply, remarks=request_obj.remarks, requested_by=request_obj.sent_by)
 

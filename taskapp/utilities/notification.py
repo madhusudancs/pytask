@@ -115,6 +115,33 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.message += "</ul><br />"
         notification.message += "Happy Mentoring."
 
+    elif role == "NU":
+
+        start_here_url = '<a href="/about/starthere/" taget="_blank">start here</a>'
+        notification.sub = "Welcome %s"%sent_to.username
+        notification.message = "Welcome to PyTasks %s.<br />"%sent_to.username
+        notification.message += "If you are lost and have no clue, %s"%start_here_url
+
+    elif role in ["ND", "NG", "NA"]:
+
+        rights_dict = dict(RIGHTS_CHOICES)
+
+        if role == "ND":
+            role_rights = rights_dict["DV"]
+        elif role == "NG":
+            role_rights = rights_dict["MG"]
+        elif role == "NA":
+            role_rights = rights_dict["AD"]
+
+        requested_by_url = r'<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
+        role_learn_url = r'<a href="/about/%s" target="_blank">click here</a>'%role_rights.lower()
+        a_or_an = "an" if role_rights == "Admin" else "a"
+
+        notification.sub = "You are now %s %s"%(a_or_an, role_rights)
+        notification.message = r"You have accepted the request made by %s asking you to act as %s %s in the site "%(requested_by_url, a_or_an, role_rights)
+        notification.message += "and you are now %s %s in the site.<br /> %s to learn more on %s."%(a_or_an, role_rights, role_learn_url, role_rights)
+
+
     elif role in ["CM", "CD"]:
 
         notification.sent_from = sent_from
