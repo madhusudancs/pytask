@@ -95,7 +95,7 @@ class Task(models.Model):
     title = models.CharField(max_length = 100, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
-    tags_field = TagField()
+    tags_field = TagField() ## must be named some thing decent later on
     
     credits = models.PositiveSmallIntegerField()
     progress = models.PositiveSmallIntegerField(default = 0)

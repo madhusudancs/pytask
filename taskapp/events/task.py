@@ -119,7 +119,7 @@ def createTask(title,desc,created_by,credits):
             break
 
     try:
-        task = Task.objects.get(title__iexact=title)
+        task = Task.objects.exclude(status="DL").get(title__iexact=title)
         return None
     except:
         task = Task(title=title)

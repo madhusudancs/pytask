@@ -132,7 +132,7 @@ def create_task(request):
                     title = data['title']
                     desc = data['desc']
                     credits = data['credits']
-                    publish = data['publish']
+                    #publish = data['publish'] # just in case if we have to show the option
                     task = createTask(title,desc,user,credits)
                     
                     if not task:
@@ -537,7 +537,7 @@ def edit_task(request, tid):
                 data = form.cleaned_data
                 title = data['title']
                 try:
-                    prev_task = Task.objects.get(title=title)
+                    prev_task = Task.objects.exclude(status="DL").get(title=title)
                     if prev_task != task:
                         error_msg = "Another task exists with the same title"
                         return render_to_response('task/edittask.html',{'user':user, 'form':form, 'error_msg':error_msg})
@@ -555,9 +555,6 @@ def edit_task(request, tid):
             return render_to_response('task/edittask.html',{'user':user, 'form':form})
     else:
         return show_msg(user, "You cannot edit the task at this stage", task_url, "view the task")
-
-
-
 
 def complete_task(request, tid):
     """ call the event called complete task.
