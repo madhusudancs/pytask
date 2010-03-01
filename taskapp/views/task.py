@@ -80,10 +80,12 @@ def view_task(request, tid):
                'is_mentor':is_mentor,
               }
 
+    claimed_users = task.claimed_users.all()
+
     context['task_viewable'] = True if ( task.status != "UP" ) or is_mentor else False
 
     context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
-    context['can_edit'] = True if task.status in ["UP", "LO", "OP"] and is_mentor else False
+    context['can_edit'] = True if ( not claimed_users ) and task.status in ["UP", "LO", "OP"] and is_mentor else False
     context['can_close'] = True if task.status not in ["UP", "CD", "CM"] and is_mentor else False
 
     context['can_mod_mentors'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_mentor else False
