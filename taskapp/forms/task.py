@@ -5,7 +5,20 @@ class TaskCreateForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ['title', 'desc', 'tags_field', 'credits']
-    publish = forms.BooleanField(required=False)
+    #publish = forms.BooleanField(required=False)
+
+def EditTaskForm(task, instance=None):
+    class myForm(forms.ModelForm):
+        class Meta:
+            model = Task
+            fields = ['title', 'desc', 'tags_field', 'credits']
+    data = {
+        'title': task.title,
+        'desc': task.desc,
+        'tags_field': task.tags_field,
+        'credits': task.credits,
+    }
+    return myForm(instance) if instance else myForm(data)
 
 def AddMentorForm(choices,instance=None):
     """ return a form object with appropriate choices """

@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Claim, Request, Notification
 from pytask.taskapp.utilities.task import getTask
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm, EditTaskForm
 from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addMentor
 from pytask.taskapp.views.user import show_msg
 from pytask.taskapp.utilities.user import get_user
@@ -137,15 +137,15 @@ def create_task(request):
                     
                     if not task:
                         error_msg = "Another task with the same title exists"
-                        return render_to_response('task/create.html',{'form':form, 'error_msg':error_msg})
+                        return render_to_response('task/create.html',{'user':user, 'form':form, 'error_msg':error_msg})
                     
                     addMentor(task, user)
                     updateTask(task,tags_field=data['tags_field'])
-                    if publish: publishTask(task)    
+                    # if publish: publishTask(task)    
                     task_url = '/task/view/tid=%s'%task.id
                     return redirect(task_url)
                 else:
-                    return render_to_response('task/create.html',{'form':form})
+                    return render_to_response('task/create.html',{'user':user, 'form':form})
             else:
                 form = TaskCreateForm()
                 return render_to_response('task/create.html',{'form':form})
@@ -521,8 +521,43 @@ def edit_task(request, tid):
     and then give the user fields accordingly.
     """
     
-    task = Task.objects.get(id=tid) 
+    task = Task.objects.get(id=tid)
+    task_url = "/task/view/tid=%s"%tid
     user = get_user(request.user) if request.user.is_authenticated() else request.user
+
+    is_mentor = True if user in task.mentors.all() else False
+    can_edit = True if is_mentor and task.status == "UP" else False
+
+    if can_edit:
+        form = EditTaskForm(task)
+        if request.method=="POST":
+            data = request.POST
+            form = EditTaskForm(task, data)
+            if form.is_valid():
+                data = form.cleaned_data
+                title = data['title']
+                try:
+                    prev_task = Task.objects.get(title=title)
+                    if prev_task != task:
+                        error_msg = "Another task exists with the same title"
+                        return render_to_response('task/edittask.html',{'user':user, 'form':form, 'error_msg':error_msg})
+                except Task.DoesNotExist:
+                    pass
+                task.title = title
+                task.desc = data['desc']
+                task.tags_field = data['tags_field']
+                task.credits = data['credits']
+                task.save()
+                return redirect(task_url)
+            else:
+                return render_to_response('task/edittask.html',{'user':user, 'form':form})
+        else:
+            return render_to_response('task/edittask.html',{'user':user, 'form':form})
+    else:
+        return show_msg(user, "You cannot edit the task at this stage", task_url, "view the task")
+
+
+
 
 def complete_task(request, tid):
     """ call the event called complete task.

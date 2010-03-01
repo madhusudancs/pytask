@@ -92,7 +92,7 @@ class Task(models.Model):
     
     prim_key = models.AutoField(primary_key = True)
     id = models.CharField(max_length = 10, unique = True)
-    title = models.CharField(max_length = 100, unique = True, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
+    title = models.CharField(max_length = 100, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
     tags_field = TagField()
