@@ -152,7 +152,7 @@ def create_task(request):
         else:
             return show_msg(user, 'You are not authorised to create a task.')
     else:
-        return show_msg(user, 'You are not authorised to create a task.')
+        return show_msg(user, 'You are not authorised to create a task.', "/", "home page")
         
 def add_mentor(request, tid):
     """ check if the current user has the rights to edit the task and add him.
@@ -521,7 +521,8 @@ def edit_task(request, tid):
     and then give the user fields accordingly.
     """
     
-    task = Task.objects.get(id=tid)
+    task = getTask(tid)
+
     task_url = "/task/view/tid=%s"%tid
     user = get_user(request.user) if request.user.is_authenticated() else request.user
 
