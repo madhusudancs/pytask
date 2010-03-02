@@ -18,13 +18,11 @@ from pytask.taskapp.utilities.user import get_user
 
 about = {
     "addmentors": "about/addmentors.html",
-    "mentor": "about/mentor.html", ## - include role in different stages and merge with mentorrights
+    "mentor": "about/mentor.html", 
     "starthere": "about/starthere.html",
-    ## "claimtask":
-    ## "edittask": - contains both about up and pub states
-    ## "mentorrights":
-    ## "assigntask":
-    ## "developer":
+    "task": "about/task.html",
+    "tasklife": "about/tasklife.html",
+    "developer": "about/developer.html", 
     ## "manager":
     ## "admin":
     ## "request": - also contains about automatic rejection of requests

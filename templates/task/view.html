@@ -127,7 +127,12 @@
         {% endif %}
         
         {% if task_claimable %}
-            <a href="/task/claim/tid={{task.id}}">View claims</a>
+            <a href="/task/claim/tid={{task.id}}">
+            {% if is_mentor %}
+                View claims
+            {% else %}
+                Claim the task
+            {% endif %}</a>
         {% endif %}
         
         {% if comments %}

@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}
-    {{PyTasks - Learn more - Mentor}}
+    PyTasks - About - Mentor
 {% endblock %}
 {% block content %}
-    The user who created a task will become a mentor for the task. Mentor is a person who mentors the task.
-    Mentor has all the rights over the task. A Mentor can request other users also to mentor the task.
-    Mentor can add/remove subtasks if applicable. Mentor can request assign of credits for task.
-    Mentor can mark the task as Invalid/Complete.<br />
+    Mentoring is a right specific to the task. The user who creates a task will become the mentor for the task. A Mentor can request 
+    other <sup><a href="/about/addmentors/" target="_blank">learn more</a></sup> users also to mentor the task.
+    Mentor is a person who mentors the task.  Mentor has all the rights over the task.<br />
+    
+    <ul>
+    <li>Mentor can view the task even if it is unpublished.</li>
+    <li>Mentor can edit the task when it is in unpublished state.</li>
+    <li>Mentor can add/remove subtasks/dependencies to a task.</li>
+    <li>Mentor decides whom to assign the task (choose from claimed users).</li>
+    <li>Mentor also has the rights to remove a working user from a task.</li>
+    <li>Mentor requests assigning of pynts to users/mentors for the task.</li>
+    <li>Mentor has the rights to close a task or mark the task as complete.</li>
+    <li>Publishing/Deleting an unpublished task is a special right available only to the creator of the task.</li>
+    </ul>
+    <a href="/about/tasklife/" target="_blank">click here</a> to know the complete life cycle of a task.
 {% endblock %}

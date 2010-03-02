@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+    PyTasks - About - Task
+{% endblock %}
+{% block content %}
+    A task is an entity that people can work on and get pynts for their work. Every task has credits which are given to
+    users working on the task. A task is created by a privileged user and he becomes a 
+    mentor <sup><a href="/about/mentor/" target="_blank">learn more</a></sup> for the task. 
+    The task if open, can be claimed by other users if they would like to work on the task.<br /><br />
+    
+    The task can be claimed by submitting a proposal in the view claims page. The link to view claims page is available on the task page. 
+    By claiming the task, you are actually proposing that you would like to do the task and hence the mentor of the task will 
+    be given an option to choose you for the task. A user can only submit one claim per task. But if a user is assigned a task
+     and for some reason, is removed from the task later on, he can submit a second claim requesting to continue working on the task.<br /><br />
+    
+    A task can also have subtasks and dependencies.
+    The task can only be calimed when it is open for people to work on. If the link is unavailable it implies that the task is locked 
+    since it has subtasks or it has dependencies that are not complete or the task is closed or the task is complete.<br /><br />
+    
+    <a href="/about/tasklife/" target="_blank">click here</a> to know the complete life cycle of a task.
+    
+{% endblock %}
