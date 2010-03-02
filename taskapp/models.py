@@ -73,7 +73,7 @@ class Profile(models.Model):
     credits = models.PositiveSmallIntegerField(default = 0)
     
     aboutme = models.TextField(blank = True)
-    foss_comm = TagField()
+    foss_comm = TagField(verbose_name="FOSS Communities")
     phonenum = models.CharField(max_length = 15, blank = True, verbose_name = u"Phone Number")
     homepage = models.URLField(blank = True, verbose_name = u"Homepage/Blog")
     street = models.CharField(max_length = 80, blank = True)
@@ -92,7 +92,7 @@ class Task(models.Model):
     title = models.CharField(max_length = 100, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
-    tags_field = TagField() ## must be named some thing decent later on
+    tags_field = TagField(verbose_name = u"Tags") 
     
     credits = models.PositiveSmallIntegerField()
     progress = models.PositiveSmallIntegerField(default = 0)
