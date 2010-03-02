@@ -104,7 +104,10 @@ def view_task(request, tid):
    
     if request.method == 'POST':
         if not is_guest:
-            data = request.POST["data"]
+            data = request.POST.get("data", "").strip()
+            if not data:
+                context['error_msg'] = "Enter some message to comment"
+                return render_to_response('task/view.html', context)
             new_comment = Comment(task=task, data=data, created_by=user, creation_datetime=datetime.now())
             new_comment.save()
             return redirect(task_url)

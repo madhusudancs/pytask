@@ -136,12 +136,15 @@
             {% for comment in comments %}
                 <a href="/user/view/uid={{comment.created_by.id}}">{{ comment.created_by.username }}</a> 
                 on {{ comment.creation_datetime|date:"D d M Y"}} at {{comment.creation_datetime|time:"H:i"}} wrote:<br />
-            {{ comment.data }}<br /><br />
+            {{ comment.data|linebreaksbr }}<br /><br />
             {% endfor %}
         {% endif %}
 
         {% if not is_guest %}
         <hr />
+        {% if error_msg %}
+            {{error_msg}}<br />
+        {% endif %}
             {% ifnotequal task.status "CM" %}
                 Add comment:<br />
                 <form action="" method="post">
