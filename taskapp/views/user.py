@@ -22,10 +22,11 @@ about = {
     "starthere": "about/starthere.html",
     "task": "about/task.html",
     "tasklife": "about/tasklife.html",
-    "developer": "about/developer.html", 
-    ## "manager":
-    ## "admin":
-    ## "request": - also contains about automatic rejection of requests
+    "developer": "about/developer.html",
+    "notification": "about/notification.html",
+    "request": "about/request.html",
+    "manager": "about/manager.html",
+    "admin": "about/admin.html",
 }
 
 def show_msg(user, message, redirect_url=None, url_desc=None):

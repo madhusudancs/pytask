@@ -96,7 +96,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
         notification.task = task
         new_mentor = sent_to
-        mentor_learn_url = '<sup><a href="/about/mentor">learn more</a></sup>'
+        mentor_learn_url = '<sup><a href="/about/mentor/">learn more</a></sup>'
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
 
         notification.sub = "You are mentoring the task %s"%task.title[:20]
