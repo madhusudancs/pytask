@@ -530,25 +530,12 @@ def edit_task(request, tid):
     can_edit = True if is_mentor and task.status == "UP" else False
 
     if can_edit:
-        form = EditTaskForm(task)
+        form = EditTaskForm(instance=task)
         if request.method=="POST":
             data = request.POST
-            form = EditTaskForm(task, data)
+            form = EditTaskForm(data, instance=task)
             if form.is_valid():
-                data = form.cleaned_data
-                title = data['title']
-                try:
-                    prev_task = Task.objects.exclude(status="DL").get(title__iexact=title)
-                    if prev_task != task:
-                        error_msg = "Another task exists with the same title"
-                        return render_to_response('task/edittask.html',{'user':user, 'form':form, 'error_msg':error_msg})
-                except Task.DoesNotExist:
-                    pass
-                task.title = title
-                task.desc = data['desc']
-                task.tags_field = data['tags_field']
-                task.credits = data['credits']
-                task.save()
+                form.save()
                 return redirect(task_url)
             else:
                 return render_to_response('task/edittask.html',{'user':user, 'form':form})
@@ -633,7 +620,6 @@ def close_task(request, tid):
             return show_msg(user, "The task is either already closed or cannot be closed at this stage", task_url, "view the task")
     else:
         return show_msg(user, "You are not authorised to do this", task_url, "view the task")
-
 
 def delete_task(request, tid):
     """ mark the task status as DL.
