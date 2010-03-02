@@ -118,10 +118,10 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
     elif role == "NU":
 
-        start_here_url = '<a href="/about/starthere/" taget="_blank">start here</a>'
+        start_here_url = '<a href="/about/starthere/" taget="_blank">click here</a>'
         notification.sub = "Welcome %s"%sent_to.username
         notification.message = "Welcome to PyTasks %s.<br />"%sent_to.username
-        notification.message += "If you are lost and have no clue, %s"%start_here_url
+        notification.message += "%s to know more."%start_here_url
 
     elif role in ["ND", "NG", "NA"]:
 

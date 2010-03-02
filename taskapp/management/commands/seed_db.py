@@ -8,6 +8,7 @@ from pytask.taskapp.events import task as taskEvents
 from pytask.taskapp.events import user as userEvents
 
 from pytask.taskapp.utilities.request import create_request
+from pytask.taskapp.utilities.notification import create_notification
 
 
 def seed_db():
@@ -25,6 +26,7 @@ def seed_db():
         dob = datetime.now()
         gender = "M"
         user = userEvents.createUser(username,email,password,dob,gender)
+        create_notification("NU", user)
 
         if i%4==0:
             create_request(defaultMentor, "MG", user)
