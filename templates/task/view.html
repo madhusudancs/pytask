@@ -52,17 +52,18 @@
         {% if task.tags.count %}
             Tags: 
             {% for tag in task.tags %}
-                tag
+                {{tag}}
             {% endfor %}
             <hr />
         {% endif %}
 
         {% if deps %}
         
-            <br />The task has following dependencies.<br />
+            <br />The task has following dependencies.<ul>
             {% for dep in deps %}
-                <a href="/task/view/tid={{dep.id}}">{{dep.title}}</a><br />
+                <li><a href="/task/view/tid={{dep.id}}">{{dep.title}}</a></li>
             {% endfor %}
+            </ul>
             
             {% if can_mod_tasks %}
                 <a href="/task/addtask/tid={{task.id}}">add more dependencies</a>
@@ -72,10 +73,11 @@
         {% else %}
         
             {% if subs %}
-                The task has following sub tasks.<br />
+                The task has following sub tasks.<ul>
                 {% for sub in subs %}
-                    <a href="/task/view/tid={{sub.id}}">{{sub.title}}</a><br />
+                    <li><a href="/task/view/tid={{sub.id}}">{{sub.title}}</a></li>
                 {% endfor %}
+                </ul>
                 
                 {% if can_mod_tasks %}
                     <a href="/task/addtask/tid={{task.id}}">add more subtasks</a>
