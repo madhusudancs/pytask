@@ -152,7 +152,7 @@ def create_task(request):
                     return render_to_response('task/create.html',{'user':user, 'form':form})
             else:
                 form = TaskCreateForm()
-                return render_to_response('task/create.html',{'form':form})
+                return render_to_response('task/create.html',{'user':user, 'form':form})
         else:
             return show_msg(user, 'You are not authorised to create a task.')
     else:
