@@ -7,11 +7,26 @@ class TaskCreateForm(forms.ModelForm):
         fields = ['title', 'desc', 'tags_field', 'credits']
     #publish = forms.BooleanField(required=False)
 
+    def clean_desc(self):
+        data = self.cleaned_data['desc'].strip()
+        if not data:
+            raise forms.ValidationError("Enter some description for the task")
+
+        return data
+
 def EditTaskForm(task, instance=None):
     class myForm(forms.ModelForm):
         class Meta:
             model = Task
             fields = ['title', 'desc', 'tags_field', 'credits']
+
+        def clean_desc(self):
+            data = self.cleaned_data['desc'].strip()
+            if not data:
+                raise forms.ValidationError("Enter some description for the task")
+
+            return data
+
     data = {
         'title': task.title,
         'desc': task.desc,
