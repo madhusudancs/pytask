@@ -7,6 +7,14 @@ class TaskCreateForm(forms.ModelForm):
         fields = ['title', 'desc', 'tags_field', 'credits']
     #publish = forms.BooleanField(required=False)
 
+    def clean_title(self):
+        data = self.cleaned_data['title'].strip()
+        try:
+            Task.objects.exclude(status="DL").get(title__iexact=data)
+            raise forms.ValidationError("Another task with same title exists")
+        except Task.DoesNotExist:
+            return data
+
     def clean_desc(self):
         data = self.cleaned_data['desc'].strip()
         if not data:
@@ -26,6 +34,17 @@ def EditTaskForm(task, instance=None):
                 raise forms.ValidationError("Enter some description for the task")
 
             return data
+
+        def clean_title(self):
+            data = self.cleaned_data['title'].strip()
+            try:
+                prev_task = Task.objects.exclude(status="DL").get(title__iexact=data)
+                if prev_task != task:
+                    raise forms.ValidationError("Another task with same title exists")
+                else:
+                    return data
+            except:
+                return data
 
     data = {
         'title': task.title,

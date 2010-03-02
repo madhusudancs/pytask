@@ -139,10 +139,6 @@ def create_task(request):
                     #publish = data['publish'] # just in case if we have to show the option
                     task = createTask(title,desc,user,credits)
                     
-                    if not task:
-                        error_msg = "Another task with the same title exists"
-                        return render_to_response('task/create.html',{'user':user, 'form':form, 'error_msg':error_msg})
-                    
                     addMentor(task, user)
                     updateTask(task,tags_field=data['tags_field'])
                     # if publish: publishTask(task)    
@@ -541,7 +537,7 @@ def edit_task(request, tid):
                 data = form.cleaned_data
                 title = data['title']
                 try:
-                    prev_task = Task.objects.exclude(status="DL").get(title=title)
+                    prev_task = Task.objects.exclude(status="DL").get(title__iexact=title)
                     if prev_task != task:
                         error_msg = "Another task exists with the same title"
                         return render_to_response('task/edittask.html',{'user':user, 'form':form, 'error_msg':error_msg})
