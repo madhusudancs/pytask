@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if not notifications %}
-        You have no notifications.
+        You have no notifications.<sup><a href="/about/notification/" target="_blank">learn more</a></sup><br />
     {% else %}
+    Notifications for you: <sup><a href="/about/notification/" target="_blank">learn more</a></sup><br />
         {% for notification in notifications %}
             <a href="/user/notifications/nid={{notification.id}}">
             {% if not notification.is_read %} <b> {% endif %}

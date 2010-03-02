@@ -17,8 +17,9 @@ from pytask.taskapp.utilities.notification import get_notification, create_notif
 from pytask.taskapp.utilities.user import get_user
 
 about = {
-    "addmentors":"about/addmentors.html",
-    "mentor":"about/mentor.html", ## - include role in different stages and merge with mentorrights
+    "addmentors": "about/addmentors.html",
+    "mentor": "about/mentor.html", ## - include role in different stages and merge with mentorrights
+    "starthere": "about/starthere.html",
     ## "claimtask":
     ## "edittask": - contains both about up and pub states
     ## "mentorrights":
