@@ -8,12 +8,13 @@ from pytask.taskapp.utilities.notification import create_notification
 def publishTask(task, rem_mentors=True, rem_comments=True):
     """ set the task status to open """
 
-    if task.sub_type == 'D':
-        deps, subs = task.map_subs.all(), []
-    else:
-        subs, deps = task.map_subs.all(), []
+ #   if task.sub_type == 'D':
+     #      deps, subs = task.map_subs.all(), []
+     #else:
+         #   subs, deps = task.map_subs.all(), []
    
-    if subs or any(map(lambda t:t.status!="CM",deps)):
+    task = getTask(task.id)
+    if task.subs or any(map(lambda t:t.status!="CM",task.deps)):
         task.status = "LO"
     else:
         task.status = "OP"
