@@ -82,7 +82,9 @@ def view_task(request, tid):
 
     claimed_users = task.claimed_users.all()
 
-    context['task_viewable'] = True if ( task.status != "UP" ) or is_mentor else False
+    task_viewable = True if ( task.status != "UP" ) or is_mentor or user.request_sent_to.filter(is_valid=True,is_replied=False,role="MT",task=task)else False 
+    if not task_viewable:
+        return show_msg(user, "You are not authorised to view this task", "/task/browse/", "browse the tasks")
 
     context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
     context['can_edit'] = True if task.status == "UP" and is_mentor else False
