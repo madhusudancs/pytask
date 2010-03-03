@@ -86,7 +86,7 @@
     -->
     
     {% if unpublished_tasks %}
-    Unpublished tasks viewable by you:<br /><ul>
+    Unpublished tasks viewable by you:<ul>
         {% for a_task in unpublished_tasks %}
             <li><a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a></li>
         {% endfor %}
@@ -95,16 +95,16 @@
     {% endif %}
 
     {% if mentored_tasks %}
-    Tasks you are mentoring:<br /><ul>
+    Tasks you are mentoring:<ul>
         {% for a_task in mentored_tasks %}
-            <li></li><a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a></li>
+            <li><a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a></li>
         {% endfor %}
         </ul>
     <br /><br >
     {% endif %}
 
     {% if working_tasks %}
-    Tasks that have been assigned to you:<br /><ul>
+    Tasks that have been assigned to you:<ul>
         {% for a_task in working_tasks %}
             <li><a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a></li>
         {% endfor %}
@@ -113,7 +113,7 @@
     {% endif %}
 
     {% if claimed_tasks %}
-    Tasks claimed but still not assigned to you:<br /><ul>
+    Tasks claimed but still not assigned to you:<ul>
         {% for a_task in claimed_tasks %}
             <li><a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a></li>
         {% endfor %}
