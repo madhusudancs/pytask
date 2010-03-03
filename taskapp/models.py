@@ -92,9 +92,9 @@ class Task(models.Model):
     title = models.CharField(max_length = 100, verbose_name = u"Title", help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
-    tags_field = TagField(verbose_name = u"Tags") 
+    tags_field = TagField(verbose_name = u"Tags", help_text = u"Give comma seperated tags") 
     
-    credits = models.PositiveSmallIntegerField()
+    credits = models.PositiveSmallIntegerField(help_text = u"No.of credits a user gets on completing the task")
     progress = models.PositiveSmallIntegerField(default = 0)
         
     mentors = models.ManyToManyField(User, related_name = "%(class)s_mentors")
