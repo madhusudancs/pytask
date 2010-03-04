@@ -148,7 +148,13 @@ def addClaim(task, message, user):
     claim.creation_datetime = datetime.now()
     claim.save()
 
-    user.request_sent_to.filter(is_replied=False, is_valid=True, role="MT", task=task).update(is_valid=False)
+    pending_reqs = user.request_sent_to.filter(is_replied=False, is_valid=True, role="MT", task=task).all()
+    for req in pending_reqs:
+        req.is_valid = False
+        req.save()
+        user_url = '<a href="/user/view/uid=%s">%s</a>'%(user.id, user.username)
+        reason = "User has claimed the task and hence cannot be a mentor and this request was made invalid."
+        create_notification("MT", req.sent_by, user, task=task, reply=False, remarks=reason, requested_by=req.sent_by)
     
 def assignTask(task, added_user, assigned_by):
     """ check for the status of task and assign it to the particular user """
