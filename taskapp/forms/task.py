@@ -1,5 +1,5 @@
 from django import forms
-from pytask.taskapp.models import Task, Claim
+from pytask.taskapp.models import Task
 
 class TaskCreateForm(forms.ModelForm):
     class Meta:
@@ -53,10 +53,15 @@ def AddMentorForm(choices,instance=None):
     form = myform(instance) if instance else myform()
     return form
 
-class ClaimTaskForm(forms.ModelForm):
-    class Meta:
-        model = Claim
-        fields = ['message']
+class ClaimTaskForm(forms.Form):
+    message = forms.CharField(label="Proposal")
+
+    def clean_message(self):
+        data = self.cleaned_data['message'].strip()
+        if not data:
+            raise forms.ValidationError('Enter something as a proposal')
+        return data
+
 
 def ChoiceForm(choices, instance=None):
     """ return a form object with appropriate choices """

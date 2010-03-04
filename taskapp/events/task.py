@@ -1,5 +1,5 @@
 from datetime import datetime
-from pytask.taskapp.models import Profile, Task, Comment, Claim, Map
+from pytask.taskapp.models import Profile, Task, Comment, Map
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.utilities.request import create_request
 from pytask.taskapp.utilities.helper import get_key
@@ -141,12 +141,6 @@ def addClaim(task, message, user):
     
     task.claimed_users.add(user)
     task.save()
-    claim = Claim()
-    claim.message = message
-    claim.task = task
-    claim.user = user
-    claim.creation_datetime = datetime.now()
-    claim.save()
 
     pending_reqs = user.request_sent_to.filter(is_replied=False, is_valid=True, role="MT", task=task).all()
     for req in pending_reqs:

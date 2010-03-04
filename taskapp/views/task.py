@@ -3,9 +3,9 @@ from datetime import datetime
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect
 
-from pytask.taskapp.models import User, Task, Comment, Claim, Request, Notification
+from pytask.taskapp.models import User, Task, Comment, Request, Notification
 from pytask.taskapp.utilities.task import getTask
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm, EditTaskForm
+from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm, EditTaskForm, ClaimTaskForm
 from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addMentor, deleteTask
 from pytask.taskapp.views.user import show_msg
 from pytask.taskapp.utilities.user import get_user
@@ -342,7 +342,7 @@ def claim_task(request, tid):
     
     user = get_user(request.user) if request.user.is_authenticated() else request.user
     task = getTask(tid)
-    #claims = Claim.objects.filter(task=task)
+    
     #claims = task.notifications_task.filter(role="CL",sent_to=task.created_by) 
     # this is what the next line should be when i re sync the db
     claims = Notification.objects.filter(task=task, sent_to=task.created_by, role="CL")
@@ -368,13 +368,16 @@ def claim_task(request, tid):
                'errors':errors}
     
     if not is_guest:
+        form = ClaimTaskForm()
+        context['form'] = form
         if request.method == "POST":
-            claim_proposal = request.POST['message']
-            if claim_proposal:
+            form = ClaimTaskForm(request.POST)
+            context['form'] = form
+            if form.is_valid():
+                claim_proposal = form.cleaned_data['message']
                 addClaim(task, claim_proposal, user)
                 return redirect(claim_url)
             else:
-                errors.append('Please fill up proposal in the field below')
                 return render_to_response('task/claim.html', context)
         else:
             return render_to_response('task/claim.html', context)

@@ -127,13 +127,6 @@ class Comment(models.Model):
     def __unicode__(self):
         return unicode(self.task.title)
 
-class Claim(models.Model):
-    
-    task = models.ForeignKey('Task')
-    user = models.ForeignKey(User)
-    message = models.TextField()
-    creation_datetime = models.DateTimeField()
-
 class Request(models.Model):
 
     sent_to = models.ManyToManyField(User, related_name = "%(class)s_sent_to", blank = False)

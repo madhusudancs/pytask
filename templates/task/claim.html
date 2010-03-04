@@ -26,6 +26,7 @@
         <a href="/task/assign/tid={{task.id}}">Select a user to assign the work.</a><sup><a href="/about/assigntask/" target="_blank">learn more</a></sup>
     {% endif %}
     {% if user_can_claim %}
+    <!--
         {% if errors %}
             {% for error in errors %}
                 {{error}}<br />
@@ -37,7 +38,15 @@
             <form action="" method="post">
             <textarea name="message"></textarea><br />
             <input type="submit" value="Submit Claim"><br />
-            Please note that you can claim only once and so write your proposal carefully.<br />
+            
             </form>
+        -->
+        <hr />
+        <form action="" method="post">
+        {{form.as_p}}
+        <input type="submit" value="Submit Claim"><br />
+        Please note that you can claim only once and so write your proposal carefully.<br />
+        </form>
     {% endif %}
+
 {% endblock %}
