@@ -229,10 +229,11 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         notification.remarks = remarks
 
         claimed_by_url = '<a href="/user/view/uid=%s">%s</a>'%(sent_from.id, sent_from.username)
+        claim_url = '<a href="/task/claim/tid=%s">claim</a>'%(task.id)
         task_url = '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
 
         notification.sub = 'New claim for the task "%s"'%(task.title[:20])
-        notification.message = '%s has submitted a claim for the task "%s" mentored by you.<br />'%(claimed_by_url, task_url)
+        notification.message = '%s has submitted a %s for the task "%s" mentored by you.<br />'%(claimed_by_url, claim_url, task_url)
         notification.message += '<b>Claim proposal:</b> %s'%(remarks)
 
 
