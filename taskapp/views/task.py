@@ -342,7 +342,10 @@ def claim_task(request, tid):
     
     user = get_user(request.user) if request.user.is_authenticated() else request.user
     task = getTask(tid)
-    claims = Claim.objects.filter(task=task)
+    #claims = Claim.objects.filter(task=task)
+    #claims = task.notifications_task.filter(role="CL",sent_to=task.created_by) 
+    # this is what the next line should be when i re sync the db
+    claims = Notification.objects.filter(task=task, sent_to=task.created_by, role="CL")
 
     mentors = task.mentors.all()
     claimed_users = task.claimed_users.all()

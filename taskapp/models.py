@@ -163,7 +163,7 @@ class Notification(models.Model):
     role = models.CharField(max_length = 2, choices = NOTIFY_CHOICES, blank = False)
     sent_to = models.ForeignKey(User, related_name = "%(class)s_sent_to", blank = False)
     sent_from = models.ForeignKey(User, related_name = "%(class)s_sent_from", null = True, blank = True)
-    task = models.ForeignKey(Task, related_name = "%(class)s_sent_for", null = True, blank = True)
+    task = models.ForeignKey(Task, related_name = "%(class)s_task", null = True, blank = True)
 
     sub = models.CharField(max_length = 100)
     message = models.TextField()

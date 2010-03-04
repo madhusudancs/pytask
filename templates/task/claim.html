@@ -7,9 +7,9 @@
         List of all the claims for the task <a href="/task/view/tid={{task.id}}">{{task.title}}</a><br />
         {% for claim in claims %}
             <hr />
-            <a href="/user/view/uid={{claim.user.id}}">{{claim.user.username}}</a>
-            on {{claim.creation_datetime|date:"D d M Y"}} at {{claim.creation_datetime|time:"H:i"}} wrote:<br />
-            {{claim.message}}<br />
+            <a href="/user/view/uid={{claim.sent_from.id}}">{{claim.sent_from.username}}</a>
+            on {{claim.sent_date|date:"D d M Y"}} at {{claim.sent_date|time:"H:i"}} wrote:<br />
+            {{claim.remarks}}<br />
         {% endfor %}
     {% else %}
         {% if task_claimable %}
