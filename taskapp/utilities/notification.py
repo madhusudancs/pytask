@@ -222,6 +222,21 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             notification.remarks = remarks
             notification.message += "<b>Reason: </b>%s"%remarks
 
+    elif role == "CL":
+
+        notification.sent_from = sent_from
+        notification.task = task
+        notification.remarks = remarks
+
+        claimed_by_url = '<a href="/user/view/uid=%s">%s</a>'%(sent_from.id, sent_from.username)
+        task_url = '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
+
+        notification.sub = 'New claim for the task "%s"'%(task.title[:20])
+        notification.message = '%s has submitted a claim for the task "%s" mentored by you.<br />'%(claimed_by_url, task_url)
+        notification.message += '<b>Claim proposal:</b> %s'%(remarks)
+
+
+
     notification.save()
 
 def mark_notification_read(notification_id):

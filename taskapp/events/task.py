@@ -155,6 +155,9 @@ def addClaim(task, message, user):
         user_url = '<a href="/user/view/uid=%s">%s</a>'%(user.id, user.username)
         reason = "User has claimed the task and hence cannot be a mentor and this request was made invalid."
         create_notification("MT", req.sent_by, user, task=task, reply=False, remarks=reason, requested_by=req.sent_by)
+
+    for a_mentor in task.mentors.all():
+        create_notification("CL", a_mentor, user, task=task, remarks=message)
     
 def assignTask(task, added_user, assigned_by):
     """ check for the status of task and assign it to the particular user """
