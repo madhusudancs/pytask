@@ -174,7 +174,7 @@ class Notification(models.Model):
     is_deleted = models.BooleanField(default = False)
 
     def __unicode__(self):
-        return u"%s %s"%(self.sent_to, self.sent_date.ctime())
+        return u"%s %s %s"%(self.sent_to, self.message, self.sent_date.ctime())
     
 tagging.register(Profile)
 tagging.register(Task)
