@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 from pytask.taskapp.models import Task, Profile, Request
 
-from pytask.taskapp.events.user import createUser, updateProfile
+from pytask.taskapp.events.user import createUser
 from pytask.taskapp.events.request import reply_to_request
 
 from pytask.taskapp.forms.user import UserProfileEditForm, UserChoiceForm
@@ -101,33 +101,23 @@ def edit_my_profile(request):
     """ enables the user to edit his/her user profile """
 
     user = get_user(request.user)
+    user_profile = user.get_profile()
+
+    edit_profile_form = UserProfileEditForm(instance = user_profile)
     if request.method == 'POST':
-        form = UserProfileEditForm(request.POST)
-#        if not form.is_valid():
-#            edit_profile_form = UserProfileEditForm(instance = form)
-#            return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form})
-        if request.user.is_authenticated() == True:
-            profile = Profile.objects.get(user = request.user)
-            data = request.POST#form.cleaned_data
-            properties = {'aboutme':data['aboutme'],
-                          'foss_comm':data['foss_comm'],
-                          'phonenum':data['phonenum'],
-                          'homepage':data['homepage'],
-                          'street':data['street'],
-                          'city':data['city'],
-                          'country':data['country'],
-                          'nick':data['nick']}
-            uploaded_photo = request.FILES.get('photo',None)
-            prev_photo = profile.photo
-            if uploaded_photo:
-                if prev_photo:
-                    os.remove(prev_photo.path)
-                properties['photo'] = uploaded_photo
-            #fields = ['dob','gender','credits','aboutme','foss_comm','phonenum','homepage','street','city','country','nick']
-            updateProfile(profile,properties)
-            return redirect('/user/view/uid='+str(profile.user_id))
+
+        data = request.POST.copy()
+        uploaded_photo = request.FILES.get('photo', None)
+        data.__setitem__('photo', uploaded_photo)
+
+        edit_profile_form = UserProfileEditForm(data, instance=user_profile)
+        if edit_profile_form.is_valid():
+            edit_profile_form.save()
+            return redirect('/user/view/uid='+str(user.id))
+        else:
+            return render_to_response('user/edit_profile.html',{'user':user, 'edit_profile_form' : edit_profile_form})
     else:
-        profile = Profile.objects.get(user = request.user)
+        profile = user.get_profile()
         edit_profile_form = UserProfileEditForm(instance = profile)
         return render_to_response('user/edit_profile.html',{'edit_profile_form' : edit_profile_form, 'user':user})
 
