@@ -85,16 +85,18 @@ def learn_more(request, what):
 def view_my_profile(request,uid=None):
     """ allows the user to view the profiles of users """
     user = get_user(request.user)
+    request_user_profile = request.user.get_profile()
+    request_user_privilege = True if request_user_profile.rights in ['AD','MG'] else False
     if uid == None:
         edit_profile = True
         profile = Profile.objects.get(user = request.user)
-        return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':user})
+        return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':user, 'privilege':request_user_privilege})
     edit_profile = True if request.user == User.objects.get(pk=uid) else False
     try:
         profile = Profile.objects.get(user = User.objects.get(pk=uid))
     except Profile.DoesNotExist:
         raise Http404
-    return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':user})
+    return render_to_response('user/my_profile.html', {'edit_profile':edit_profile,'profile':profile, 'user':user, 'privilege':request_user_privilege})
 
 @login_required
 def edit_my_profile(request):

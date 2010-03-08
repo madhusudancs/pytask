@@ -18,6 +18,9 @@
         <img border="0" height="200" src={{ profile.photo.url }}>
         </a>
     {% endif %}
+    {% if privilege or edit_profile %}
+        <br><h4>E-Mail</h4><hr>{{ user.email }}
+    {% endif %}
     {% if profile.aboutme %}
         <br><h4>About Me</h4><hr>{{ profile.aboutme }}
     {% endif %}
@@ -33,24 +36,29 @@
     {% if profile.foss_comm %}
         <br><h4>Foss Community</h4><hr>{{ profile.foss_comm }}
     {% endif %}
-    {% if profile.phonenum %}
-        <br><h4>Phone Number</h4><hr>{{ profile.phonenum }}
+    {% if privilege or edit_profile %}
+        {% if profile.phonenum %}
+            <br><h4>Phone Number</h4><hr>{{ profile.phonenum }}
+        {% endif %}
     {% endif %}
     {% if profile.homepage %}
         <br><h4>Homepage</h4><hr>{{ profile.homepage }}
     {% endif %}
-    {% if profile.street or profile.city or profile.country %}
-        <br><h4>Address</h4><hr>
-        {% if profile.street %}
-            {{ profile.street }}
-            <br>
+    {% if privilege or edit_profile %}
+        {% if profile.street or profile.city or profile.country %}
+            <br><h4>Address</h4><hr>
+            {% if profile.street %}
+                {{ profile.street }}
+                <br>
+            {% endif %}
+            {% if profile.city %}
+                {{ profile.city }}
+                <br>
+            {% endif %}
+            {% if profile.country %}
+                {{ profile.country }}
+            {% endif %}
         {% endif %}
-        {% if profile.city %}
-            {{ profile.city }}
-            <br>
-        {% endif %}
-        {% if profile.country %}
-            {{ profile.country }}
-        {% endif %}
+    {% else %}
     {% endif %}
 {% endblock %}
