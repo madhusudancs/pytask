@@ -9,6 +9,7 @@ from django import forms
 from pytask.taskapp.models import GENDER_CHOICES, Profile
 from registration.forms import RegistrationFormUniqueEmail
 from registration.models import RegistrationProfile
+from pytask.taskapp.utilities.notification import create_notification
 
 class UserProfileEditForm(forms.ModelForm):
     """Form used to edit the profile of a user"""
@@ -50,6 +51,8 @@ class RegistrationFormCustom(RegistrationFormUniqueEmail):
         
         new_profile = Profile(user=new_user,dob=self.cleaned_data['dob'],gender=self.cleaned_data['gender'])
         new_profile.save()
+        
+        create_notification('NU',new_user)
         
         return new_user
 
