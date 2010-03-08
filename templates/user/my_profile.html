@@ -19,7 +19,7 @@
         </a>
     {% endif %}
     {% if privilege or edit_profile %}
-        <br><h4>E-Mail</h4><hr>{{ user.email }}
+        <br><h4>E-Mail</h4><hr>{{ profile.user.email }}
     {% endif %}
     {% if profile.aboutme %}
         <br><h4>About Me</h4><hr>{{ profile.aboutme }}
