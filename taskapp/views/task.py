@@ -24,6 +24,19 @@ def browse_tasks(request):
                }
     return render_to_response('task/browse.html', context)
 
+def show_textbooks(request):
+    """ display all the tasks """
+    
+    user = get_user(request.user) if request.user.is_authenticated() else request.user
+    task_list = Task.objects.exclude(status="UP").exclude(status="DL").order_by('published_datetime').reverse()
+
+    textbooks = task_list.filter(tags_field__icontains="textbook")
+    
+    context = {'user':user,
+               'task_list':task_list,
+               }
+    return render_to_response('task/browse.html', context)
+
 def publish_task(request, tid):
     """ check if user is the mentor and also if the task status is UP.
     """

@@ -169,5 +169,5 @@ class Notification(models.Model):
     def __unicode__(self):
         return u"%s %s %s"%(self.sent_to, self.message, self.sent_date.ctime())
     
-tagging.register(Profile)
-tagging.register(Task)
+#tagging.register(Profile)
+#tagging.register(Task)

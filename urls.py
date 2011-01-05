@@ -58,5 +58,7 @@ urlpatterns = patterns('',
     (r'^user/make/(\w+)/$', userViews.change_rights),
 
     (r'^about/(\w+)/$', userViews.learn_more),
+
+    (r'^textbook/$', taskViews.show_textbooks),
     
 )
