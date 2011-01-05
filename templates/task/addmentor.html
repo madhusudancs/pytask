@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
     <a href="/task/view/tid={{task.id}}">Click here</a> to return to the task.<br /><br />
-    Requesting a user to act as a mentor for the task sends him a request. If he accepts the request, he will also be the mentor for this task
+    Requesting a user to act as a reviewer for the task sends him a request. If he accepts the request, he will also be the reviewer for this task
     {% ifequal task.status "UP" %}
-        and can view/edit<sup><a href="/about/mentor/" target="_blank">learn more</a></sup> the task. But only the creator of a task can publish the task.
+        and can view/edit<sup><a href="/about/reviewer/" target="_blank">learn more</a></sup> the task. But only the creator of a task can publish the task.
     {% else %}
-        and will have all the rights<sup><a href="/about/mentor/" target="_blank">learn more</a></sup> you posses over the task.
+        and will have all the rights<sup><a href="/about/reviewer/" target="_blank">learn more</a></sup> you posses over the task.
     {% endifequal %}
     <br />
     <br />
@@ -18,7 +18,7 @@
         {% for req in pending_requests %}
             <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested 
             {% for a_user in req.sent_to.all %}
-                <a href="/user/view/uid={{a_user.id}}">{{a_user.username}}</a> to act as a mentor
+                <a href="/user/view/uid={{a_user.id}}">{{a_user.username}}</a> to act as a reviewer
             {% endfor %}
             on {{req.creation_date|date:"D d M Y"}} at {{req.creation_date|time:"H:i"}}<br />
         {% endfor %}

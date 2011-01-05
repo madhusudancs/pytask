@@ -17,8 +17,8 @@ from pytask.taskapp.utilities.notification import get_notification, create_notif
 from pytask.taskapp.utilities.user import get_user
 
 about = {
-    "addmentors": "about/addmentors.html",
-    "mentor": "about/mentor.html", 
+    "addreviewers": "about/addreviewers.html",
+    "reviewer": "about/reviewer.html", 
     "starthere": "about/starthere.html",
     "task": "about/task.html",
     "tasklife": "about/tasklife.html",
@@ -39,7 +39,7 @@ def homepage(request):
    
     user = request.user
     is_guest = False
-    is_mentor = False
+    is_reviewer = False
     can_create_task = False
     task_list = []
     
@@ -52,18 +52,18 @@ def homepage(request):
     else:
         user = get_user(request.user)
         user_profile = user.get_profile()
-        is_mentor = True if user.task_mentors.all() else False
+        is_reviewer = True if user.task_reviewers.all() else False
         can_create_task = False if user_profile.rights == u"CT" else True
         
         context = {'user':user,
                    'is_guest':is_guest,
-                   'is_mentor':is_mentor,
+                   'is_reviewer':is_reviewer,
                    'task_list':task_list,
                    'can_create_task':can_create_task,
                    }
 
-        context["unpublished_tasks"] = user.task_mentors.filter(status="UP")
-        context["mentored_tasks"] = user.task_mentors.exclude(status="UP").exclude(status="CM").exclude(status="CD").exclude(status="DL")
+        context["unpublished_tasks"] = user.task_reviewers.filter(status="UP")
+        context["reviewered_tasks"] = user.task_reviewers.exclude(status="UP").exclude(status="CM").exclude(status="CD").exclude(status="DL")
         context["claimed_tasks"] = user.task_claimed_users.exclude(status="UP").exclude(status="CM").exclude(status="CD").exclude(status="DL")
         context["working_tasks"] = user.task_assigned_users.filter(status="WR")
                    

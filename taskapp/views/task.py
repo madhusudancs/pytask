@@ -5,12 +5,12 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Request, Notification
 from pytask.taskapp.utilities.task import getTask
-from pytask.taskapp.forms.task import TaskCreateForm, AddMentorForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm, EditTaskForm, ClaimTaskForm
-from pytask.taskapp.events.task import createTask, reqMentor, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addMentor, deleteTask
+from pytask.taskapp.forms.task import TaskCreateForm, AddReviewerForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm, EditTaskForm, ClaimTaskForm
+from pytask.taskapp.events.task import createTask, reqReviewer, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addReviewer, deleteTask
 from pytask.taskapp.views.user import show_msg
 from pytask.taskapp.utilities.user import get_user
 
-## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add mentor and all
+## everywhere if there is no task, django should display 500 message.. but take care of that in sensitive views like add reviewer and all
 ## do not create su user thro syncdb
 
 def browse_tasks(request):
@@ -40,7 +40,7 @@ def show_textbooks(request):
     return render_to_response('task/browse.html', context)
 
 def publish_task(request, tid):
-    """ check if user is the mentor and also if the task status is UP.
+    """ check if user is the reviewer and also if the task status is UP.
     """
 
     task_url = "/task/view/tid=%s"%tid
@@ -49,7 +49,7 @@ def publish_task(request, tid):
     task = getTask(tid)
 
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if user in task.mentors.all() else False
+    is_reviewer = True if user in task.reviewers.all() else False
 
     if user == task.created_by:
         context = {
@@ -79,41 +79,41 @@ def view_task(request, tid):
     if task.status == "DL":
         return show_msg(user, 'This task no longer exists', '/task/browse/','browse the tasks')
     comments = task.comment_set.filter(is_deleted=False).order_by('creation_datetime')
-    mentors = task.mentors.all()
+    reviewers = task.reviewers.all()
 
     deps, subs = task.deps, task.subs
     
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if user in task.mentors.all() else False
+    is_reviewer = True if user in task.reviewers.all() else False
     context = {'user':user,
                'task':task,
                'comments':comments,
-               'mentors':mentors,
+               'reviewers':reviewers,
                'subs':subs,
                'deps':deps,
                'is_guest':is_guest,
-               'is_mentor':is_mentor,
+               'is_reviewer':is_reviewer,
               }
 
     claimed_users = task.claimed_users.all()
 
 
-    is_requested_mentor = True if user.is_authenticated() and user.request_sent_to.filter(is_valid=True,is_replied=False,role="MT",task=task) else False
-    task_viewable = True if ( task.status != "UP" ) or is_mentor or is_requested_mentor else False
+    is_requested_reviewer = True if user.is_authenticated() and user.request_sent_to.filter(is_valid=True,is_replied=False,role="MT",task=task) else False
+    task_viewable = True if ( task.status != "UP" ) or is_reviewer or is_requested_reviewer else False
     if not task_viewable:
         return show_msg(user, "You are not authorised to view this task", "/task/browse/", "browse the tasks")
 
-    context['is_requested_mentor'] = is_requested_mentor
+    context['is_requested_reviewer'] = is_requested_reviewer
 
     context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
-    context['can_edit'] = True if task.status == "UP" and is_mentor else False
-    context['can_close'] = True if task.status not in ["UP", "CD", "CM"] and is_mentor else False
+    context['can_edit'] = True if task.status == "UP" and is_reviewer else False
+    context['can_close'] = True if task.status not in ["UP", "CD", "CM"] and is_reviewer else False
     context['can_delete'] = True if task.status == "UP" and user == task.created_by else False
 
-    context['can_mod_mentors'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_mentor else False
-    context['can_mod_tasks'] = True if task.status in ["UP", "OP", "LO"] and is_mentor else False
+    context['can_mod_reviewers'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_reviewer else False
+    context['can_mod_tasks'] = True if task.status in ["UP", "OP", "LO"] and is_reviewer else False
 
-    context['can_assign_credits'] = True if task.status in ["OP", "WR"] and is_mentor else False
+    context['can_assign_credits'] = True if task.status in ["OP", "WR"] and is_reviewer else False
     context['task_claimable'] = True if task.status in ["OP", "WR"] and not is_guest else False
 
     if task.status == "CD":
@@ -160,7 +160,7 @@ def create_task(request):
                     #publish = data['publish'] # just in case if we have to show the option
                     task = createTask(title,desc,user,credits)
                     
-                    addMentor(task, user)
+                    addReviewer(task, user)
                     updateTask(task,tags_field=data['tags_field'])
                     # if publish: publishTask(task)    
                     task_url = '/task/view/tid=%s'%task.id
@@ -175,7 +175,7 @@ def create_task(request):
     else:
         return show_msg(user, 'You are not authorised to create a task.', "/", "home page")
         
-def add_mentor(request, tid):
+def add_reviewer(request, tid):
     """ check if the current user has the rights to edit the task and add him.
     if user is not authenticated, redirect him to concerned page. """
     
@@ -187,15 +187,15 @@ def add_mentor(request, tid):
     
     is_guest = True if not user.is_authenticated() else False
     
-    if (not is_guest) and user in task.mentors.all():
+    if (not is_guest) and user in task.reviewers.all():
 
         pending_requests = Request.objects.filter(is_replied=False,is_valid=True,role="MT",task=task).order_by('creation_date').reverse()
         user_pending_requests = pending_requests.filter(sent_by=user)
 
         ## now iam going for a brute force method
         user_list = list(User.objects.filter(is_active=True))
-        for mentor in task.mentors.all():
-            user_list.remove(mentor)
+        for reviewer in task.reviewers.all():
+            user_list.remove(reviewer)
             
         for a_user in task.claimed_users.all():
             user_list.remove(a_user)
@@ -206,11 +206,11 @@ def add_mentor(request, tid):
         for req in user_pending_requests:
             user_list.remove(req.sent_to.all()[0])
             
-        non_mentors = ((_.id, _.username) for _ in user_list)
-        non_mentor_ids = [ str(a_user.id) for a_user in user_list ]
+        non_reviewers = ((_.id, _.username) for _ in user_list)
+        non_reviewer_ids = [ str(a_user.id) for a_user in user_list ]
         ## code till must be made elegant and not brute force like above
 
-        form = AddMentorForm(non_mentors)
+        form = AddReviewerForm(non_reviewers)
 
         context = {
             'user':user,
@@ -221,18 +221,18 @@ def add_mentor(request, tid):
 
         if request.method == "POST":
             data = request.POST
-            uid = data.get('mentor', None)
-            if uid in non_mentor_ids:
-                new_mentor = User.objects.get(id=int(uid))
-                reqMentor(task, new_mentor, user)
-                return redirect('/task/addmentor/tid=%s'%task.id)
+            uid = data.get('reviewer', None)
+            if uid in non_reviewer_ids:
+                new_reviewer = User.objects.get(id=int(uid))
+                reqReviewer(task, new_reviewer, user)
+                return redirect('/task/addreviewer/tid=%s'%task.id)
             else:
                 ## bogus post request
                 raise Http404
         else:
-            return render_to_response('task/addmentor.html', context)
+            return render_to_response('task/addreviewer.html', context)
     else:
-        return show_msg(user, 'You are not authorised to add mentors for this task', task_url, 'view the task')
+        return show_msg(user, 'You are not authorised to add reviewers for this task', task_url, 'view the task')
     
 def add_tasks(request, tid):
     """ first display tasks which can be subtasks for the task and do the rest.
@@ -257,7 +257,7 @@ def add_tasks(request, tid):
     
     is_guest = True if not user.is_authenticated() else False
     
-    if (not is_guest) and user in task.mentors.all():
+    if (not is_guest) and user in task.reviewers.all():
         if task.status in ["UP", "OP", "LO"]:
             form = AddTaskForm(task_choices, is_plain)
             if request.method == "POST":
@@ -304,7 +304,7 @@ def remove_task(request, tid):
     task = getTask(tid)
 
     is_guest = True if not user.is_authenticated() else False
-    if (not is_guest) and user in task.mentors.all():
+    if (not is_guest) and user in task.reviewers.all():
 
         if task.status in ["UP", "LO", "OP"]:
             
@@ -362,19 +362,19 @@ def claim_task(request, tid):
     # this is what the next line should be when i re sync the db
     claims = Notification.objects.filter(task=task, sent_to=task.created_by, role="CL")
 
-    mentors = task.mentors.all()
+    reviewers = task.reviewers.all()
     claimed_users = task.claimed_users.all()
     assigned_users = task.assigned_users.all()
     
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if user in mentors else False
+    is_reviewer = True if user in reviewers else False
 
     task_claimable = True if task.status in ["OP", "WR"] else False
-    user_can_claim = True if  task_claimable and not ( is_guest or is_mentor ) and ( user not in claimed_users ) and ( user not in assigned_users )  else False
+    user_can_claim = True if  task_claimable and not ( is_guest or is_reviewer ) and ( user not in claimed_users ) and ( user not in assigned_users )  else False
     task_claimed = True if claimed_users else False
     
     context = {'user':user,
-               'is_mentor':is_mentor,
+               'is_reviewer':is_reviewer,
                'task':task,
                'claims':claims,
                'user_can_claim':user_can_claim,
@@ -409,9 +409,9 @@ def rem_user(request, tid):
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if user in task.mentors.all() else False
+    is_reviewer = True if user in task.reviewers.all() else False
 
-    if (not is_guest) and is_mentor:
+    if (not is_guest) and is_reviewer:
 
         assigned_users = task.assigned_users.all()
         choices = [ (_.id,_.username) for _ in assigned_users ]
@@ -457,14 +457,14 @@ def assign_task(request, tid):
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if user in task.mentors.all() else False
+    is_reviewer = True if user in task.reviewers.all() else False
 
     claimed_users = task.claimed_users.all()
     assigned_users = task.assigned_users.all()
 
     task_claimed = True if claimed_users else False
     
-    if (not is_guest) and is_mentor:
+    if (not is_guest) and is_reviewer:
         if task.status in ["OP", "WR"]:
             if task_claimed:
                 user_list = ((user.id,user.username) for user in claimed_users)
@@ -487,10 +487,10 @@ def assign_task(request, tid):
         return show_msg(user, 'You are not authorised to perform this action', task_url, 'view the task')
 
 def assign_credits(request, tid):
-    """ Check if the user is a mentor and credits can be assigned.
+    """ Check if the user is a reviewer and credits can be assigned.
     Then display all the approved credits.
-    Then see if mentor can assign credits to users also or only mentors.
-    Then put up a form for mentor to assign credits accordingly.
+    Then see if reviewer can assign credits to users also or only reviewers.
+    Then put up a form for reviewer to assign credits accordingly.
     """
     
     task_url = "/task/view/tid=%s"%tid
@@ -499,16 +499,16 @@ def assign_credits(request, tid):
     task = getTask(tid)
 
     ## the moment we see that user had requested credits, it means he had worked and hence we change the status to WR
-    ## we have to discuss on this since, credits may also be given to mentor
+    ## we have to discuss on this since, credits may also be given to reviewer
     task.status = "WR"
     task.save()
 
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if (not is_guest) and user in task.mentors.all() else False
+    is_reviewer = True if (not is_guest) and user in task.reviewers.all() else False
 
-    if is_mentor:
+    if is_reviewer:
         if task.status in ["OP", "WR"]:
-            choices = [(_.id,_.username) for _ in task.mentors.all()]
+            choices = [(_.id,_.username) for _ in task.reviewers.all()]
             if task.status == "WR":
                 choices.extend([(_.id, _.username) for _  in task.assigned_users.all() ])
             prev_credits = task.request_task.filter(role="PY",is_valid=True,is_replied=True,reply=True).count()
@@ -553,8 +553,8 @@ def edit_task(request, tid):
     task_url = "/task/view/tid=%s"%tid
     user = get_user(request.user) if request.user.is_authenticated() else request.user
 
-    is_mentor = True if user in task.mentors.all() else False
-    can_edit = True if is_mentor and task.status == "UP" else False
+    is_reviewer = True if user in task.reviewers.all() else False
+    can_edit = True if is_reviewer and task.status == "UP" else False
 
     if can_edit:
         form = EditTaskForm(instance=task)
@@ -582,7 +582,7 @@ def complete_task(request, tid):
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if user in task.mentors.all() else False
+    is_reviewer = True if user in task.reviewers.all() else False
 
     claimed_users = task.claimed_users.all()
     assigned_users = task.assigned_users.all()
@@ -591,7 +591,7 @@ def complete_task(request, tid):
     task_assigned_credits = task.credit_set.all()
 
 
-    if is_mentor:
+    if is_reviewer:
         if task.status in ["OP", "WR"]:
 
             context = {
@@ -623,9 +623,9 @@ def close_task(request, tid):
     task = getTask(tid)
     
     is_guest = True if not user.is_authenticated() else False
-    is_mentor = True if user in task.mentors.all() else False
+    is_reviewer = True if user in task.reviewers.all() else False
 
-    if is_mentor:
+    if is_reviewer:
 
         context = {
             'user':user,
@@ -650,7 +650,7 @@ def close_task(request, tid):
 
 def delete_task(request, tid):
     """ mark the task status as DL.
-    take a reason from the user and pass on to all the other mentors.
+    take a reason from the user and pass on to all the other reviewers.
     """
 
     task_url = "/task/view/tid=%s"%tid

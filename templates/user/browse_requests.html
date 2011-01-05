@@ -13,7 +13,7 @@
             {% endifequal %}
             
             {% ifequal req.role "MT" %} 
-                Request to mentor the task "{{req.task.title|slice:":20"}}"
+                Request to reviewer the task "{{req.task.title|slice:":20"}}"
             {% endifequal %}
             
             {% ifequal req.role "DV" %}

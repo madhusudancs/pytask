@@ -9,12 +9,12 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         sent_to: a user to which the notification is to be sent
         sent_from : a user from which the message has originated
             A user who approves/rejects in case of request
-            A mentor who closes/complets the task
+            A reviewer who closes/complets the task
         reply: A boolean
         task: a task if applicable
         requested_by: a user makes the request
-            A mentor who assigns credits in case of pynts
-            A mentor who requests to act as a mentor
+            A reviewer who assigns credits in case of pynts
+            A reviewer who requests to act as a reviewer
         remarks: any remarks for rejecting
         receiving_user: user receiving pynts
         pynts: the obvious
@@ -33,18 +33,18 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
         credits_url = '<a href="/task/assigncredits/tid=%s">%s</a>'%(task.id, "click here")
-        mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
+        reviewer_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
         admin_url = '<a href="/user/view/uid=%s">%s</a>'%(sent_from.id, sent_from.username)
         user_url = '<a href="/user/view/uid=%s">%s</a>'%(receiving_user.id, receiving_user.username)
 
         if reply:
             notification.sub = "Approved request for assign of credits for %s"%task.title[:20]
             notification.message  = """ Request made by %s to assign %s pynts to %s for the task %s has been approved by %s<br />
-                                    %s if you want the view/assign pynts page of the task.<br />"""%(mentor_url, pynts, user_url, task_url, admin_url, credits_url)
+                                    %s if you want the view/assign pynts page of the task.<br />"""%(reviewer_url, pynts, user_url, task_url, admin_url, credits_url)
 
         else:
             notification.sub = "Rejected request for assign of credits for %s"%task.title[:20]
-            notification.message = """ Request made by %s to assign %s pynts to %s for the task %s has been rejected by %s.<br /> """%(mentor_url, pynts, user_url, task_url, admin_url)
+            notification.message = """ Request made by %s to assign %s pynts to %s for the task %s has been rejected by %s.<br /> """%(reviewer_url, pynts, user_url, task_url, admin_url)
             if remarks:
                 notification.remarks = remarks
                 notification.message += "Reason: %s<br />"%remarks
@@ -56,18 +56,18 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         notification.sent_from = sent_from
 
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
-        requested_mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
-        new_mentor = sent_from
-        new_mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(new_mentor.id, new_mentor.username)
+        requested_reviewer_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
+        new_reviewer = sent_from
+        new_reviewer_url = '<a href="/user/view/uid=%s">%s</a>'%(new_reviewer.id, new_reviewer.username)
         
         if reply:
-            notification.sub = "New mentor for the task %s"%task.title[:20]
-            notification.message = "%s has accepted the request made by %s, asking him act as a mentor for the task %s<br />"%(new_mentor_url, requested_mentor_url, task_url)
-            notification.message += "He can be contacted on %s"%new_mentor.email
+            notification.sub = "New reviewer for the task %s"%task.title[:20]
+            notification.message = "%s has accepted the request made by %s, asking him act as a reviewer for the task %s<br />"%(new_reviewer_url, requested_reviewer_url, task_url)
+            notification.message += "He can be contacted on %s"%new_reviewer.email
 
         else:
-            notification.sub = "%s rejected request to act as a mentor"%new_mentor.username
-            notification.message = "%s has rejected your request asking him to act as a mentor for %s.<br />"%(new_mentor_url, task_url)
+            notification.sub = "%s rejected request to act as a reviewer"%new_reviewer.username
+            notification.message = "%s has rejected your request asking him to act as a reviewer for %s.<br />"%(new_reviewer_url, task_url)
             if remarks:
                 notification.remarks = remarks
                 notification.message += "Remarks: %s<br />"%remarks
@@ -95,16 +95,16 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
     elif role == "NT":
 
         notification.task = task
-        new_mentor = sent_to
-        mentor_learn_url = '<sup><a href="/about/mentor/">learn more</a></sup>'
+        new_reviewer = sent_to
+        reviewer_learn_url = '<sup><a href="/about/reviewer/">learn more</a></sup>'
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
 
-        notification.sub = "You are mentoring the task %s"%task.title[:20]
-        notification.message = "You have accepted to act as a mentor%s for the task %s.<br />"%(mentor_learn_url, task_url)
-        notification.message += " Here is a list of other mentors and their email addresses.<br /> <ul>"
+        notification.sub = "You are reviewering the task %s"%task.title[:20]
+        notification.message = "You have accepted to act as a reviewer%s for the task %s.<br />"%(reviewer_learn_url, task_url)
+        notification.message += " Here is a list of other reviewers and their email addresses.<br /> <ul>"
 
-        for a_mentor in task.mentors.exclude(id=new_mentor.id):
-            notification.message += "<li> %s - %s </li>"%(a_mentor.username, a_mentor.email)
+        for a_reviewer in task.reviewers.exclude(id=new_reviewer.id):
+            notification.message += "<li> %s - %s </li>"%(a_reviewer.username, a_reviewer.email)
         notification.message += "</ul>"
 
         working_users = task.assigned_users.all()
@@ -114,7 +114,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
             for a_user in working_users:
                 notification.message += "<li> %s - %s </li>"%(a_user.username, a_user.email)
             notification.message += "</ul><br />"
-        notification.message += "Happy Mentoring."
+        notification.message += "Happy Reviewering."
 
     elif role == "NU":
 
@@ -150,17 +150,17 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         notification.task = task
         notification.remarks = remarks
 
-        mentor = sent_from
-        mentor_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
+        reviewer = sent_from
+        reviewer_url = '<a href="/user/view/uid=%s">%s</a>'%(reviewer.id, reviewer.username)
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
         
         if role == "CM":
             notification.sub = "%s has been marked complete"%task.title
-            notification.message = "The task %s has been marked complete by %s.<br />"%(task_url, mentor_url)
+            notification.message = "The task %s has been marked complete by %s.<br />"%(task_url, reviewer_url)
 
         elif role == "CD":
             notification.sub = "%s has been closed"%task.title
-            notification.message = "The task %s has been closed by %s.<br />"%(task_url, mentor_url)
+            notification.message = "The task %s has been closed by %s.<br />"%(task_url, reviewer_url)
 
         if remarks:
             notification.remarks = remarks
@@ -171,17 +171,17 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         notification.task = task
         notification.sent_from = sent_from
         added_user = sent_to
-        mentor = sent_from
-        assigned_by_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
+        reviewer = sent_from
+        assigned_by_url = '<a href="/user/view/uid=%s">%s</a>'%(reviewer.id, reviewer.username)
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
 
         notification.sub = "Your claim for the task %s accepted."%task.title[:20]
         notification.message = "You have been selected to work on the task %s by %s.<br />"%(task_url, assigned_by_url)
-        notification.message += "You can now start working on the task and will be credited by the mentors for your work.<br />"
+        notification.message += "You can now start working on the task and will be credited by the reviewers for your work.<br />"
 
-        notification.message += " Here is a list of mentors for the task and their email addresses.<br /> <ul>"
-        for a_mentor in task.mentors.all():
-            notification.message += "<li> %s - %s </li>"%(a_mentor.username, a_mentor.email)
+        notification.message += " Here is a list of reviewers for the task and their email addresses.<br /> <ul>"
+        for a_reviewer in task.reviewers.all():
+            notification.message += "<li> %s - %s </li>"%(a_reviewer.username, a_reviewer.email)
         notification.message += "</ul>"
 
         working_users = task.assigned_users.exclude(id=added_user.id)
@@ -197,8 +197,8 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         notification.task = task
         notification.sent_from = sent_from
         removed_user = sent_to
-        mentor = sent_from
-        removed_by_url = '<a href="/user/view/uid=%s">%s</a>'%(mentor.id, mentor.username)
+        reviewer = sent_from
+        removed_by_url = '<a href="/user/view/uid=%s">%s</a>'%(reviewer.id, reviewer.username)
         task_url = '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
         claim_url = '<a href="/task/claim/tid=%s">%s</a>'%(task.id, "clicking here")
 
@@ -233,7 +233,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         task_url = '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
 
         notification.sub = 'New claim for the task "%s"'%(task.title[:20])
-        notification.message = '%s has submitted a %s for the task "%s" mentored by you.<br />'%(claimed_by_url, claim_url, task_url)
+        notification.message = '%s has submitted a %s for the task "%s" reviewered by you.<br />'%(claimed_by_url, claim_url, task_url)
         notification.message += '<b>Claim proposal:</b> %s'%(remarks)
 
 

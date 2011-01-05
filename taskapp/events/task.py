@@ -5,7 +5,7 @@ from pytask.taskapp.utilities.request import create_request
 from pytask.taskapp.utilities.helper import get_key
 from pytask.taskapp.utilities.notification import create_notification
 
-def publishTask(task, rem_mentors=True, rem_comments=True):
+def publishTask(task, rem_reviewers=True, rem_comments=True):
     """ set the task status to open """
 
  #   if task.sub_type == 'D':
@@ -19,9 +19,9 @@ def publishTask(task, rem_mentors=True, rem_comments=True):
     else:
         task.status = "OP"
 
-    if rem_mentors:
-        task.mentors.clear()
-        task.mentors.add(task.created_by)
+    if rem_reviewers:
+        task.reviewers.clear()
+        task.reviewers.add(task.created_by)
 
     if rem_comments:
         task.comment_set.update(is_deleted=True)
@@ -93,22 +93,22 @@ def addDep(main_task, dependency):
     
     main_task.save()
 
-def reqMentor(task, mentor, req_by):
+def reqReviewer(task, reviewer, req_by):
     """ create a request object with role as MT.
     """
 
-    create_request(sent_by=req_by, role="MT", sent_to=mentor, task=task) 
+    create_request(sent_by=req_by, role="MT", sent_to=reviewer, task=task) 
 
-def addMentor(task,mentor):
-    """ add the mentor to mentors list of the task """
+def addReviewer(task,reviewer):
+    """ add the reviewer to reviewers list of the task """
     
-    task.mentors.add(mentor)
+    task.reviewers.add(reviewer)
     task.save()
     return task     
 
 def createTask(title,desc,created_by,credits):
     """ creates a bare minimum task with title, description and credits.
-    the creator of the task will be assigned as a mentor for the task.
+    the creator of the task will be assigned as a reviewer for the task.
     """
 
     while True:
@@ -147,11 +147,11 @@ def addClaim(task, message, user):
         req.is_valid = False
         req.save()
         user_url = '<a href="/user/view/uid=%s">%s</a>'%(user.id, user.username)
-        reason = "User has claimed the task and hence cannot be a mentor and this request was made invalid."
+        reason = "User has claimed the task and hence cannot be a reviewer and this request was made invalid."
         create_notification("MT", req.sent_by, user, task=task, reply=False, remarks=reason, requested_by=req.sent_by)
 
-    for a_mentor in task.mentors.all():
-        create_notification("CL", a_mentor, user, task=task, remarks=message)
+    for a_reviewer in task.reviewers.all():
+        create_notification("CL", a_reviewer, user, task=task, remarks=message)
     
 def assignTask(task, added_user, assigned_by):
     """ check for the status of task and assign it to the particular user """
@@ -231,8 +231,8 @@ def completeTask(task, marked_by):
     for a_user in task.claimed_users.all():
         create_notification(role="CM", sent_to=a_user, sent_from=marked_by, task=task)
 
-    for a_mentor in task.mentors.all():
-        create_notification(role="CM", sent_to=a_mentor, sent_from=marked_by, task=task)
+    for a_reviewer in task.reviewers.all():
+        create_notification(role="CM", sent_to=a_reviewer, sent_from=marked_by, task=task)
 
 def closeTask(task, closed_by, reason=None):
     """ set the status of task as CD.
@@ -253,8 +253,8 @@ def closeTask(task, closed_by, reason=None):
     for a_user in task.claimed_users.all():
         create_notification(role="CD", sent_to=a_user, sent_from=closed_by, task=task, remarks=reason)
 
-    for a_mentor in task.mentors.all():
-        create_notification(role="CD", sent_to=a_mentor, sent_from=closed_by, task=task, remarks=reason)
+    for a_reviewer in task.reviewers.all():
+        create_notification(role="CD", sent_to=a_reviewer, sent_from=closed_by, task=task, remarks=reason)
 
 def deleteTask(task, deleted_by, reason=None):
     """ set the task status as DL
@@ -267,5 +267,5 @@ def deleteTask(task, deleted_by, reason=None):
     pending_requests = task.request_task.filter(is_replied=False,is_valid=True)
     pending_requests.update(is_valid=False)
 
-    for a_mentor in task.mentors.exclude(id=deleted_by.id):
-        create_notification("DL", sent_to=a_mentor, sent_from=deleted_by, task=task, remarks=reason)
+    for a_reviewer in task.reviewers.exclude(id=deleted_by.id):
+        create_notification("DL", sent_to=a_reviewer, sent_from=deleted_by, task=task, remarks=reason)

@@ -28,7 +28,7 @@
     {% else %}    
     
         {% ifequal "MT" req.role %}
-            <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested you to act as a mentor for the task
+            <a href="/user/view/uid={{req.sent_by.id}}">{{req.sent_by.username}}</a> requested you to act as a reviewer for the task
             <a href="/task/view/tid={{req.task.id}}">{{req.task.title}}</a><br />
         {% else %}
             You have been requested to act as 

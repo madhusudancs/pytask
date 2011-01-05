@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}
-    PyTasks - About - Add Mentors
+    PyTasks - About - Add Reviewers
 {% endblock %}
 {% block content %}
      
-    A Mentor <sup><a href="/about/mentor/" target="_blank">learn more</a></sup>
-    of the task can request other users to mentor the task by clicking the link "Add more mentors" available on the task page.
-    A request will be sent to the user. If a user has claimed the task or is working on the task, he cannot be requested to be a mentor.
-    If the requested user accepts the request, he will also become the mentor of the task.<br /><br />
+    A Reviewer <sup><a href="/about/reviewer/" target="_blank">learn more</a></sup>
+    of the task can request other users to reviewer the task by clicking the link "Add more reviewers" available on the task page.
+    A request will be sent to the user. If a user has claimed the task or is working on the task, he cannot be requested to be a reviewer.
+    If the requested user accepts the request, he will also become the reviewer of the task.<br /><br />
     
-    Since mentors can view unpublished tasks, mentors can be requested to view, edit and comment upon unpublished tasks.
+    Since reviewers can view unpublished tasks, reviewers can be requested to view, edit and comment upon unpublished tasks.
     They can also add or remove subtasks/dependencies in unpublished state. Thereby, the creator of task can fix on the task.
     Publishing/Deleting of an unpublished task is available only to the creator of the task.<br /><br />
     
-    Users can also be requested to mentor an published task. If the user accepts the request, he also becomes the mentor of the task.
-    In this case, the mentor is equivalent to the creator of the task. He can select/remove users; request pynts; close/complete the task.
+    Users can also be requested to reviewer an published task. If the user accepts the request, he also becomes the reviewer of the task.
+    In this case, the reviewer is equivalent to the creator of the task. He can select/remove users; request pynts; close/complete the task.
     He will have complete control over the task.<br /><br />
     
-    If a mentor requests a user to act as a mentor, he cannot make the same request to the same user again untill the previous one is 
-    rejected. However, another mentor in the task can request the same user to be a mentor, unless there is already a similar request to the user
-    from this mentor also.
+    If a reviewer requests a user to act as a reviewer, he cannot make the same request to the same user again untill the previous one is 
+    rejected. However, another reviewer in the task can request the same user to be a reviewer, unless there is already a similar request to the user
+    from this reviewer also.
 
 {% endblock %}

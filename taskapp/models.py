@@ -26,7 +26,7 @@ STATUS_CHOICES = (
     ("CM", "Completed"))
 
 NOTIFY_CHOICES = (
-    ("MT", "Add Mentor"),
+    ("MT", "Add Reviewer"),
     ("DV", "Developer"),
     ("MG", "Manager"),
     ("AD", "Admin"),
@@ -35,7 +35,7 @@ NOTIFY_CHOICES = (
     ("CD", "Task closed"),
     ("DL", "Task deleted"),
     ("NU", "New User"),
-    ("NT", "New Mentor"),
+    ("NT", "New Reviewer"),
     ("ND", "New Developer"),
     ("NG", "New Manager"),
     ("NA", "New Admin"),
@@ -97,7 +97,7 @@ class Task(models.Model):
     credits = models.PositiveSmallIntegerField(help_text = u"No.of credits a user gets on completing the task")
     progress = models.PositiveSmallIntegerField(default = 0)
         
-    mentors = models.ManyToManyField(User, related_name = "%(class)s_mentors")
+    reviewers = models.ManyToManyField(User, related_name = "%(class)s_reviewers")
     created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
     claimed_users = models.ManyToManyField(User, blank = True, related_name = "%(class)s_claimed_users")
     assigned_users = models.ManyToManyField(User, blank = True, related_name = "%(class)s_assigned_users")

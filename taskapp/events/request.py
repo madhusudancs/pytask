@@ -1,6 +1,6 @@
 from datetime import datetime
 from pytask.taskapp.models import Profile
-from pytask.taskapp.events.task import  addMentor
+from pytask.taskapp.events.task import  addReviewer
 from pytask.taskapp.events.user import changeRole
 from pytask.taskapp.utilities.notification import create_notification
 
@@ -33,24 +33,24 @@ def reply_to_request(request_obj, reply, replied_by):
             task = request_obj.task
             requested_by = request_obj.sent_by
             if reply:
-                ## tell the replied user that he is mentor for this task and give him learn more link
+                ## tell the replied user that he is reviewer for this task and give him learn more link
                 create_notification("NT", request_obj.replied_by, task=task) 
 
                 ## now check if there are such similar requests and mark them as invalid
                 ## they cannot be of type PY and so we can use the replied_by to get requests
                 pending_requests = replied_by.request_sent_to.filter(is_valid=True, is_replied=False, role="MT",task=task)
                 for req in pending_requests:
-                       create_notification("MT", req.sent_by, replied_by, False, task=req.task, remarks = "User has already accepted one such request and is a mentor.", requested_by = req.sent_by)
+                       create_notification("MT", req.sent_by, replied_by, False, task=req.task, remarks = "User has already accepted one such request and is a reviewer.", requested_by = req.sent_by)
                        req.is_valid = False
                        req.save()
 
-                ## alert all the mentors including who made request and all assigned users
-                for a_mentor in task.mentors.all():
-                    create_notification(request_obj.role, a_mentor, replied_by, True, task, request_obj.remarks, requested_by)
+                ## alert all the reviewers including who made request and all assigned users
+                for a_reviewer in task.reviewers.all():
+                    create_notification(request_obj.role, a_reviewer, replied_by, True, task, request_obj.remarks, requested_by)
                 for a_user in task.assigned_users.all():
                     create_notification(request_obj.role, a_user, replied_by, True, task, request_obj.remarks, requested_by)
 
-                addMentor(task, request_obj.replied_by)
+                addReviewer(task, request_obj.replied_by)
             else:
                 ## tell the requested user that his request was rejected due to these reasons.
                 create_notification(request_obj.role, requested_by, replied_by, False, task, request_obj.remarks, requested_by)

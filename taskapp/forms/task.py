@@ -45,11 +45,11 @@ class EditTaskForm(forms.ModelForm):
         except Task.DoesNotExist:
             return data
 
-def AddMentorForm(choices,instance=None):
+def AddReviewerForm(choices,instance=None):
     """ return a form object with appropriate choices """
     
     class myform(forms.Form):
-        mentor = forms.ChoiceField(choices=choices, required=True)
+        reviewer = forms.ChoiceField(choices=choices, required=True)
     form = myform(instance) if instance else myform()
     return form
 

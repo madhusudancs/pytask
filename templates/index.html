@@ -73,9 +73,9 @@
         {% endifnotequal %}<br />
     {% endif %}
     
-    {% if user.task_mentors.count %}
-        <a href="/user/mentor/">Mentoring {{ user.task_mentors.count }}
-        {% ifnotequal user.task_mentors.count 1 %}
+    {% if user.task_reviewers.count %}
+        <a href="/user/reviewer/">Reviewering {{ user.task_reviewers.count }}
+        {% ifnotequal user.task_reviewers.count 1 %}
             tasks
         {% else %}
             task
@@ -94,9 +94,9 @@
     <br />
     {% endif %}
 
-    {% if mentored_tasks %}
-    Tasks you are mentoring:<ul>
-        {% for a_task in mentored_tasks %}
+    {% if reviewered_tasks %}
+    Tasks you are reviewering:<ul>
+        {% for a_task in reviewered_tasks %}
             <li><a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a></li>
         {% endfor %}
         </ul>

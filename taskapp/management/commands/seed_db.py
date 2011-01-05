@@ -14,9 +14,9 @@ from pytask.taskapp.utilities.notification import create_notification
 def seed_db():
     """ a method to seed the database with random data """
     
-    defaultMentor = userEvents.createSuUser("admin", "admin@example.com", "123456", datetime.now(), "M")
-    mentor_profile = defaultMentor.get_profile()
-    userEvents.updateProfile(mentor_profile, {'rights':"AD"})
+    defaultReviewer = userEvents.createSuUser("admin", "admin@example.com", "123456", datetime.now(), "M")
+    reviewer_profile = defaultReviewer.get_profile()
+    userEvents.updateProfile(reviewer_profile, {'rights':"AD"})
     
     for i in range(1,21):
         
@@ -29,11 +29,11 @@ def seed_db():
         create_notification("NU", user)
 
         if i%4==0:
-            create_request(defaultMentor, "MG", user)
+            create_request(defaultReviewer, "MG", user)
         elif i%3==0:
-            create_request(defaultMentor, "DV", user)
+            create_request(defaultReviewer, "DV", user)
         elif i%2==0:
-            create_request(defaultMentor, "AD", user)
+            create_request(defaultReviewer, "AD", user)
         elif i in [7, 13]:
             user.is_active = False
             user.save()
@@ -42,12 +42,12 @@ def seed_db():
         
         title = "Task "+str(i)
         desc = "I am "+title
-        created_by = defaultMentor
+        created_by = defaultReviewer
         credits = 20
         
         task = taskEvents.createTask(title,desc,created_by,credits)
         if task:
-            taskEvents.addMentor(task, defaultMentor)
+            taskEvents.addReviewer(task, defaultReviewer)
             if i%2==0:taskEvents.publishTask(task)
 
 class Command(NoArgsCommand):
