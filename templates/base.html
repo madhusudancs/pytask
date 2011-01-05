@@ -133,6 +133,8 @@
             <li><a href="/" title="home">home</a></li>
             {% if user.is_authenticated %}
                 <li><a href="/task/browse/" title="tasks">tasks</a></li>
+                <li><a href="/textbook/" title="textbook">textbooks</a></li>
+                <br />
                 <li><a href="/user/notifications/" title="notifications">
                 {% if user.unread_notifications.count %}
                     notifications({{user.unread_notifications.count}})
