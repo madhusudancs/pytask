@@ -18,6 +18,8 @@ def browse_tasks(request):
     
     user = get_user(request.user) if request.user.is_authenticated() else request.user
     task_list = Task.objects.exclude(status="UP").exclude(status="DL").order_by('published_datetime').reverse()
+
+    task_list = task_list.exclude(tags_field__icontains="textbook")
     
     context = {'user':user,
                'task_list':task_list,
@@ -30,7 +32,7 @@ def show_textbooks(request):
     user = get_user(request.user) if request.user.is_authenticated() else request.user
     task_list = Task.objects.exclude(status="UP").exclude(status="DL").order_by('published_datetime').reverse()
 
-    textbooks = task_list.filter(tags_field__icontains="textbook")
+    task_list = task_list.filter(tags_field__icontains="textbook")
     
     context = {'user':user,
                'task_list':task_list,
