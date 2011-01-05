@@ -68,7 +68,7 @@ def upload_work(request, tid):
         pass
     else:
         form = WorkReportForm()
-        context.update("form":form)
+        context.update({"form":form})
         return render_to_response('task/report.html', context)
 
 
