@@ -124,5 +124,6 @@ urlpatterns = patterns('',
     (r'^about/(\w+)/$', userViews.learn_more),
 
     (r'^textbook/$', taskViews.show_textbooks),
+    (r'^task/report/tid=(\w+)/$', taskViews.upload_work),
     
 )

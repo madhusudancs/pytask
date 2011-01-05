@@ -1,5 +1,5 @@
 from django import forms
-from pytask.taskapp.models import Task
+from pytask.taskapp.models import Task, WorkReport
 
 class TaskCreateForm(forms.ModelForm):
     class Meta:
@@ -99,3 +99,8 @@ def RemoveUserForm(choices, instance=None):
         reason = forms.CharField(min_length=1, required=True)
     return myForm(instance) if instance else myForm()
 
+class WorkReportForm(forms.ModelForm):
+
+    class Meta:
+        model = WorkReport
+        fields = ['remarks', 'attachment']

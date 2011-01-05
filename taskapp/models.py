@@ -169,5 +169,15 @@ class Notification(models.Model):
     def __unicode__(self):
         return u"%s %s %s"%(self.sent_to, self.message, self.sent_date.ctime())
     
+class WorkReport(models.Model):
+
+    attachment = models.FileField(upload_to = UPLOADS_DIR, blank = False)
+    remarks = models.TextField()
+    revision = models.PositiveIntegerField(default=0)
+    task = models.ForeignKey(Task, related_name = "%(class)s_report")
+    submitted_by = models.ForeignKey(Task, related_name = "%(class)s_submitted_by")
+
+    created_at = models.DateTimeField()
+
 #tagging.register(Profile)
 #tagging.register(Task)

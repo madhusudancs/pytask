@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Request, Notification
 from pytask.taskapp.utilities.task import getTask
-from pytask.taskapp.forms.task import TaskCreateForm, AddReviewerForm, AddTaskForm, ChoiceForm, AssignPyntForm, RemoveUserForm, EditTaskForm, ClaimTaskForm
+from pytask.taskapp.forms.task import TaskCreateForm, AddReviewerForm, AddTaskForm, ChoiceForm, AssignPyntForm, RemoveUserForm, EditTaskForm, ClaimTaskForm, WorkReportForm
 from pytask.taskapp.events.task import createTask, reqReviewer, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignPynts, completeTask, closeTask, addReviewer, deleteTask
 from pytask.taskapp.views.user import show_msg
 from pytask.taskapp.utilities.user import get_user
@@ -38,6 +38,34 @@ def show_textbooks(request):
                'task_list':task_list,
                }
     return render_to_response('task/browse.html', context)
+
+def upload_work(request, tid):
+    """ Check if the work is in WR state and the user is in assigned_users.
+    """
+
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = get_user(request.user) if request.user.is_authenticated() else request.user
+    task = getTask(tid)
+
+    if not task.status == "WR":
+        return show_msg(user, "The task is not in a stage to upload content", task_url, "view the task")
+
+    if not user in task.assigned_users.all():
+        return show_msg(user, "You are not authorised to upload data to this task", task_url, "view the task")
+
+
+    context = {
+        'user':user,
+        'task':task,
+    }
+
+    if request.method == "POST":
+        pass
+    else:
+        form = WorkReportForm()
+        return render_to_response('task/report.html', context)
+
 
 def publish_task(request, tid):
     """ check if user is the reviewer and also if the task status is UP.
