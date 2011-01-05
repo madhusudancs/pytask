@@ -51,19 +51,24 @@ def upload_work(request, tid):
     if not task.status == "WR":
         return show_msg(user, "The task is not in a stage to upload content", task_url, "view the task")
 
-    if not user in task.assigned_users.all():
-        return show_msg(user, "You are not authorised to upload data to this task", task_url, "view the task")
+    can_upload = True if user in task.assigned_users.all() else False
 
+    old_reports = WorkReport.workreport_report.all()
 
     context = {
-        'user':user,
-        'task':task,
+        'user': user,
+        'task': task,
+        'old_reports': old_reports,
     }
 
     if request.method == "POST":
+        if not can_upload:
+            return show_msg(user, "You are not authorised to upload data to this task", task_url, "view the task")
+
         pass
     else:
         form = WorkReportForm()
+        context.update("form":form)
         return render_to_response('task/report.html', context)
 
 

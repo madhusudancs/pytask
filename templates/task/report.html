@@ -3,5 +3,13 @@
     {{task.title}}
 {% endblock %}
 {% block content %}
-
+{% if not old_reports %}
+There are no reports submitted as of now
+{% else %}
+{% for rep in old_reports %}
+{{rep.submitted_by}} | {{rep.attachment}} <br />
+{% endfor %}
+{% endif %}
+some data
+<hr />
 {% endblock %}
