@@ -4,7 +4,7 @@ from pytask.taskapp.models import Task
 class TaskCreateForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'desc', 'tags_field', 'credits']
+        fields = ['title', 'desc', 'tags_field', 'pynts']
     #publish = forms.BooleanField(required=False)
 
     def clean_title(self):
@@ -25,7 +25,7 @@ class TaskCreateForm(forms.ModelForm):
 class EditTaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['title', 'desc', 'tags_field', 'credits']
+        fields = ['title', 'desc', 'tags_field', 'pynts']
 
     def clean_desc(self):
         data = self.cleaned_data['desc'].strip()
@@ -85,7 +85,7 @@ def AddTaskForm(task_choices, is_plain=False):
         task = forms.ChoiceField(choices=task_choices)
     return myForm()
 
-def AssignCreditForm(choices, instance=None):
+def AssignPyntForm(choices, instance=None):
     
     class myForm(forms.Form):
         user = forms.ChoiceField(choices=choices, required=True)

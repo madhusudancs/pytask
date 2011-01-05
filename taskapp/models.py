@@ -30,7 +30,7 @@ NOTIFY_CHOICES = (
     ("DV", "Developer"),
     ("MG", "Manager"),
     ("AD", "Admin"),
-    ("PY", "Assign credits"),
+    ("PY", "Assign pynts"),
     ("CM", "Task completed"),
     ("CD", "Task closed"),
     ("DL", "Task deleted"),
@@ -70,7 +70,7 @@ class Profile(models.Model):
     dob = models.DateField(verbose_name = u"Date of Birth", help_text = "YYYY-MM-DD")
     gender = models.CharField(max_length = 1, choices = GENDER_CHOICES)
     rights = models.CharField(max_length = 2, choices = RIGHTS_CHOICES, default = u"CT")
-    credits = models.PositiveSmallIntegerField(default = 0)
+    pynts = models.PositiveSmallIntegerField(default = 0)
     
     aboutme = models.TextField(blank = True)
     foss_comm = TagField(verbose_name="FOSS Communities")
@@ -94,7 +94,7 @@ class Task(models.Model):
     status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
     tags_field = TagField(verbose_name = u"Tags", help_text = u"Give comma seperated tags") 
     
-    credits = models.PositiveSmallIntegerField(help_text = u"No.of credits a user gets on completing the task")
+    pynts = models.PositiveSmallIntegerField(help_text = u"No.of pynts a user gets on completing the task")
     progress = models.PositiveSmallIntegerField(default = 0)
         
     reviewers = models.ManyToManyField(User, related_name = "%(class)s_reviewers")

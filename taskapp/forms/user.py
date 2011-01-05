@@ -16,7 +16,7 @@ class UserProfileEditForm(forms.ModelForm):
     
     class Meta:
         model = Profile
-        exclude = ('user','rights','dob','credits')
+        exclude = ('user','rights','dob','pynts')
 
     def clean_photo(self):
         uploaded_photo = self.data.get('photo', None)

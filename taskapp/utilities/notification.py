@@ -13,7 +13,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         reply: A boolean
         task: a task if applicable
         requested_by: a user makes the request
-            A reviewer who assigns credits in case of pynts
+            A reviewer who assigns pynts in case of pynts
             A reviewer who requests to act as a reviewer
         remarks: any remarks for rejecting
         receiving_user: user receiving pynts
@@ -32,18 +32,18 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
         notification.pynts = pynts
 
         task_url= '<a href="/task/view/tid=%s">%s</a>'%(task.id, task.title)
-        credits_url = '<a href="/task/assigncredits/tid=%s">%s</a>'%(task.id, "click here")
+        pynts_url = '<a href="/task/assignpynts/tid=%s">%s</a>'%(task.id, "click here")
         reviewer_url = '<a href="/user/view/uid=%s">%s</a>'%(requested_by.id, requested_by.username)
         admin_url = '<a href="/user/view/uid=%s">%s</a>'%(sent_from.id, sent_from.username)
         user_url = '<a href="/user/view/uid=%s">%s</a>'%(receiving_user.id, receiving_user.username)
 
         if reply:
-            notification.sub = "Approved request for assign of credits for %s"%task.title[:20]
+            notification.sub = "Approved request for assign of pynts for %s"%task.title[:20]
             notification.message  = """ Request made by %s to assign %s pynts to %s for the task %s has been approved by %s<br />
-                                    %s if you want the view/assign pynts page of the task.<br />"""%(reviewer_url, pynts, user_url, task_url, admin_url, credits_url)
+                                    %s if you want the view/assign pynts page of the task.<br />"""%(reviewer_url, pynts, user_url, task_url, admin_url, pynts_url)
 
         else:
-            notification.sub = "Rejected request for assign of credits for %s"%task.title[:20]
+            notification.sub = "Rejected request for assign of pynts for %s"%task.title[:20]
             notification.message = """ Request made by %s to assign %s pynts to %s for the task %s has been rejected by %s.<br /> """%(reviewer_url, pynts, user_url, task_url, admin_url)
             if remarks:
                 notification.remarks = remarks
@@ -177,7 +177,7 @@ def create_notification(role, sent_to, sent_from=None, reply=None, task=None, re
 
         notification.sub = "Your claim for the task %s accepted."%task.title[:20]
         notification.message = "You have been selected to work on the task %s by %s.<br />"%(task_url, assigned_by_url)
-        notification.message += "You can now start working on the task and will be credited by the reviewers for your work.<br />"
+        notification.message += "You can now start working on the task and will be pynted by the reviewers for your work.<br />"
 
         notification.message += " Here is a list of reviewers for the task and their email addresses.<br /> <ul>"
         for a_reviewer in task.reviewers.all():

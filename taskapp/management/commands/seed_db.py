@@ -43,9 +43,9 @@ def seed_db():
         title = "Task "+str(i)
         desc = "I am "+title
         created_by = defaultReviewer
-        credits = 20
+        pynts = 20
         
-        task = taskEvents.createTask(title,desc,created_by,credits)
+        task = taskEvents.createTask(title,desc,created_by,pynts)
         if task:
             taskEvents.addReviewer(task, defaultReviewer)
             if i%2==0:taskEvents.publishTask(task)

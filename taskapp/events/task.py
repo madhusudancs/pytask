@@ -106,8 +106,8 @@ def addReviewer(task,reviewer):
     task.save()
     return task     
 
-def createTask(title,desc,created_by,credits):
-    """ creates a bare minimum task with title, description and credits.
+def createTask(title,desc,created_by,pynts):
+    """ creates a bare minimum task with title, description and pynts.
     the creator of the task will be assigned as a reviewer for the task.
     """
 
@@ -128,7 +128,7 @@ def createTask(title,desc,created_by,credits):
     task.id = id 
     task.desc = desc
     task.created_by = created_by
-    task.credits = credits
+    task.pynts = pynts
     task.creation_datetime = datetime.now()
     task.published_datetime = datetime.now()
     task.save()
@@ -165,7 +165,7 @@ def assignTask(task, added_user, assigned_by):
     create_notification("AU", added_user, assigned_by, task=task)
 
 
-def updateTask(task, title=None, desc=None, credits=None, tags_field=None):
+def updateTask(task, title=None, desc=None, pynts=None, tags_field=None):
     """ update the property accordingly.
     while updating title, check for uniqueness of title.
     return None if any error. 
@@ -178,7 +178,7 @@ def updateTask(task, title=None, desc=None, credits=None, tags_field=None):
         except Task.IntegrityError:
             return None
     if desc:task.desc = desc
-    if credits:task.credits = credits
+    if pynts:task.pynts = pynts
     if tags_field:task.tags_field = tags_field
     task.save()
     return task
@@ -204,7 +204,7 @@ def removeUser(main_task, rem_user, removed_by, reason=None):
     create_notification("RU", rem_user, removed_by, task=main_task, remarks=reason)
     ## TODO : create notification to the victim
 
-def assignCredits(task, given_by, given_to, points):
+def assignPynts(task, given_by, given_to, points):
     """ make a proper request object.
     """
     

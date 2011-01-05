@@ -5,8 +5,8 @@ from django.shortcuts import render_to_response, redirect
 
 from pytask.taskapp.models import User, Task, Comment, Request, Notification
 from pytask.taskapp.utilities.task import getTask
-from pytask.taskapp.forms.task import TaskCreateForm, AddReviewerForm, AddTaskForm, ChoiceForm, AssignCreditForm, RemoveUserForm, EditTaskForm, ClaimTaskForm
-from pytask.taskapp.events.task import createTask, reqReviewer, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignCredits, completeTask, closeTask, addReviewer, deleteTask
+from pytask.taskapp.forms.task import TaskCreateForm, AddReviewerForm, AddTaskForm, ChoiceForm, AssignPyntForm, RemoveUserForm, EditTaskForm, ClaimTaskForm
+from pytask.taskapp.events.task import createTask, reqReviewer, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignPynts, completeTask, closeTask, addReviewer, deleteTask
 from pytask.taskapp.views.user import show_msg
 from pytask.taskapp.utilities.user import get_user
 
@@ -113,7 +113,7 @@ def view_task(request, tid):
     context['can_mod_reviewers'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_reviewer else False
     context['can_mod_tasks'] = True if task.status in ["UP", "OP", "LO"] and is_reviewer else False
 
-    context['can_assign_credits'] = True if task.status in ["OP", "WR"] and is_reviewer else False
+    context['can_assign_pynts'] = True if task.status in ["OP", "WR"] and is_reviewer else False
     context['task_claimable'] = True if task.status in ["OP", "WR"] and not is_guest else False
 
     if task.status == "CD":
@@ -156,9 +156,9 @@ def create_task(request):
                     data = form.cleaned_data
                     title = data['title']
                     desc = data['desc']
-                    credits = data['credits']
+                    pynts = data['pynts']
                     #publish = data['publish'] # just in case if we have to show the option
-                    task = createTask(title,desc,user,credits)
+                    task = createTask(title,desc,user,pynts)
                     
                     addReviewer(task, user)
                     updateTask(task,tags_field=data['tags_field'])
@@ -486,11 +486,11 @@ def assign_task(request, tid):
     else:
         return show_msg(user, 'You are not authorised to perform this action', task_url, 'view the task')
 
-def assign_credits(request, tid):
-    """ Check if the user is a reviewer and credits can be assigned.
-    Then display all the approved credits.
-    Then see if reviewer can assign credits to users also or only reviewers.
-    Then put up a form for reviewer to assign credits accordingly.
+def assign_pynts(request, tid):
+    """ Check if the user is a reviewer and pynts can be assigned.
+    Then display all the approved pynts.
+    Then see if reviewer can assign pynts to users also or only reviewers.
+    Then put up a form for reviewer to assign pynts accordingly.
     """
     
     task_url = "/task/view/tid=%s"%tid
@@ -498,8 +498,8 @@ def assign_credits(request, tid):
     user = get_user(request.user) if request.user.is_authenticated() else request.user
     task = getTask(tid)
 
-    ## the moment we see that user had requested credits, it means he had worked and hence we change the status to WR
-    ## we have to discuss on this since, credits may also be given to reviewer
+    ## the moment we see that user had requested pynts, it means he had worked and hence we change the status to WR
+    ## we have to discuss on this since, pynts may also be given to reviewer
     task.status = "WR"
     task.save()
 
@@ -511,35 +511,35 @@ def assign_credits(request, tid):
             choices = [(_.id,_.username) for _ in task.reviewers.all()]
             if task.status == "WR":
                 choices.extend([(_.id, _.username) for _  in task.assigned_users.all() ])
-            prev_credits = task.request_task.filter(role="PY",is_valid=True,is_replied=True,reply=True).count()
-            credit_requests = task.request_task.filter(role="PY",is_valid=True).order_by('creation_date').reverse()
-            form = AssignCreditForm(choices)
+            prev_pynts = task.request_task.filter(role="PY",is_valid=True,is_replied=True,reply=True).count()
+            pynt_requests = task.request_task.filter(role="PY",is_valid=True).order_by('creation_date').reverse()
+            form = AssignPyntForm(choices)
 
             context = {
                 'user':user,
                 'task':task,
-                'prev_credits':prev_credits,
-                'credit_requests':credit_requests,
+                'prev_pynts':prev_pynts,
+                'pynt_requests':pynt_requests,
                 'form':form,
             }
 
             if request.method == "POST":
                 data = request.POST
-                form = AssignCreditForm(choices, data)
+                form = AssignPyntForm(choices, data)
                 if form.is_valid():
                     data = form.cleaned_data
                     uid = data['user']
                     points = data['pynts']
                     given_to = User.objects.get(id=uid)
-                    assignCredits(task=task, given_by=user, given_to=given_to, points=points)
-                    return redirect('/task/assigncredits/tid=%s'%task.id)
+                    assignPynts(task=task, given_by=user, given_to=given_to, points=points)
+                    return redirect('/task/assignpynts/tid=%s'%task.id)
                 else:
                     context['form'] = form
-                    return render_to_response('task/assigncredits.html', context)
+                    return render_to_response('task/assignpynts.html', context)
             else:
-                return render_to_response('task/assigncredits.html', context)
+                return render_to_response('task/assignpynts.html', context)
         else:
-            return show_msg(user, "Credits cannot be assigned at this stage", task_url, "view the task")
+            return show_msg(user, "Pynts cannot be assigned at this stage", task_url, "view the task")
     else:
         return show_msg(user, "You are not authorised to perform this action", task_url, "view the task")
 
@@ -587,8 +587,8 @@ def complete_task(request, tid):
     claimed_users = task.claimed_users.all()
     assigned_users = task.assigned_users.all()
 
-    assign_credits_url = '/task/assigncredits/tid=%s'%task.id
-    task_assigned_credits = task.credit_set.all()
+    assign_pynts_url = '/task/assignpynts/tid=%s'%task.id
+    task_assigned_pynts = task.pynt_set.all()
 
 
     if is_reviewer:
@@ -599,14 +599,14 @@ def complete_task(request, tid):
                 'task':task,
             }
 
-            if task_assigned_credits:
+            if task_assigned_pynts:
                 if request.method=="POST":
                     completeTask(task, user)
                     return redirect(task_url)
                 else:
                     return render_to_response('task/complete.html', context)
             else:
-                return show_msg(user, "Nobody has been credited for doing this task.", assign_credits_url, "assign credits")
+                return show_msg(user, "Nobody has been pynted for doing this task.", assign_pynts_url, "assign pynts")
         else:
             return show_msg(user, "The task cannot be marked as completed at this stage", task_url, "view the task")
     else:
