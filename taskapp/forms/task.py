@@ -104,3 +104,4 @@ class WorkReportForm(forms.ModelForm):
     class Meta:
         model = WorkReport
         fields = ['remarks', 'attachment']
+

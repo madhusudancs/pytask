@@ -171,11 +171,11 @@ class Notification(models.Model):
     
 class WorkReport(models.Model):
 
-    attachment = models.FileField(upload_to = UPLOADS_DIR, blank = False)
+    attachment = models.FileField(upload_to=UPLOADS_DIR)
     remarks = models.TextField()
     revision = models.PositiveIntegerField(default=0)
     task = models.ForeignKey(Task, related_name = "%(class)s_report")
-    submitted_by = models.ForeignKey(Task, related_name = "%(class)s_submitted_by")
+    submitted_by = models.ForeignKey(User, related_name = "%(class)s_submitted_by")
 
     created_at = models.DateTimeField()
 

@@ -66,7 +66,24 @@ def upload_work(request, tid):
         if not can_upload:
             return show_msg(user, "You are not authorised to upload data to this task", task_url, "view the task")
 
-        pass
+        form = WorkReportForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            r = WorkReport(attachment = form.cleaned_data['remarks'],
+                           remarks = form.cleaned_data['remarks'],
+                           revision = old_reports.count(),
+                           task = task,
+                           submitted_by = user,
+                           created_at = datetime.now(),
+                          )
+
+            r.save()
+            return redirect(task_url)
+
+        else:
+            context.update({"form":form})
+            return render_to_response('task/report.html', context)
+
     else:
         form = WorkReportForm()
         context.update({"form":form})
