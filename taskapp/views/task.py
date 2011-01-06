@@ -69,7 +69,7 @@ def upload_work(request, tid):
         form = WorkReportForm(request.POST, request.FILES)
 
         if form.is_valid():
-            r = WorkReport(attachment = form.cleaned_data['remarks'],
+            r = WorkReport(attachment = form.cleaned_data['attachment'],
                            remarks = form.cleaned_data['remarks'],
                            revision = old_reports.count(),
                            task = task,

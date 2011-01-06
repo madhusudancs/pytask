@@ -171,7 +171,7 @@ class Notification(models.Model):
     
 class WorkReport(models.Model):
 
-    attachment = models.FileField(upload_to=UPLOADS_DIR)
+    attachment = models.FileField(upload_to=IMAGES_DIR)
     remarks = models.TextField()
     revision = models.PositiveIntegerField(default=0)
     task = models.ForeignKey(Task, related_name = "%(class)s_report")
