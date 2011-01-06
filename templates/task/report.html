@@ -10,6 +10,11 @@ There are no reports submitted as of now
 {{rep.submitted_by}} | {{rep.attachment}} <br />
 {% endfor %}
 {% endif %}
-some data
 <hr />
+{% if can_upload %}
+Submit a report: <br />
+<form action='' method=post enctype="multipart/form-data">
+{{ form.as_p }}
+</form>
+{% endif %}
 {% endblock %}

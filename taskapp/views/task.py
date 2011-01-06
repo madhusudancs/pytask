@@ -3,7 +3,7 @@ from datetime import datetime
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect
 
-from pytask.taskapp.models import User, Task, Comment, Request, Notification
+from pytask.taskapp.models import User, Task, Comment, Request, Notification, WorkReport
 from pytask.taskapp.utilities.task import getTask
 from pytask.taskapp.forms.task import TaskCreateForm, AddReviewerForm, AddTaskForm, ChoiceForm, AssignPyntForm, RemoveUserForm, EditTaskForm, ClaimTaskForm, WorkReportForm
 from pytask.taskapp.events.task import createTask, reqReviewer, publishTask, addSubTask, addDep, addClaim, assignTask, updateTask, removeTask, removeUser, assignPynts, completeTask, closeTask, addReviewer, deleteTask
@@ -53,12 +53,13 @@ def upload_work(request, tid):
 
     can_upload = True if user in task.assigned_users.all() else False
 
-    old_reports = WorkReport.workreport_report.all()
+    old_reports = task.workreport_report.all()
 
     context = {
         'user': user,
         'task': task,
         'old_reports': old_reports,
+        'can_upload': can_upload,
     }
 
     if request.method == "POST":
