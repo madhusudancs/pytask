@@ -7,6 +7,7 @@ GENDER_CHOICES = (( 'M', 'Male'), ('F', 'Female'))
 RIGHTS_CHOICES = (
 	("DC", "Director"),
 	("MG", "Manager"),
+        ("CR", "Co-ordinator"),
 	("CT", "Contributor"),)
 
 ROLE_CHOICES = (
