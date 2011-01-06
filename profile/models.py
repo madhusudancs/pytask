@@ -13,7 +13,7 @@ ROLE_CHOICES = (
 	("DC", "Request sent by Director \
                 to a user at lower level, asking him to act as a director"),
 	("MG", "Request sent by Manager \
-                to a user at lower level, asking him to act as a manager"),
+                to a user at lower level, asking him to act as a manager"),)
 
 class Profile(models.Model):
     
