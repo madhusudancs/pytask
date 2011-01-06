@@ -7,7 +7,7 @@
 There are no reports submitted as of now
 {% else %}
 {% for rep in old_reports %}
-{{rep.submitted_by}} | {{rep.attachment}} <br />
+{{rep.submitted_by}} | <a href="{{rep.attachment.url}}">{{rep.attachment.name}}</a> <br />
 {% endfor %}
 {% endif %}
 <hr />
