@@ -4,6 +4,7 @@
     {% block js_script %} {% endblock %}
     <link rel=stylesheet href="/static/css/base.css" type="text/css" >
 </head>
+{% load user_tags %}
 <body>
 <div id="wrapper">
     <div id="header">
@@ -17,19 +18,8 @@
                 <li><a href="/task/browse/" title="tasks">tasks</a></li>
                 <li><a href="/textbook/" title="textbook">textbooks</a></li>
                 <br />
-                <li><a href="/user/notifications/" title="notifications">
-                {% if user.unread_notifications.count %}
-                    notifications({{user.unread_notifications.count}})
-                {% else %}
-                    notifications
-                {% endif %}
-                </a></li>
-                <li><a href="/user/requests/" title="Requests">
-                {% if user.unread_requests.count %}
-                    requests({{user.unread_requests.count}})
-                {% else %}
-                    requests
-                {% endif %}
+                <li><a href="/profile/notf/browse/" title="notifications">
+			{{ user|notf_dsp }}
                 </a></li>
                 <br>
                 <li><a href="/profile/view">profile</a></li>
