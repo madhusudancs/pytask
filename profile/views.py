@@ -10,6 +10,8 @@ from pytask.profile.utils import get_notification
 
 @login_required
 def view_profile(request):
+    """ Display the profile information.
+    """
 
     user = request.user
     profile = user.get_profile()
@@ -21,6 +23,8 @@ def view_profile(request):
 
 @login_required
 def edit_profile(request):
+    """ Make only a few fields editable.
+    """
 
     user = request.user
     profile = user.get_profile()
@@ -86,3 +90,57 @@ def view_notification(request, nid):
               }
 
     return render_to_response('profile/view_notification.html', context)
+
+@login_required
+def delete_notification(request, nid):
+    """ check if the user owns the notification and delete it.
+    """
+
+    user = request.user
+    newest, newer, notification, older, oldest = get_notification(nid, user)
+
+    if not notification:
+        raise Http404
+
+    notification.is_deleted = True
+    notification.save()
+
+    context = {'user':user,
+               'notification':notification,
+               'newest':newest,
+               'newer':newer,
+               'older':older,
+               'oldest':oldest,
+              }
+    redirect_url = "/profile/notf/" + \
+            "view/nid=%s"%older.uniq_key if older else "browse"
+
+    return redirect(redirect_url)
+
+@login_required
+def unread_notification(request, nid)
+
+    """ check if the user owns the notification and delete it.
+    """
+
+    user = request.user
+    newest, newer, notification, older, oldest = get_notification(nid, user)
+
+    if not notification:
+        raise Http404
+
+    notification.is_read = False
+    notification.save()
+
+    context = {'user':user,
+               'notification':notification,
+               'newest':newest,
+               'newer':newer,
+               'older':older,
+               'oldest':oldest,
+              }
+
+    redirect_url = "/profile/notf/" + \
+            "view/nid=%s"%older.uniq_key if older else "browse"
+
+    return redirect(redirect_url)
