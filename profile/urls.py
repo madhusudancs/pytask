@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 
 from pytask.profile.views import view_profile, edit_profile,\
                                  browse_notifications, view_notification,\
-                                 delte_notification, unread_notification
+                                 delete_notification, unread_notification
 
 urlpatterns = patterns('',
 

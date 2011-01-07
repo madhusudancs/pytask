@@ -112,13 +112,16 @@ def delete_notification(request, nid):
                'older':older,
                'oldest':oldest,
               }
-    redirect_url = "/profile/notf/" + \
-            "view/nid=%s"%older.uniq_key if older else "browse"
+
+    if older:
+        redirect_url = "/profile/notf/view/nid=%s"%older.uniq_key
+    else:
+        redirect_url = "/profile/notf/browse"
 
     return redirect(redirect_url)
 
 @login_required
-def unread_notification(request, nid)
+def unread_notification(request, nid):
 
     """ check if the user owns the notification and delete it.
     """
@@ -140,7 +143,9 @@ def unread_notification(request, nid)
                'oldest':oldest,
               }
 
-    redirect_url = "/profile/notf/" + \
-            "view/nid=%s"%older.uniq_key if older else "browse"
+    if older:
+        redirect_url = "/profile/notf/view/nid=%s"%older.uniq_key
+    else:
+        redirect_url = "/profile/notf/browse"
 
     return redirect(redirect_url)

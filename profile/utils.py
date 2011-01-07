@@ -1,3 +1,4 @@
+from pytask.profile.models import Notification
 
 def get_notification(nid, user):
     """ if notification exists, and belongs to the current user, return it.
