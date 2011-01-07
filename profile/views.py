@@ -12,4 +12,4 @@ def view_profile(request):
     context = {"user": user,
                "profile": profile,
               }
-    return render_to_response("/profile/view.html", context)
+    return render_to_response("profile/view.html", context)
