@@ -4,13 +4,13 @@ from django.core.management.base import NoArgsCommand
 
 from django.contrib.auth.models import User
 
-from pytask.profile.models import Profile
+from pytask.profile.models import Profile, Notification
 
 def seed_db():
     """ a method to seed the database with random data """
     
     
-    for i in range(1,21):
+    for i in range(21,1,-1):
         
         username = 'user'+str(i)
         email = username+'@example.com'
@@ -37,6 +37,17 @@ def seed_db():
         elif i%3 == 0:
             new_profile.rights = "CR"
         new_profile.save()
+
+    new_user.is_superuser = True
+    new_user.is_staff = True
+    new_user.save()
+
+    for i in range(10):
+        Notification(sent_to=new_user, sent_date=datetime.now(), 
+                     subject="A subject here for"+str(i),
+                     message="A message with mess"+str(i)+" html inside.\
+                     <br /><b>a bold text</b>"
+                    ).save()
 
 class Command(NoArgsCommand):
     
