@@ -62,8 +62,6 @@ def browse_notifications(request):
                'notifications':active_notifications,
               }                               
 
-    print active_notifications
-
     return render_to_response('profile/browse_notifications.html', context)
 
 @login_required
