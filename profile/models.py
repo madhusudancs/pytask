@@ -20,6 +20,9 @@ class Profile(models.Model):
     
     uniq_key = models.CharField(max_length=20)
 
+    full_name = models.CharField(max_length=50, verbose_name="Name as on bank\
+                                 account", help_text="Any DD/Cheque will be\
+                                 issued on this name")
     user = models.ForeignKey(User, unique = True)
     rights = models.CharField(max_length = 2, choices = RIGHTS_CHOICES, default = u"CT")
     pynts = models.PositiveSmallIntegerField(default = 0)
