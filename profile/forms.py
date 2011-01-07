@@ -10,12 +10,12 @@ from registration.models import RegistrationProfile
 from pytask.utils import make_key
 from pytask.profile.models import GENDER_CHOICES, Profile
 
-class RegistrationFormCustom(RegistrationFormUniqueEmail):
+class CustomRegistrationForm(RegistrationFormUniqueEmail):
     """Used instead of RegistrationForm used by default django-registration
     backend, this adds aboutme, dob, gender, address, phonenum to the default 
     django-registration RegistrationForm"""
 
-    aboutme = forms.TextField(required=True, max_length=1000, label=u"About Me",
+    aboutme = forms.CharField(required=True, max_length=1000, label=u"About Me",
                               help_text="A write up about yourself to aid the\
                               reviewer in judging your eligibility for a task.\
                               It can have your educational background, CGPA,\
@@ -26,17 +26,17 @@ class RegistrationFormCustom(RegistrationFormUniqueEmail):
     dob = forms.DateField(help_text = "YYYY-MM-DD", required=True, label=u'date of birth')
     gender = forms.ChoiceField(choices = GENDER_CHOICES, required=True, label=u'gender')
 
-    address = forms.TextField(required=True, max_length=200, help_text="This \
+    address = forms.CharField(required=True, max_length=200, help_text="This \
                              information will be used while sending DD/Cheque")
-    phonenum = forms.TextField(required=True, max_length=10. label="Phone
-                               Number")
+    phonenum = forms.CharField(required=True, max_length=10, 
+                               label="Phone Number")
 
     def clean_aboutme(self):
         """ Empty not allowed """
 
         data = self.cleaned_data['aboutme']
         if not data.strip():
-            raise forms.ValidationError("Please write something about
+            raise forms.ValidationError("Please write something about\
                                         yourself")
 
         return data
@@ -55,8 +55,8 @@ class RegistrationFormCustom(RegistrationFormUniqueEmail):
 
         data = self.cleaned_data['phonenum']
 
-        if (not data.strip()) or 
-           (data.strip("1234567890")) or 
+        if (not data.strip()) or \
+           (data.strip("1234567890")) or \
            (len(data)!= 10):
                raise forms.ValidationError("This is not a valid phone number")
 
@@ -74,7 +74,7 @@ class RegistrationFormCustom(RegistrationFormUniqueEmail):
                               aboutme=self.cleaned_data['aboutme'],
                               dob=self.cleaned_data['dob'],
                               gender=self.cleaned_data['gender'],
-                              address=self.cleaned_data['address']
+                              address=self.cleaned_data['address'],
                               phonenum=self.cleaned_data['phonenum'],
                               uniq_key=make_key(Profile),
                              )
