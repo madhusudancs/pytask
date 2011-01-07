@@ -40,7 +40,7 @@ def edit_profile(request):
 
         if form.is_valid():
             form.save()
-            return redirect("/accounts/profile/view")
+            return redirect("/profile/view")
         else:
             context.update({"form":form})
             return render_to_response("profile/edit.html", context)
