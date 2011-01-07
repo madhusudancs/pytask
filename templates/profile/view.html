@@ -3,8 +3,12 @@
 Name: {{profile.full_name}} <br />
 Username: {{user.username}} <br />
 Gender: {{profile.gender}} <br />
-About Me: {{profile.aboutme}} <br />
-Address: {{profile.address}} <br />
+Date of Birth: {{profile.dob}}<br />
+<hr />
+About Me: {{profile.aboutme|linebreaksbr}} <br />
+<hr />
+Address: {{profile.address|linebreaksbr}} <br />
+<hr />
 Phone Number: {{profile.phonenum}} <br />
 <a href="/profile/edit">Edit profile</a>
 {% endblock %}
