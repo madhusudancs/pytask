@@ -57,3 +57,29 @@ def browse_notifications(request):
               }                               
 
     return render_to_response('profile/browse_notifications.html', context)
+
+@login_required
+def view_notification(request, nid):
+    """ get the notification depending on nid.
+    Display it.
+    """
+
+    user = get_user(request.user)
+    newest, newer, notification, older, oldest =
+    get_notification(nid, user)
+
+    if not notification:
+        raise Http404
+
+    notification.is_read = True
+    notification.save()
+
+    context = {'user':user,
+               'notification':notification,
+               'newest':newest,
+               'newer':newer,
+               'older':older,
+               'oldest':oldest,
+              }
+
+    return render_to_response('profile/view_notification.html', context)
