@@ -46,7 +46,6 @@ class Notification(models.Model):
     uniq_key = models.CharField(max_length=20)
 
     sent_to = models.ForeignKey(User, related_name = "%(class)s_sent_to", blank = False)
-    sent_from = models.ForeignKey(User, related_name = "%(class)s_sent_from", null = True, blank = True)
 
     subject = models.CharField(max_length=100, blank=True)
     message = models.TextField()
