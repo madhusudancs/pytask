@@ -5,6 +5,7 @@ from django.core.management.base import NoArgsCommand
 from django.contrib.auth.models import User
 
 from pytask.profile.models import Profile, Notification
+from pytask.utils import make_key
 
 def seed_db():
     """ a method to seed the database with random data """
@@ -46,7 +47,8 @@ def seed_db():
         Notification(sent_to=new_user, sent_date=datetime.now(), 
                      subject="A subject here for"+str(i),
                      message="A message with mess"+str(i)+" html inside.\
-                     <br /><b>a bold text</b>"
+                     <br /><b>a bold text</b>",
+                     uniq_key=make_key(Notification),
                     ).save()
 
 class Command(NoArgsCommand):
