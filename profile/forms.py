@@ -76,6 +76,7 @@ class RegistrationFormCustom(RegistrationFormUniqueEmail):
                               gender=self.cleaned_data['gender'],
                               address=self.cleaned_data['address']
                               phonenum=self.cleaned_data['phonenum'],
+                              uniq_key=make_key(Profile),
                              )
         new_profile.save()
         
