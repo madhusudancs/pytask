@@ -1,4 +1,3 @@
-
 import os
 import PIL
 
@@ -82,3 +81,8 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
         
         return new_user
 
+class EditProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ['aboutme', 'gender', 'dob', 'address', 'phonenum']
