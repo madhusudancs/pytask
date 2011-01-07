@@ -1,7 +1,7 @@
 Welcome to PyTasks:
 
 Click on the following link 
-http://{% url site %}/accounts/activate/{{activation_key}}
+http://localhost:8000/accounts/activate/{{activation_key}}
 and activate your account.
 Note that the account has to activated within {{expiration_days}} days
 

@@ -104,4 +104,3 @@ AUTH_PROFILE_MODULE = 'profile.Profile'
 #django-registration
 ACCOUNT_ACTIVATION_DAYS = 7
 DEFAULT_FROM_EMAIL = 'Admin <admin@fossee.in>'
-
