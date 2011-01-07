@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-username: {{user.username}} <br />
-gender: {{profile.gender}} <br />
+Name: {{profile.full_name}} <br />
+Username: {{user.username}} <br />
+Gender: {{profile.gender}} <br />
 About Me: {{profile.aboutme}} <br />
-address: {{profile.address}} <br />
-phone number: {{profile.phonenum}} <br />
+Address: {{profile.address}} <br />
+Phone Number: {{profile.phonenum}} <br />
 <a href="/profile/edit">Edit profile</a>
 {% endblock %}

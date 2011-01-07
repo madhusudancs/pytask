@@ -3,7 +3,7 @@
 {% if not notifications %}
 You have no notifications.
 {% else %}
-Notifications for you: <br />
+Notifications: <br />
 {% for notification in notifications %}
 <a href="/profile/notf/view/nid={{notification.uniq_key}}">
 {% if not notification.is_read %} <b> {% endif %}
