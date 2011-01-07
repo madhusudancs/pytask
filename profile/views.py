@@ -1,10 +1,12 @@
 from django.shortcuts import render_to_response, redirect
+from django.http import Http404
 
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_protect
 
 from pytask.profile.forms import EditProfileForm
+from pytask.profile.utils import get_notification
 
 @login_required
 def view_profile(request):
@@ -56,6 +58,8 @@ def browse_notifications(request):
                'notifications':active_notifications,
               }                               
 
+    print active_notifications
+
     return render_to_response('profile/browse_notifications.html', context)
 
 @login_required
@@ -64,9 +68,8 @@ def view_notification(request, nid):
     Display it.
     """
 
-    user = get_user(request.user)
-    newest, newer, notification, older, oldest =
-    get_notification(nid, user)
+    user = request.user
+    newest, newer, notification, older, oldest = get_notification(nid, user)
 
     if not notification:
         raise Http404
