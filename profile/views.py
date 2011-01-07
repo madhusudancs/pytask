@@ -48,7 +48,7 @@ def browse_notifications(request):
     """ get the list of notifications that are not deleted and display in
     datetime order."""
 
-    user = get_user(request.user)
+    user = request.user
 
     active_notifications = user.notification_sent_to.filter(is_deleted=False).order_by('sent_date').reverse()
 
