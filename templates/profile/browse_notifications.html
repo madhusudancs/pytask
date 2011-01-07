@@ -7,7 +7,7 @@ Notifications for you: <br />
 {% for notification in notifications %}
 <a href="/profile/notf/view/nid={{notification.uniq_key}}">
 {% if not notification.is_read %} <b> {% endif %}
-{{notification.sub}}
+{{notification.subject}}
 {% if not notification.is_read %} </b> {% endif %}</a><br />
 {% endfor %}
 {% endif %}
