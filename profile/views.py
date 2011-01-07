@@ -55,4 +55,5 @@ def browse_notifications(request):
     context = {'user':user,
                'notifications':active_notifications,
               }                               
+
     return render_to_response('profile/browse_notifications.html', context)
