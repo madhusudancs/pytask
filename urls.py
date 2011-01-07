@@ -21,4 +21,6 @@ urlpatterns = patterns('',
     url(r'^accounts/register/$', register,
         {'form_class': CustomRegistrationForm},
         name='registration_register'),
+
+    (r'^accounts/', include('registration.urls')),
 )
