@@ -16,6 +16,7 @@ def seed_db():
         username = 'user'+str(i)
         email = username+'@example.com'
         password = '123456'
+        full_name = "User "+str(i)
         dob = datetime.now()
         gender = "M"
         aboutme = "I am User"+str(i)
@@ -28,6 +29,7 @@ def seed_db():
 
         new_profile = Profile()
         new_profile.user = new_user
+        new_profile.full_name = full_name
         new_profile.dob = dob
         new_profile.aboutme = aboutme
         new_profile.gender = gender
