@@ -42,3 +42,17 @@ def edit_profile(request):
         form = EditProfileForm(instance=profile)
         context.update({"form":form})
         return render_to_response("profile/edit.html", context)
+
+@login_required
+def browse_notifications(request):
+    """ get the list of notifications that are not deleted and display in
+    datetime order."""
+
+    user = get_user(request.user)
+
+    active_notifications = user.notification_sent_to.filter(is_deleted=False).order_by('sent_date').reverse()
+
+    context = {'user':user,
+               'notifications':active_notifications,
+              }                               
+    return render_to_response('profile/browse_notifications.html', context)
