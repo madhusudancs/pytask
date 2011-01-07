@@ -14,6 +14,11 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
     backend, this adds aboutme, dob, gender, address, phonenum to the default 
     django-registration RegistrationForm"""
 
+    full_name = forms.CharField(required=True, max_length=50, 
+                                label="Name as on your bank account", 
+                                help_text="Any DD/Cheque will be issued on \
+                                           this name")
+
     aboutme = forms.CharField(required=True, max_length=1000, label=u"About Me",
                               help_text="A write up about yourself to aid the\
                               reviewer in judging your eligibility for a task.\
@@ -85,4 +90,4 @@ class EditProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['aboutme', 'gender', 'dob', 'address', 'phonenum']
+        fields = ['full_name', 'aboutme', 'gender', 'dob', 'address', 'phonenum']
