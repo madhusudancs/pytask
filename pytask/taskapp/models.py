@@ -34,17 +34,20 @@ class Task(models.Model):
     
     pynts = models.PositiveSmallIntegerField(help_text = u"No.of pynts a user \
                                              gets on completing the task")
-    created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
-    approved_by = models.ForeignKey(User, related_name = "%(class)s_approved_by")
-    reviewers = models.ManyToManyField(User, related_name = "%(class)s_reviewers")
+    created_by = models.ForeignKey(User,
+                                   related_name = "%(class)s_created_by")
+    approved_by = models.ForeignKey(User, blank = True, null = True,
+                                    related_name = "%(class)s_approved_by")
+    reviewers = models.ManyToManyField(User, blank = True, null = True,
+                                       related_name = "%(class)s_reviewers")
 
-    claimed_users = models.ManyToManyField(User, blank = True, 
+    claimed_users = models.ManyToManyField(User, blank = True, null = True, 
                                            related_name = "%(class)s_claimed_users")
-    selected_users = models.ManyToManyField(User, blank = True, 
+    selected_users = models.ManyToManyField(User, blank = True, null = True, 
                                             related_name = "%(class)s_selected_users")
     
     creation_datetime = models.DateTimeField()
-    approval_datetime = models.DateTimeField()
+    approval_datetime = models.DateTimeField(blank = True)
     
     def __unicode__(self):
         return unicode(self.title)
@@ -55,7 +58,8 @@ class TaskComment(models.Model):
     task = models.ForeignKey('Task', related_name = "%(class)s_task")
             
     data = models.TextField()
-    commented_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
+    commented_by = models.ForeignKey(User,
+                                     related_name = "%(class)s_created_by")
     deleted_by = models.ForeignKey(User, null = True, blank = True,
                                    related_name = "%(class)s_deleted_by")
     comment_datetime = models.DateTimeField()
@@ -69,11 +73,11 @@ class TaskClaim(models.Model):
     uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey('Task', related_name = "%(class)s_task")
             
-    claimed_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
+    claimed_by = models.ForeignKey(User,
+                                   related_name = "%(class)s_created_by")
     proposal = models.TextField()
 
     comment_datetime = models.DateTimeField()
-    is_deleted = models.BooleanField(default=False)
 
     def __unicode__(self):
         return unicode(self.task.title)
@@ -82,9 +86,9 @@ class WorkReport(models.Model):
 
     uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey(Task, related_name = "%(class)s_task")
-    submitted_by = models.ForeignKey(User, 
+    submitted_by = models.ForeignKey(User, null = True, blank = True,
                                      related_name = "%(class)s_submitted_by")
-    approved_by = models.ForeignKey(User, 
+    approved_by = models.ForeignKey(User, null = True, blank = True,
                                     related_name = "%(class)s_approved_by")
 
     data = models.TextField()
@@ -118,7 +122,7 @@ class RequestPynts(models.Model):
     requested_for = models.ForeignKey(User, 
                                      related_name = "%(class)s_requested_for")
 
-    responded_by = models.ForeignKey(User,
+    responded_by = models.ForeignKey(User, null = True, blank = True,
                                     related_name = "%(class)s_responded_by")
 
     is_accepted = models.BooleanField(default=False)
@@ -135,10 +139,11 @@ class TextBook(models.Model):
     tags_field = TagField(verbose_name="Tags")
 
     created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
-    approved_by = models.ForeignKey(User, related_name = "%(class)s_approved_by")
+    approved_by = models.ForeignKey(User, null = True, blank = True,
+                                    related_name = "%(class)s_approved_by")
 
     status = models.CharField(max_length = 2, choices = TB_STATUS_CHOICES, default = "UP")
     creation_datetime = models.DateTimeField()
-    approval_datetime = models.DateTimeField()
+    approval_datetime = models.DateTimeField(blank = True)
 
 tagging.register(Task)
