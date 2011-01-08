@@ -18,7 +18,8 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
                                 help_text="Any DD/Cheque will be issued on \
                                            this name")
 
-    aboutme = forms.CharField(required=True, max_length=1000, label=u"About Me",
+    aboutme = forms.CharField(required=True, widget=forms.Textarea, 
+                              max_length=1000, label=u"About Me",
                               help_text="A write up about yourself to aid the\
                               reviewer in judging your eligibility for a task.\
                               It can have your educational background, CGPA,\
@@ -29,8 +30,9 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
     dob = forms.DateField(help_text = "YYYY-MM-DD", required=True, label=u'date of birth')
     gender = forms.ChoiceField(choices = GENDER_CHOICES, required=True, label=u'gender')
 
-    address = forms.CharField(required=True, max_length=200, help_text="This \
-                             information will be used while sending DD/Cheque")
+    address = forms.CharField(required=True, max_length=200,
+                              widget=forms.Textarea, help_text="This \
+                              information will be used while sending DD/Cheque")
     phonenum = forms.CharField(required=True, max_length=10, 
                                label="Phone Number")
 
