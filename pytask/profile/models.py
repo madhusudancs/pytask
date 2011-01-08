@@ -69,7 +69,7 @@ class RoleRequest(models.Model):
     message = models.TextField()
     response = models.TextField()
 
-    sent_to = models.ForeignKey(User, related_name = "%(class)s_sent_to", blank = False)
+    sent_to = models.ManyToManyField(User, related_name = "%(class)s_sent_to", blank = False)
     sent_from = models.ForeignKey(User, related_name = "%(class)s_sent_from", null = True, blank = True)
 
     sent_date = models.DateTimeField()
