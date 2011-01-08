@@ -32,4 +32,5 @@ urlpatterns = patterns('',
 
     (r'^accounts/', include('registration.urls')),
     (r'^profile/', include('pytask.profile.urls')),
+    (r'^task/', include('pytask.task.urls')),
 )
