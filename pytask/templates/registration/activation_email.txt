@@ -1,8 +1,10 @@
-Welcome to PyTasks:
+Welcome to PyTasks
+
+You are just a step away from using the website.
 
 Click on the following link 
-http://localhost:8000/accounts/activate/{{activation_key}}
-and activate your account.
+http://{site}}/accounts/activate/{{activation_key}} to activate your account.
+
 Note that the account has to activated within {{expiration_days}} days
 
 Regards,
