@@ -100,4 +100,25 @@ class ReportComment(models.Model):
     comment_datetime = models.DateTimeField()
     is_deleted = models.BooleanField(default=False)
 
+class RequestPynts(models.Model):
+
+    uniq_key = models.CharField(max_length = 10, unique = True)
+    task = models.ForeignKey(Task, related_name = "%(class)s_task")
+    pynts = models.PositiveIntegerField(default=0, help_text="No.of pynts")
+
+    requested_by = models.ForeignKey(User, 
+                                     related_name = "%(class)s_requested_by")
+    requested_for = models.ForeignKey(User, 
+                                     related_name = "%(class)s_requested_for")
+
+    responded_by = models.ForeignKey(User,
+                                    related_name = "%(class)s_responded_by")
+
+    is_accepted = models.BooleanField(default=False)
+    remarks = models.CharField(max_length=100, blank=True,
+                               help_text="Reason in case of rejection")
+            
+    request_datetime = models.DateTimeField()
+    is_responded = models.BooleanField(default=False)
+
 tagging.register(Task)
