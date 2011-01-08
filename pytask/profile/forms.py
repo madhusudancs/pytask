@@ -91,3 +91,34 @@ class EditProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['full_name', 'aboutme', 'gender', 'dob', 'address', 'phonenum']
+
+    def clean_aboutme(self):
+        """ Empty not allowed """
+
+        data = self.cleaned_data['aboutme']
+        if not data.strip():
+            raise forms.ValidationError("Please write something about\
+                                        yourself")
+
+        return data
+
+    def clean_address(self):
+        """ Empty not allowed """
+
+        data = self.cleaned_data['address']
+        if not data.strip():
+            raise forms.ValidationError("Please enter an address")
+        
+        return data
+
+    def clean_phonenum(self):
+        """ should be of 10 digits """
+
+        data = self.cleaned_data['phonenum']
+
+        if (not data.strip()) or \
+           (data.strip("1234567890")) or \
+           (len(data)!= 10):
+               raise forms.ValidationError("This is not a valid phone number")
+
+        return data
