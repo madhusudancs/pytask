@@ -57,7 +57,7 @@ class TaskComment(models.Model):
     uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey('Task', related_name = "comments")
             
-    data = models.TextField()
+    data = models.TextField(verbose_name="")
     commented_by = models.ForeignKey(User,
                                      related_name = "commented_taskcomments")
     deleted_by = models.ForeignKey(User, null = True, blank = True,
