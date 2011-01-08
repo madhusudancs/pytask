@@ -1,0 +1,6 @@
+mercurial/bdiff.so
+mercurial/parsers.so
+mercurial/mpatch.so
+mercurial/base85.so
+mercurial/diffhelpers.so
+mercurial/osutil.so
