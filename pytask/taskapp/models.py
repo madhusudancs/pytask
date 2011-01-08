@@ -67,6 +67,7 @@ class TaskClaim(models.Model):
 
 class WorkReport(models.Model):
 
+    uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey(Task, related_name = "%(class)s_task")
     submitted_by = models.ForeignKey(User, 
                                      related_name = "%(class)s_submitted_by")
