@@ -8,10 +8,12 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_protect
 
 from pytask.utils import make_key
+from pytask.views import show_msg
 
 from pytask.taskapp.models import Task
 from pytask.taskapp.forms import CreateTaskForm, EditTaskForm
 from pytask.profile.utils import get_notification
+
 
 @login_required
 def create_task(request):
