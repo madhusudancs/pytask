@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 import tagging
 from tagging.fields import TagField
 
-STATUS_CHOICES = (
+TASK_STATUS_CHOICES = (
         ("UP", "Unpublished"),
         ("OP", "Open"),
         ("LO", "Locked"),
@@ -12,6 +12,12 @@ STATUS_CHOICES = (
         ("CD", "Closed"),
         ("DL", "Deleted"),
         ("CM", "Completed"))
+
+TB_STATUS_CHOICES = (
+    ("UP", "Unpublished"),
+    ("OP", "Open"),
+    ("WR", "All tasks have users selected"),
+    ("CM", "Completed"))
 
 UPLOADS_DIR = "./pytask/static/uploads"
 
@@ -22,7 +28,7 @@ class Task(models.Model):
                              help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
 
-    status = models.CharField(max_length = 2, choices = STATUS_CHOICES, default = "UP")
+    status = models.CharField(max_length = 2, choices = TASK_STATUS_CHOICES, default = "UP")
     tags_field = TagField(verbose_name = u"Tags", 
                           help_text = u"Give tags seperated by commas") 
     
@@ -38,6 +44,7 @@ class Task(models.Model):
                                             related_name = "%(class)s_selected_users")
     
     creation_datetime = models.DateTimeField()
+    approval_datetime = models.DateTimeField()
     
     def __unicode__(self):
         return unicode(self.title)
@@ -120,5 +127,17 @@ class RequestPynts(models.Model):
             
     request_datetime = models.DateTimeField()
     is_responded = models.BooleanField(default=False)
+
+class TextBook(models.Model):
+
+    uniq_key = models.CharField(max_length = 10, unique = True)
+    tags_field = TagField(verbose_name="Tags")
+
+    created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
+    approved_by = models.ForeignKey(User, related_name = "%(class)s_approved_by")
+
+    status = models.CharField(max_length = 2, choices = TB_STATUS_CHOICES, default = "UP")
+    creation_datetime = models.DateTimeField()
+    approval_datetime = models.DateTimeField()
 
 tagging.register(Task)
