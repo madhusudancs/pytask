@@ -89,7 +89,7 @@ class CreateProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['full_name', 'aboutme', 'gender', 'dob', 'address', 'phonenum']
+        exclude = ['pynts', 'rights']
 
 class EditProfileForm(forms.ModelForm):
 
