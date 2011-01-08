@@ -47,7 +47,7 @@ class Task(models.Model):
                                             related_name = "%(class)s_selected_users")
     
     creation_datetime = models.DateTimeField()
-    approval_datetime = models.DateTimeField(blank = True)
+    approval_datetime = models.DateTimeField(blank = True, null = True)
     
     def __unicode__(self):
         return unicode(self.title)
@@ -144,6 +144,6 @@ class TextBook(models.Model):
 
     status = models.CharField(max_length = 2, choices = TB_STATUS_CHOICES, default = "UP")
     creation_datetime = models.DateTimeField()
-    approval_datetime = models.DateTimeField(blank = True)
+    approval_datetime = models.DateTimeField(blank = True, null = True)
 
 tagging.register(Task)
