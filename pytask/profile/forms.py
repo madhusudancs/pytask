@@ -1,5 +1,4 @@
 import os
-import PIL
 
 from django import forms
 
@@ -85,6 +84,12 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
         new_profile.save()
         
         return new_user
+
+class CreateProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = Profile
+        fields = ['full_name', 'aboutme', 'gender', 'dob', 'address', 'phonenum']
 
 class EditProfileForm(forms.ModelForm):
 
