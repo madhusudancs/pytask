@@ -65,3 +65,30 @@ class TaskClaim(models.Model):
     def __unicode__(self):
         return unicode(self.task.title)
 
+class WorkReport(models.Model):
+
+    task = models.ForeignKey(Task, related_name = "%(class)s_task")
+    submitted_by = models.ForeignKey(User, 
+                                     related_name = "%(class)s_submitted_by")
+    approved_by = models.ForeignKey(User, 
+                                    related_name = "%(class)s_approved_by")
+
+    data = models.TextField()
+    summary = models.CharField(max_length=100, verbose_name="Summary",
+                               help_text="A one line summary")
+    attachment = models.FileField(upload_to = UPLOADS_DIR)
+
+    revision = models.PositiveIntegerField(default=0)
+    submitted_at = models.DateTimeField()
+
+class ReportComment(models.Model):
+
+    uniq_key = models.CharField(max_length = 10, unique = True)
+    report = models.ForeignKey('WorkReport', related_name = "%(class)s_report")
+            
+    data = models.TextField()
+    commented_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
+    deleted_by = models.ForeignKey(User, null = True, blank = True,
+                                   related_name = "%(class)s_deleted_by")
+    comment_datetime = models.DateTimeField()
+    is_deleted = models.BooleanField(default=False)
