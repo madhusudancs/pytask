@@ -1,5 +1,5 @@
 from django import forms
-from pytask.taskapp.models import Task, WorkReport
+from pytask.taskapp.models import Task, WorkReport, TaskComment
 
 class CreateTaskForm(forms.ModelForm):
     class Meta:
@@ -50,6 +50,21 @@ class EditTaskForm(forms.ModelForm):
                 return data
         except Task.DoesNotExist:
             return data
+
+class TaskCommentForm(forms.ModelForm):
+
+    class Meta:
+        model = TaskComment
+        fields = ['data']
+
+    def clean_data(self):
+
+        data = self.cleaned_data['data'].strip()
+        if not data:
+            raise forms.ValidationError("Please add some content")
+
+        return data
+
 
 def AddReviewerForm(choices,instance=None):
     """ return a form object with appropriate choices """
