@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 import tagging
 from tagging.fields import TagField
@@ -11,6 +12,8 @@ STATUS_CHOICES = (
         ("CD", "Closed"),
         ("DL", "Deleted"),
         ("CM", "Completed"))
+
+UPLOADS_DIR = "./pytask/static/uploads"
 
 class Task(models.Model):
     
