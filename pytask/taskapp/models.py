@@ -35,3 +35,18 @@ class Task(models.Model):
     
     def __unicode__(self):
         return unicode(self.title)
+
+class TaskComment(models.Model):
+
+    uniq_key = models.CharField(max_length = 10, unique = True)
+    task = models.ForeignKey('Task', related_name = "%(class)s_task")
+            
+    data = models.TextField()
+    created_by = models.ForeignKey(User, related_name = "%(class)s_created_by")
+    deleted_by = models.ForeignKey(User, null = True, blank = True,
+                                   related_name = "%(class)s_deleted_by")
+    creation_datetime = models.DateTimeField()
+    is_deleted = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return unicode(self.task.title)
