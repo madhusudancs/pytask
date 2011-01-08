@@ -1,5 +1,8 @@
 from django.db import models
 
+import tagging
+from tagging.fields import TagField
+
 STATUS_CHOICES = (
         ("UP", "Unpublished"),
         ("OP", "Open"),
@@ -93,3 +96,5 @@ class ReportComment(models.Model):
                                    related_name = "%(class)s_deleted_by")
     comment_datetime = models.DateTimeField()
     is_deleted = models.BooleanField(default=False)
+
+tagging.register(Task)
