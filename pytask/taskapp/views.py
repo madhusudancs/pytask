@@ -27,10 +27,10 @@ def create_task(request):
 
     context.update(csrf(request))
 
-    can_create_task = False if user_profile.rights == "CT" else True
+    can_create_task = False if profile.rights == "CT" else True
     if can_create_task:
         if request.method == "POST":
-            form = TaskCreateForm(request.POST)
+            form = CreateTaskForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data.copy()
                 data.update({"created_by": user,
@@ -44,9 +44,11 @@ def create_task(request):
                 task_url = '/task/view/tid=%s'%task.uniq_key
                 return redirect(task_url)
             else:
-                return render_to_response('task/create.html',{'user':user, 'form':form})
+                context.update({'form':form})
+                return render_to_response('task/create.html', context)
         else:
-            form = TaskCreateForm()
-            return render_to_response('task/create.html',{'user':user, 'form':form})
+            form = CreateTaskForm()
+            context.update({'form':form})
+            return render_to_response('task/create.html', context)
     else:
         return show_msg(user, 'You are not authorised to create a task.')
