@@ -2,6 +2,8 @@ from django.conf.urls.defaults import *
 
 from registration.views import register
 from registration.backends.default import DefaultBackend
+import pytask.profile.regbackend
+
 from pytask.profile.forms import CustomRegistrationForm
 
 from django.shortcuts import redirect
