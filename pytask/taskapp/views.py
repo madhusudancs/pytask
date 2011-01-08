@@ -10,8 +10,9 @@ from django.views.decorators.csrf import csrf_protect
 from pytask.utils import make_key
 from pytask.views import show_msg
 
-from pytask.taskapp.models import Task
-from pytask.taskapp.forms import CreateTaskForm, EditTaskForm
+from pytask.taskapp.models import Task, TaskComment
+from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, TaskCommentForm
+from pytask.taskapp.utils import getTask
 from pytask.profile.utils import get_notification
 
 
@@ -52,3 +53,85 @@ def create_task(request):
             return render_to_response('task/create.html', context)
     else:
         return show_msg(user, 'You are not authorised to create a task.')
+
+def view_task(request, tid):
+    """ get the task depending on its tid and display accordingly if it is a get.
+    check for authentication and add a comment if it is a post request.
+    """
+    
+    task_url = "/task/view/tid=%s"%tid
+    task = getTask(tid)
+
+    user = request.user
+    profile = user.get_profile()
+
+    context = {"user": user,
+               "profile": profile,
+               "task": task,
+              }
+
+    context.update(csrf(request))
+
+    if task.status == "DL":
+        return show_msg(user, 'This task no longer exists', '/task/browse/','browse the tasks')
+
+    comments = task.comments.filter(is_deleted=False).order_by('comment_datetime')
+    reviewers = task.reviewers.all()
+
+    is_guest = True if not user.is_authenticated() else False
+    is_reviewer = True if user in task.reviewers.all() else False
+
+    context.update({'is_guest':is_guest,
+                    'is_reviewer':is_reviewer,
+                    'comments':comments,
+                    'reviewers':reviewers,
+                   })
+
+    claimed_users = task.claimed_users.all()
+
+
+#    is_requested_reviewer = True if user.is_authenticated() and user.request_sent_to.filter(is_valid=True,is_replied=False,role="MT",task=task) else False
+#    task_viewable = True if ( task.status != "UP" ) or is_reviewer or is_requested_reviewer else False
+#    if not task_viewable:
+#        return show_msg(user, "You are not authorised to view this task", "/task/browse/", "browse the tasks")
+
+#    context['is_requested_reviewer'] = is_requested_reviewer
+
+    context['can_publish'] = True if task.status == "UP" and user == task.created_by else False
+    context['can_edit'] = True if task.status == "UP" and is_reviewer else False
+    context['can_close'] = True if task.status not in ["UP", "CD", "CM"] and is_reviewer else False
+    context['can_delete'] = True if task.status == "UP" and user == task.created_by else False
+
+    context['can_mod_reviewers'] = True if task.status in ["UP", "OP", "LO", "WR"] and is_reviewer else False
+    context['can_mod_tasks'] = True if task.status in ["UP", "OP", "LO"] and is_reviewer else False
+
+    context['can_assign_pynts'] = True if task.status in ["OP", "WR"] and is_reviewer else False
+    context['task_claimable'] = True if task.status in ["OP", "WR"] and not is_guest else False
+
+#    if task.status == "CD":
+#        context['closing_notification'] =  Notification.objects.filter(task=task,role="CD")[0]
+#    elif task.status == "CM":
+#        context['completed_notification'] =  Notifications.objects.filter(task=task,role="CM")[0]
+#    elif task.status == "WR":
+#        context['assigned_users'] = task.assigned_users.all()
+   
+    if request.method == 'POST':
+        if not is_guest:
+            form = TaskCommentForm(request.POST)
+            if form.is_valid():
+                data = form.cleaned_data['data']
+                new_comment = TaskComment(task=task, data=data,
+                                          uniq_key=make_key(TaskComment),
+                                          commented_by=user, comment_datetime=datetime.now())
+                new_comment.save()
+                return redirect(task_url)
+            else:
+                context['form'] = form
+                return render_to_response('task/view.html', context)
+        else:
+            return redirect(task_url)
+    else:
+        form = TaskCommentForm()
+        context['form'] = form
+        return render_to_response('task/view.html', context)
+
