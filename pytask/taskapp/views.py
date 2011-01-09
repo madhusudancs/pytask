@@ -186,6 +186,10 @@ def claim_task(response, tid):
                          "claimed_by": user,})
             new_claim = TaskClaim(**data)
             new_claim.save()
+
+            task.claimed_users.add(user)
+            task.save()
+
             return redirect(claim_url)
 
         else:
