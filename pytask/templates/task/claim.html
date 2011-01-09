@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if can_claim %}
+    Propose a claim to work on this task.<br />
+    {% endif %}
+    {% if claims %}
+        List of all the claims for the task <a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a><br />
+        {% for claim in claims %}
+            <hr />
+            <a href="/user/view/uid={{claim.claimed_by.id}}">{{claim.claimed_by.username}}</a>
+            on {{claim.claim_datetime|date:"D d M Y"}} at {{claim.claim_datetime|time:"H:i"}} wrote:<br />
+            {{claim.proposal|linebreaksbr}}<br />
+        {% endfor %}
+    {% else %}
+        {% if task_claimable %}
+            There are no claims for this task yet.<br />
+            {% if can_claim %}
+                Be the first to claim the task.<br />
+            {% endif %}
+        {% else %}
+            The task cannot be claimed at this stage.<br />
+        {% endif %}
+        <a href="/task/view/tid={{task.id}}">Click here</a> to view the task.<br />
+    {% endif %}
+    {% if task_claimed and is_creator %}
+        <a href="/task/select/tid={{task.id}}">Select a user to assign the work.</a>
+    {% endif %}
+
+    {% if can_claim %}
+        <hr />
+        <form action="" method="post">
+	{% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Submit Claim"><br />
+        Please note that you can claim only once and so write your proposal carefully.<br />
+        </form>
+    {% endif %}
+
+{% endblock %}
