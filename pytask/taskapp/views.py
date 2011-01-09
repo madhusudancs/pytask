@@ -10,8 +10,8 @@ from django.views.decorators.csrf import csrf_protect
 from pytask.utils import make_key
 from pytask.views import show_msg
 
-from pytask.taskapp.models import Task, TaskComment
-from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, TaskCommentForm
+from pytask.taskapp.models import Task, TaskComment, TaskClaim
+from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, TaskCommentForm, ClaimTaskForm
 from pytask.taskapp.utils import getTask
 from pytask.profile.utils import get_notification
 
@@ -138,7 +138,7 @@ def view_task(request, tid):
         return render_to_response('task/view.html', context)
 
 @login_required
-def claim_task(response, tid):
+def claim_task(request, tid):
 
     task_url = "/task/view/tid=%s"%tid
     claim_url = "/task/claim/tid=%s"%tid
@@ -159,7 +159,7 @@ def claim_task(response, tid):
 
     reviewers = task.reviewers.all()
     claimed_users = task.claimed_users.all()
-    assigned_users = task.assigned_users.all()
+    selected_users = task.selected_users.all()
 
     is_creator = True if user == task.created_by else False
     is_reviewer = True if user in reviewers else False

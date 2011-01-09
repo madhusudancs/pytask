@@ -106,8 +106,8 @@
         <a href="/task/report/tid={{task.uniq_key}}">Submit Work</a>
     {% endif %}
     
-    {% if comments %}
         <hr />
+    {% if comments %}
         comments:<br /><br />
         {% for comment in comments %}
             <a href="/user/view/uid={{comment.commented_by.uniq_key}}">{{ comment.commented_by.username }}</a> 
