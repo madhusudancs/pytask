@@ -77,21 +77,19 @@ class ClaimTaskForm(forms.ModelForm):
             raise forms.ValidationError('Enter something as a proposal')
         return data
 
+def ChoiceForm(choices, data=None):
+    """ return a form object with appropriate choices """
+    
+    class myform(forms.Form):
+        choice = forms.ChoiceField(choices=choices, required=True)
+    form = myform(data) if data else myform()
+    return form
+
 def AddReviewerForm(choices,instance=None):
     """ return a form object with appropriate choices """
     
     class myform(forms.Form):
         reviewer = forms.ChoiceField(choices=choices, required=True)
-    form = myform(instance) if instance else myform()
-    return form
-
-
-
-def ChoiceForm(choices, instance=None):
-    """ return a form object with appropriate choices """
-    
-    class myform(forms.Form):
-        choice = forms.ChoiceField(choices=choices, required=True)
     form = myform(instance) if instance else myform()
     return form
 
