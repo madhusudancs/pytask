@@ -5,6 +5,7 @@ from registration.backends.default import DefaultBackend
 import pytask.profile.regbackend
 
 from pytask.profile.forms import CustomRegistrationForm
+from pytask.views import home_page
 
 from django.shortcuts import redirect
 
@@ -33,4 +34,5 @@ urlpatterns = patterns('',
     (r'^accounts/', include('registration.urls')),
     (r'^profile/', include('pytask.profile.urls')),
     (r'^task/', include('pytask.taskapp.urls')),
+    (r'^$', home_page),
 )

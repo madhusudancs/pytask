@@ -245,6 +245,7 @@ def select_user(request, tid):
 
                     task.selected_users.add(selected_user)
                     task.claimed_users.remove(selected_user)
+                    task.status = "WR"
                     task.save()
 
                     return redirect(task_url)
