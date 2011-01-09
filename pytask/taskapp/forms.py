@@ -1,5 +1,6 @@
 from django import forms
-from pytask.taskapp.models import Task, WorkReport, TaskComment, TaskClaim
+from pytask.taskapp.models import Task, WorkReport, TaskComment, TaskClaim, \
+                                  TextBook
 
 class CreateTaskForm(forms.ModelForm):
     class Meta:
@@ -84,6 +85,12 @@ def ChoiceForm(choices, data=None):
         choice = forms.ChoiceField(choices=choices, required=True)
     form = myform(data) if data else myform()
     return form
+
+class CreateTextbookForm(forms.ModelForm):
+
+    class Meta:
+        model = TextBook
+        fields = ['name', 'chapters', 'tags_field']
 
 def AddReviewerForm(choices,instance=None):
     """ return a form object with appropriate choices """

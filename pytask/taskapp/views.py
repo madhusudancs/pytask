@@ -12,10 +12,10 @@ from django.views.decorators.csrf import csrf_protect
 from pytask.utils import make_key
 from pytask.views import show_msg
 
-from pytask.taskapp.models import Task, TaskComment, TaskClaim
+from pytask.taskapp.models import Task, TaskComment, TaskClaim, TextBook
 from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, \
                                  TaskCommentForm, ClaimTaskForm, \
-                                 ChoiceForm, EditTaskForm
+                                 ChoiceForm, EditTaskForm, CreateTextbookForm
 from pytask.taskapp.utils import getTask
 from pytask.profile.utils import get_notification
 
@@ -179,8 +179,44 @@ def edit_task(request, tid):
         context.update({"form": form})
         return render_to_response("task/edit.html", context)
 
+@login_required
+def create_textbook(request):
 
+    user = request.user
+    profile = user.get_profile()
 
+    can_create = True if profile.rights != "CT" else False
+    if not can_create:
+        raise Http404
+
+    context = {"user": user,
+               "profile": profile,
+              }
+
+    context.update(csrf(request))
+
+    if request.method == "POST":
+        form = CreateTextbookForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data.copy()
+            data.update({"uniq_key": make_key(TextBook),
+                         "created_by": user,
+                         "creation_datetime": datetime.now()})
+            del data['chapters']
+            new_textbook = TextBook(**data)
+            new_textbook.save()
+
+            new_textbook.chapters = form.cleaned_data['chapters']
+
+            textbook_url = "/task/textbook/tid=%s"%new_textbook.uniq_key
+            return redirect(textbook_url)
+        else:
+            context.update({"form": form})
+            return render_to_response("task/create_textbook.html", context)
+    else:
+        form = CreateTextbookForm()
+        context.update({"form": form})
+        return render_to_response("task/create_textbook.html", context)
 
 @login_required
 def claim_task(request, tid):

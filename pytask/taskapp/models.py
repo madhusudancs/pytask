@@ -136,7 +136,8 @@ class PyntRequests(models.Model):
 class TextBook(models.Model):
 
     uniq_key = models.CharField(max_length = 10, unique = True)
-    chapters = models.ManyToManyField(Task, related_name="%(class)s_set")
+    name = models.CharField(max_length = 100)
+    chapters = models.ManyToManyField(Task, related_name="textbooks")
     tags_field = TagField(verbose_name="Tags")
 
     created_by = models.ForeignKey(User, related_name = "created_textbooks")
