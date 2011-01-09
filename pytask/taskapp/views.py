@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.contrib.auth.models import User
+
 from django.shortcuts import render_to_response, redirect
 from django.http import Http404
 
@@ -11,7 +13,9 @@ from pytask.utils import make_key
 from pytask.views import show_msg
 
 from pytask.taskapp.models import Task, TaskComment, TaskClaim
-from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, TaskCommentForm, ClaimTaskForm
+from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, \
+                                 TaskCommentForm, ClaimTaskForm, \
+                                 ChoiceForm
 from pytask.taskapp.utils import getTask
 from pytask.profile.utils import get_notification
 
@@ -220,16 +224,16 @@ def select_user(request, tid):
 
     context.update(csrf(request))
 
-    task_claimed = True if claimed_users else False
     claimed_users = task.claimed_users.all()
     selected_users = task.selected_users.all()
+    task_claimed = True if claimed_users else False
     
     is_creator = True if user == task.created_by else False
 
     if ( is_creator or profile.rights in ["CR", "DC"] ) and \
-       task.status in ["OP", "WR"] and task_claimed:
+       task.status in ["OP", "WR"]:
 
-       if claimed_users:
+        if task_claimed:
 
             user_list = ((user.id,user.username) for user in claimed_users)
 
@@ -239,8 +243,8 @@ def select_user(request, tid):
                     uid = form.cleaned_data['choice']
                     selected_user = User.objects.get(id=uid)
 
-                    task.selected_users.add(user)
-                    task.claimed_users.remove(user)
+                    task.selected_users.add(selected_user)
+                    task.claimed_users.remove(selected_user)
                     task.save()
 
                     return redirect(task_url)

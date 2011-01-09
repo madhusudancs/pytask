@@ -23,7 +23,7 @@
     {% endif %}
     {% if old_claims and is_creator %}
     <hr />
-        <a href="/task/select/tid={{task.id}}">Select a user to assign the work</a>
+        <a href="/task/select/tid={{task.uniq_key}}">Select a user to assign the work</a>
     {% endif %}
 
     {% if can_claim %}
