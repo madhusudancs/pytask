@@ -201,4 +201,59 @@ def claim_task(request, tid):
         context.update({"form": form})
         return render_to_response("task/claim.html", context)
 
+@login_required
+def select_user(request, tid):
+    """ first get the status of the task and then select one of claimed users
+    generate list of claimed users by passing it as an argument to a function.
+    """
+    
+    task_url = "/task/view/tid=%s"%tid
+    
+    user = request.user
+    profile = user.get_profile()
+    task = getTask(tid)
+    
+    context = {"user": user,
+               "profile": profile,
+               "task": task,
+              }
+
+    context.update(csrf(request))
+
+    task_claimed = True if claimed_users else False
+    claimed_users = task.claimed_users.all()
+    selected_users = task.selected_users.all()
+    
+    is_creator = True if user == task.created_by else False
+
+    if ( is_creator or profile.rights in ["CR", "DC"] ) and \
+       task.status in ["OP", "WR"] and task_claimed:
+
+       if claimed_users:
+
+            user_list = ((user.id,user.username) for user in claimed_users)
+
+            if request.method == "POST":
+                form = ChoiceForm(user_list, request.POST)
+                if form.is_valid():
+                    uid = form.cleaned_data['choice']
+                    selected_user = User.objects.get(id=uid)
+
+                    task.selected_users.add(user)
+                    task.claimed_users.remove(user)
+                    task.save()
+
+                    return redirect(task_url)
+                else:
+                    context.update({"form": form})
+                    return render_to_response('task/select_user.html', context)
+            else:
+                form = ChoiceForm(user_list)
+                context.update({"form": form})
+                return render_to_response('task/select_user.html', context)
+        else:
+            return show_msg(user, 'There are no pending claims for this task',
+                            task_url, 'view the task')
+    else:
+        raise Http404
 
