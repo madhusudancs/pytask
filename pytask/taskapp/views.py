@@ -137,3 +137,63 @@ def view_task(request, tid):
         context['form'] = form
         return render_to_response('task/view.html', context)
 
+@login_required
+def claim_task(response, tid):
+
+    task_url = "/task/view/tid=%s"%tid
+    claim_url = "/task/claim/tid=%s"%tid
+    task = getTask(tid)
+
+    if task.status == "UP":
+        raise Http404
+
+    user = request.user
+    profile = user.get_profile()
+
+    context = {"user": user,
+               "profile": profile,
+               "task": task,
+              }
+
+    context.update(csrf(request))
+
+    reviewers = task.reviewers.all()
+    claimed_users = task.claimed_users.all()
+    assigned_users = task.assigned_users.all()
+
+    is_creator = True if user == task.created_by else False
+    is_reviewer = True if user in reviewers else False
+    has_claimed = True if user in claimed_users else False
+
+    task_claimable = True if task.status in ["OP", "WR"] else False
+    can_claim = True if task_claimable and ( not has_claimed )\
+                        and ( not is_reviewer ) else False
+
+    old_claims = task.claims.all()
+
+    context.update({"is_creator": is_creator,
+                    "task_claimable": task_claimable,
+                    "can_claim": can_claim,
+                    "old_claims": old_claims})
+
+    if request.method == "POST" and can_claim:
+        form = ClaimTaskForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data.copy()
+            data.update({"uniq_key": make_key(TaskClaim),
+                         "task": task,
+                         "claim_datetime": datetime.now(),
+                         "claimed_by": user,})
+            new_claim = TaskClaim(**data)
+            new_claim.save()
+            return redirect(claim_url)
+
+        else:
+            context.update({"form": form})
+            return render_to_response("task/claim.html", context)
+    else:
+        form = ClaimTaskForm()
+        context.update({"form": form})
+        return render_to_response("task/claim.html", context)
+
+
