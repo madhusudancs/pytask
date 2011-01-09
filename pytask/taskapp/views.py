@@ -167,7 +167,8 @@ def claim_task(request, tid):
 
     task_claimable = True if task.status in ["OP", "WR"] else False
     can_claim = True if task_claimable and ( not has_claimed )\
-                        and ( not is_reviewer ) else False
+                        and ( not is_reviewer ) and (not is_creator ) \
+                        else False
 
     old_claims = task.claims.all()
 
