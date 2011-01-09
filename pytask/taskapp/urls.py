@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 
-from pytask.taskapp.views import create_task, view_task, claim_task
+from pytask.taskapp.views import create_task, view_task, claim_task \
+        select_user
 
 urlpatterns = patterns('',
 
