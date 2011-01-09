@@ -103,6 +103,7 @@ def view_task(request, tid):
     is_creator = True if user == task.created_by else False
     has_claimed = True if user in claimed_users else False
 
+    context['selected_users'] = selected_users
     context['is_selected'] = True if user in selected_users else False
     context['can_approve'] = True if task.status == "UP" and\
                                      profile.rights in ["MG", "DC"]\

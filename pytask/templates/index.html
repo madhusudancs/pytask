@@ -14,19 +14,9 @@
     <br />
     {% endif %}
     
-    
-    {% if unpublished_tasks %}
-    Unpublished tasks viewable by you:<ul>
-        {% for a_task in unpublished_tasks %}
-            <li><a href="/task/view/tid={{a_task.id}}">{{a_task.title}}</a></li>
-        {% endfor %}
-        </ul>
-    <br />
-    {% endif %}
-
-    {% if reviewered_tasks %}
+    {% if reviewing_tasks %}
     Tasks you are reviewering:<ul>
-        {% for a_task in reviewered_tasks %}
+        {% for a_task in reviewing_tasks %}
             <li><a href="/task/view/tid={{a_task.uniq_key}}">{{a_task.title}}</a></li>
         {% endfor %}
         </ul>
