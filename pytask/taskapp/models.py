@@ -77,7 +77,7 @@ class TaskClaim(models.Model):
                                    related_name = "claimed_claims")
     proposal = models.TextField()
 
-    comment_datetime = models.DateTimeField()
+    claim_datetime = models.DateTimeField()
 
     def __unicode__(self):
         return unicode(self.task.title)
