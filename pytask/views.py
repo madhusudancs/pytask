@@ -22,6 +22,7 @@ def home_page(request):
     claimed_tasks = user.claimed_tasks.all()
     selected_tasks = user.selected_tasks.all()
     reviewing_tasks = user.reviewing_tasks.all()
+    unpublished_tasks = user.created_tasks.filter(status="UP").all()
     can_create_task = True if profile.rights != "CT" else False
 
     context = {"user": user,
@@ -29,6 +30,7 @@ def home_page(request):
                "claimed_tasks": claimed_tasks,
                "selected_tasks": selected_tasks,
                "reviewing_tasks": reviewing_tasks,
+               "unpublished_tasks": unpublished_tasks,
                "can_create_task": can_create_task
               }
 

@@ -17,9 +17,11 @@
         <a href="/task/close/tid={{task.uniq_key}}">Close task</a>
     {% endif %}
     
+<!--
     {% if can_delete %}
         <a href="/task/delete/tid={{task.uniq_key}}">Delete task</a>
     {% endif %}
+    -->
 
     <hr />created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a>
     on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
