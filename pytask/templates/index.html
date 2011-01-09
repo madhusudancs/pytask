@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     {% if not user %}
-        Welcome Guest<br>
-        <a href="/accounts/register/">Register</a>
-        <a href="/accounts/login/">Login</a><br /><br />
+    Checkout the tasks on the left panel for tasks that have been recently created.<br />
+    Checkout the textbooks for textbooks that have been added to the project.<br />
+
     {% else %}
         Logged in as {{ user.username }} <br /><br />
     {% endif %}
