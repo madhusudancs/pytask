@@ -1,5 +1,5 @@
 from django import forms
-from pytask.taskapp.models import Task, WorkReport, TaskComment
+from pytask.taskapp.models import Task, WorkReport, TaskComment, TaskClaim
 
 class CreateTaskForm(forms.ModelForm):
     class Meta:
@@ -65,6 +65,17 @@ class TaskCommentForm(forms.ModelForm):
 
         return data
 
+class ClaimTaskForm(forms.ModelForm):
+
+    class Meta:
+        model = TaskClaim
+        fields = ["proposal"]
+
+    def clean_proposal(self):
+        data = self.cleaned_data['proposal'].strip()
+        if not data:
+            raise forms.ValidationError('Enter something as a proposal')
+        return data
 
 def AddReviewerForm(choices,instance=None):
     """ return a form object with appropriate choices """
@@ -74,14 +85,6 @@ def AddReviewerForm(choices,instance=None):
     form = myform(instance) if instance else myform()
     return form
 
-class ClaimTaskForm(forms.Form):
-    message = forms.CharField(label="Proposal")
-
-    def clean_message(self):
-        data = self.cleaned_data['message'].strip()
-        if not data:
-            raise forms.ValidationError('Enter something as a proposal')
-        return data
 
 
 def ChoiceForm(choices, instance=None):
