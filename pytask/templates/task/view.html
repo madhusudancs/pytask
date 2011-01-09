@@ -9,7 +9,7 @@
         <a href="/task/edit/tid={{task.uniq_key}}">Edit task</a>
     {% endif %}
     
-    {% if can_publish %}
+    {% if can_approve %}
         <a href="/task/approve/tid={{task.uniq_key}}">Approve task</a>
     {% endif %}
     
@@ -24,15 +24,18 @@
     <hr />created by <a href="/user/view/uid={{ task.created_by.uniq_key }}">{{ task.created_by.username }}</a>
     on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
     
-    {% ifequal task.status "UP" %}
-        Task can be viewed by:
-    {% else %}
-        Reviewers:
-    {% endifequal %}
-    
-    {% for reviewer in reviewers %}
-        <a href="/user/view/uid={{reviewer.id}}">{{reviewer.username}}</a>
-    {% endfor %}
+    {% if reviewers %}
+	    {% ifequal task.status "UP" %}
+		Task can be viewed by:
+	    {% else %}
+		Reviewers:
+	    {% endifequal %}
+	    
+	    {% for reviewer in reviewers %}
+		<a href="/user/view/uid={{reviewer.id}}">{{reviewer.username}}</a>
+	    {% endfor %}
+    {% endif %}
+
     
     {% if can_mod_reviewers %}
         <a href="/task/addreviewer/tid={{task.uniq_key}}">
@@ -57,6 +60,7 @@
     {% endif %}
 
     
+    <!--
     {% ifequal task.status "CD" %}
         Task has been closed by <a href="/user/view={{closing_notification.sent_from.id}}">{{closing_notification.sent_from.username}}</a>
         on {{closing_notification.sent_date|date:"D d M Y"}} at {{closing_notification.sent_date|time:"H:i"}}<br />
@@ -76,8 +80,9 @@
     {% if subs %}
         <br />This task cannot be claimed.. It exists only to show all of its sub tasks in one place.<br />
     {% endif %}
+    -->
         
-    {% if assigned_users %}
+    {% if selected_users %}
         Users working on this task:
         {% for user in assigned_users %}
             <a href="/user/view/uid={{user.id}}">{{user.username}}</a>
@@ -88,51 +93,36 @@
         <br />
     {% endif %}
     
+    {% if task_claimable %}
+	<a href="/task/claim/tid={{task.uniq_key}}">View claims</a>
+    {% endif %}
+
     {% if can_assign_pynts %}
-        <a href="/task/assignpynts/tid={{task.uniq_key}}">View/Assign pynts</a>
+        <a href="/task/assignpynts/tid={{task.uniq_key}}">Request assign pynts and mark the task as complete</a>
     {% endif %}
     
-    {% if task_claimable %}
-        <a href="/task/claim/tid={{task.uniq_key}}">
-        {% if is_reviewer %}
-            View claims
-        {% else %}
+
+    {% if is_selected %}
         <a href="/task/report/tid={{task.uniq_key}}">Submit Work</a>
-            Claim the task
-        {% endif %}</a>
     {% endif %}
     
     {% if comments %}
         <hr />
         comments:<br /><br />
         {% for comment in comments %}
-            <a href="/user/view/uid={{comment.created_by.uniq_key}}">{{ comment.created_by.username }}</a> 
+            <a href="/user/view/uid={{comment.commented_by.uniq_key}}">{{ comment.commented_by.username }}</a> 
             on {{ comment.comment_datetime|date:"D d M Y"}} at {{comment.comment_datetime|time:"H:i"}} wrote:<br />
         {{ comment.data|linebreaksbr }}<br /><br />
         {% endfor %}
     {% endif %}
 
-    {% if not is_guest %}
-        <hr />
-        {% if error_msg %}
-            {{error_msg}}<br />
-        {% endif %}
-        {% ifnotequal task.status "UP" %}
-            Add comment:<br />
-            <form action="" method="post">
-		    {% csrf_token %}
-		    {{form.as_p}}
-            <input type="submit" value="Submit">
-            </form>
-        {% else %}
-            {% if is_reviewer %}
-            Add comment:<br />
-                <form action="" method="post">
-		    {% csrf_token %}
-		    {{form.as_p}}
-                <input type="submit" value="Submit">
-                </form>                
-            {% endif %}
-        {% endifnotequal %}
+    {% if can_comment %}
+    Add comment:<br />
+	<form action="" method="post">
+	    {% csrf_token %}
+	    {{form.as_p}}
+	<input type="submit" value="Submit">
+	</form>                
     {% endif %}
+
 {% endblock %}
