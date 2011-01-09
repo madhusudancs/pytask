@@ -35,3 +35,7 @@ def home_page(request):
               }
 
     return render_to_response("index.html", context)
+
+def under_construction(request):
+
+    return render_to_response("under_construction.html")
