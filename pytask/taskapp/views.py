@@ -15,7 +15,7 @@ from pytask.views import show_msg
 from pytask.taskapp.models import Task, TaskComment, TaskClaim
 from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, \
                                  TaskCommentForm, ClaimTaskForm, \
-                                 ChoiceForm
+                                 ChoiceForm, EditTaskForm
 from pytask.taskapp.utils import getTask
 from pytask.profile.utils import get_notification
 
@@ -108,7 +108,7 @@ def view_task(request, tid):
     context['can_approve'] = True if task.status == "UP" and\
                                      profile.rights in ["MG", "DC"]\
                                      else False
-    context['can_edit'] = True if is_creator else False
+    context['can_edit'] = True if is_creator and task.status == "UP" else False
     context['can_close'] = True if task.status not in ["UP", "CD", "CM"] and is_reviewer else False
     context['can_delete'] = True if task.status == "UP" and is_creator else False
 
@@ -141,6 +141,46 @@ def view_task(request, tid):
         form = TaskCommentForm()
         context['form'] = form
         return render_to_response('task/view.html', context)
+
+@login_required
+def edit_task(request, tid):
+    """ only creator gets to edit the task and that too only before it gets
+    approved.
+    """
+
+    user = request.user
+    profile = user.get_profile()
+
+    task_url = "/task/view/tid=%s"%tid
+    task = getTask(tid)
+
+    is_creator = True if user == task.created_by else False
+    can_edit = True if task.status == "UP" and is_creator else False
+    if not can_edit:
+        raise Http404
+
+    context = {"user": user,
+               "profile": profile,
+               "task": task,
+              }
+
+    context.update(csrf(request))
+
+    if request.method == "POST":
+        form = EditTaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect(task_url)
+        else:
+            context.update({"form": form})
+            return render_to_response("task/edit.html", context)
+    else:
+        form = EditTaskForm(instance=task)
+        context.update({"form": form})
+        return render_to_response("task/edit.html", context)
+
+
+
 
 @login_required
 def claim_task(request, tid):

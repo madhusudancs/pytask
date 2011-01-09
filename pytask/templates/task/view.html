@@ -106,7 +106,7 @@
     {% if comments %}
         comments:<br /><br />
         {% for comment in comments %}
-            <a href="/user/view/uid={{comment.commented_by.uniq_key}}">{{ comment.commented_by.username }}</a> 
+            <a href="/user/view/uid={{comment.commented_by.id}}">{{ comment.commented_by.username }}</a> 
             on {{ comment.comment_datetime|date:"D d M Y"}} at {{comment.comment_datetime|time:"H:i"}} wrote:<br />
         {{ comment.data|linebreaksbr }}<br />
         {% endfor %}
