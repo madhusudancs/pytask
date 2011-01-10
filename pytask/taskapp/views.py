@@ -181,6 +181,49 @@ def edit_task(request, tid):
         return render_to_response("task/edit.html", context)
 
 @login_required
+def approve_task(request, tid):
+
+    user = request.user
+    profile = user.get_profile()
+
+    task_url = "/task/view/tid=%s"%tid
+    task = getTask(tid)
+
+    if profile.rights not in ["MG", "DC"] or task.status != "UP":
+        raise Http404
+
+    context = {"user": user,
+               "profile": profile,
+               "task": task,
+              }
+
+    return render_to_response("task/confirm_approval.html", context)
+
+@login_required
+def approved_task(request, tid):
+
+    user = request.user
+    profile = user.get_profile()
+
+    task_url = "/task/view/tid=%s"%tid
+    task = getTask(tid)
+
+    if profile.rights not in ["MG", "DC"] or task.status != "UP":
+        raise Http404
+
+    task.approved_by = user
+    task.approval_datetime = datetime.now()
+    task.status = "OP"
+    task.save()
+
+    context = {"user": user,
+               "profile": profile,
+               "task": task,
+              }
+
+    return render_to_response("task/approved_task.html", context)
+
+@login_required
 def create_textbook(request):
 
     user = request.user

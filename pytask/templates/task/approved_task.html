@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+The task <a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a> has been approved.<br />
+The task will be public. Now users can claim the task and work on it.
+{% endblock %}
