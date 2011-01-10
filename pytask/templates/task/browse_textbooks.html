@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if comp_textbooks %}
+    Textbooks that were completed recently<ul>
+    {% for textbook in comp_textbooks %}
+        <li><a href="/task/textbook/view/tid={{ textbook.uniq_key }}">{{ textbook.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <br />
+    {% endif %}
+
+    {% if open_textbooks %}
+    textbooks that are open for contribution<ul>
+    {% for textbook in comp_textbooks %}
+        <li><a href="/task/textbook/view/tid={{ textbook.uniq_key }}">{{ textbook.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <br />
+    {% endif %}
+
+    {% if unpub_textbooks %}
+    Textbooks that have been created but need approval<ul>
+    {% for textbook in unpub_textbooks %}
+        <li><a href="/task/textbook/view/tid={{ textbook.uniq_key }}">{{ textbook.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <br />
+    {% endif %}
+{% endblock %}

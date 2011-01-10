@@ -225,7 +225,7 @@ def view_textbook(request, tid):
 
     user = request.user
     if not user.is_authenticated():
-        return render_to_response("task/view_textbook.html")
+        return render_to_response("task/view_textbook.html", {"user": user})
 
     profile = user.get_profile()
 
@@ -248,6 +248,26 @@ def view_textbook(request, tid):
                     "can_edit": can_edit,
                     "can_approve": can_approve})
     return render_to_response("task/view_textbook.html", context)
+
+def browse_textbooks(request):
+
+    user = request.user
+
+    open_textbooks = TextBook.objects.filter(status="OP").\
+                                      order_by("creation_datetime")
+    comp_textbooks = TextBook.objects.filter(status="CM").\
+                                      order_by("creation_datetime")
+    context = {"user": user,
+               "open_textbooks": open_textbooks,
+               "comp_textbooks": comp_textbooks,
+              }
+
+    if user.is_authenticated() and user.get_profile().rights != "CT":
+        unpub_textbooks = TextBook.objects.filter(status="UP")
+
+        context.update({"unpub_textbooks": unpub_textbooks})
+
+    return render_to_response("task/browse_textbooks.html", context)
 
 @login_required
 def claim_task(request, tid):
