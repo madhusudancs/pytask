@@ -15,7 +15,8 @@ from pytask.views import show_msg
 from pytask.taskapp.models import Task, TaskComment, TaskClaim, TextBook
 from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, \
                                  TaskCommentForm, ClaimTaskForm, \
-                                 ChoiceForm, EditTaskForm, CreateTextbookForm
+                                 ChoiceForm, EditTaskForm, CreateTextbookForm,\
+                                 EditTextbookForm
 from pytask.taskapp.utils import getTask, getTextBook
 from pytask.profile.utils import get_notification
 
@@ -268,6 +269,41 @@ def browse_textbooks(request):
         context.update({"unpub_textbooks": unpub_textbooks})
 
     return render_to_response("task/browse_textbooks.html", context)
+
+@login_required
+def edit_textbook(request, tid):
+
+    user = request.user
+    profile = user.get_profile()
+
+    textbook = getTextBook(tid)
+    textbook_url = "/task/textbook/view/tid=%s"%textbook.uniq_key
+
+    can_edit = True if user == textbook.created_by and textbook.status == "UP"\
+                       else False
+
+    if not can_edit:
+        raise Http404
+
+    context = {"user": user,
+               "profile": profile,
+               "textbook": textbook,
+              }
+
+    context.update(csrf(request))
+
+    if request.method == "POST":
+        form = EditTextbookForm(request.POST, instance=textbook)
+        if form.is_valid():
+            form.save()
+            return redirect(textbook_url)
+        else:
+            context.update({"form": form})
+            return render_to_response("task/edit_textbook.html", context)
+    else:
+        form = EditTextbookForm(instance=textbook)
+        context.update({"form": form})
+        return render_to_response("task/edit_textbook.html", context)
 
 @login_required
 def claim_task(request, tid):

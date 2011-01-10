@@ -92,6 +92,12 @@ class CreateTextbookForm(forms.ModelForm):
         model = TextBook
         fields = ['name', 'chapters', 'tags_field']
 
+class EditTextbookForm(forms.ModelForm):
+
+    class Meta:
+        model = TextBook
+        fields = ['name', 'chapters', 'tags_field']
+
 def AddReviewerForm(choices,instance=None):
     """ return a form object with appropriate choices """
     
