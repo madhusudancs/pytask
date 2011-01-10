@@ -149,3 +149,4 @@ class TextBook(models.Model):
     approval_datetime = models.DateTimeField(blank = True, null = True)
 
 tagging.register(Task)
+tagging.register(TextBook)

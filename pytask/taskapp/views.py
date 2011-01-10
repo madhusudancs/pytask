@@ -16,7 +16,7 @@ from pytask.taskapp.models import Task, TaskComment, TaskClaim, TextBook
 from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, \
                                  TaskCommentForm, ClaimTaskForm, \
                                  ChoiceForm, EditTaskForm, CreateTextbookForm
-from pytask.taskapp.utils import getTask
+from pytask.taskapp.utils import getTask, getTextBook
 from pytask.profile.utils import get_notification
 
 
@@ -208,7 +208,7 @@ def create_textbook(request):
 
             new_textbook.chapters = form.cleaned_data['chapters']
 
-            textbook_url = "/task/textbook/tid=%s"%new_textbook.uniq_key
+            textbook_url = "/task/textbook/view/tid=%s"%new_textbook.uniq_key
             return redirect(textbook_url)
         else:
             context.update({"form": form})
@@ -217,6 +217,37 @@ def create_textbook(request):
         form = CreateTextbookForm()
         context.update({"form": form})
         return render_to_response("task/create_textbook.html", context)
+
+def view_textbook(request, tid):
+
+    textbook = getTextBook(tid)
+    textbook_url = "/task/textbook/view/tid=%s"%textbook.uniq_key
+
+    user = request.user
+    if not user.is_authenticated():
+        return render_to_response("task/view_textbook.html")
+
+    profile = user.get_profile()
+
+    context = {"user": user,
+               "profile": profile,
+               "textbook": textbook,
+              }
+
+    context.update(csrf(request))
+
+    chapters = Task.objects.filter(status="UP")
+
+    can_edit = True if user == textbook.created_by and textbook.status == "UP"\
+                       else False
+
+    can_approve = True if profile.rights in ["MG", "DC"] and \
+                          textbook.status == "UP" else False
+
+    context.update({"chapters": chapters,
+                    "can_edit": can_edit,
+                    "can_approve": can_approve})
+    return render_to_response("task/view_textbook.html", context)
 
 @login_required
 def claim_task(request, tid):
