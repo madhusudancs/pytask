@@ -23,7 +23,7 @@
     {% endif %}
     -->
 
-    <hr />created by <a href="/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a>
+    <hr />created by <a href="/profile/user/view/uid={{ task.created_by.id }}">{{ task.created_by.username }}</a>
     on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
     
     {% if reviewers %}
@@ -34,7 +34,7 @@
 	    {% endifequal %}
 	    
 	    {% for reviewer in reviewers %}
-		<a href="/user/view/uid={{reviewer.id}}">{{reviewer.username}}</a>
+		<a href="/profile/user/view/uid={{reviewer.id}}">{{reviewer.username}}</a>
 	    {% endfor %}
     {% endif %}
 
@@ -64,13 +64,13 @@
     
     <!--
     {% ifequal task.status "CD" %}
-        Task has been closed by <a href="/user/view={{closing_notification.sent_from.id}}">{{closing_notification.sent_from.username}}</a>
+        Task has been closed by <a href="/profile/user/view={{closing_notification.sent_from.id}}">{{closing_notification.sent_from.username}}</a>
         on {{closing_notification.sent_date|date:"D d M Y"}} at {{closing_notification.sent_date|time:"H:i"}}<br />
         <b>Reason: </b>{{closing_notification.remarks}}<br />
     {% endifequal %}
     
     {% ifequal task.status "CM" %}
-        Task has been marked complete by <a href="/user/view={{completed_notification.sent_from.id}}">
+        Task has been marked complete by <a href="/profile/user/view={{completed_notification.sent_from.id}}">
         {{completed_notification.sent_from.username}}</a>
         on {{completed_notification.sent_date|date:"D d M Y"}} at {{completed_notification.sent_date|time:"H:i"}}<br />
     {% endifequal %}
@@ -87,7 +87,7 @@
     {% if selected_users %}
         Users working on this task:
         {% for user in selected_users %}
-            <a href="/user/view/uid={{user.id}}">{{user.username}}</a>
+            <a href="/profile/user/view/uid={{user.id}}">{{user.username}}</a>
         {% endfor %}
         <br />
     {% endif %}
@@ -108,7 +108,7 @@
     {% if comments %}
         comments:<br /><br />
         {% for comment in comments %}
-            <a href="/user/view/uid={{comment.commented_by.id}}">{{ comment.commented_by.username }}</a> 
+            <a href="/profile/user/view/uid={{comment.commented_by.id}}">{{ comment.commented_by.username }}</a> 
             on {{ comment.comment_datetime|date:"D d M Y"}} at {{comment.comment_datetime|time:"H:i"}} wrote:<br />
         {{ comment.data|linebreaksbr }}<br />
         {% endfor %}

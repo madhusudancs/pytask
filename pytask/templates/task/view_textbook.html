@@ -13,7 +13,7 @@
         <a href="/task/textbook/approve/tid={{textbook.uniq_key}}">Approve Text book</a>
     {% endif %}
 
-    <hr />created by <a href="/user/view/uid={{ textbook.created_by.id }}">{{ textbook.created_by.username }}</a>
+    <hr />created by <a href="/profile/user/view/uid={{ textbook.created_by.id }}">{{ textbook.created_by.username }}</a>
     on {{textbook.creation_datetime|date:"D d M Y"}} at {{textbook.creation_datetime|time:"H:i"}}<br />
     <hr />
     
@@ -46,7 +46,7 @@
     {% if comments %}
         comments:<br /><br />
         {% for comment in comments %}
-            <a href="/user/view/uid={{comment.commented_by.id}}">{{ comment.commented_by.username }}</a> 
+            <a href="/profile/user/view/uid={{comment.commented_by.id}}">{{ comment.commented_by.username }}</a> 
             on {{ comment.comment_datetime|date:"D d M Y"}} at {{comment.comment_datetime|time:"H:i"}} wrote:<br />
         {{ comment.data|linebreaksbr }}<br />
         {% endfor %}

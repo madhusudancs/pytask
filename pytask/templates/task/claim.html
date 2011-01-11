@@ -7,7 +7,7 @@
         List of all the claims for the task <a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a><br />
         {% for claim in old_claims %}
             <hr />
-            <a href="/user/view/uid={{claim.claimed_by.id}}">{{claim.claimed_by.username}}</a>
+            <a href="/profile/user/view/uid={{claim.claimed_by.id}}">{{claim.claimed_by.username}}</a>
             on {{claim.claim_datetime|date:"D d M Y"}} at {{claim.claim_datetime|time:"H:i"}} wrote:<br />
             {{claim.proposal|linebreaksbr}}<br />
         {% endfor %}
