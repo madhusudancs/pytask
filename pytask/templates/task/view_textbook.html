@@ -25,12 +25,20 @@
         <hr />
     {% endif %}
 
+    {% if chapters %}
     Chapters: <br />
+    <table>
     {% for chap in chapters %}
-    <ul>
-	    <li><a href="/task/view/tid={{chap.uniq_key}}">{{chap.title}}</a> </li>
-    </ul>
+    <tr>
+	    <td><a href="/task/view/tid={{chap.uniq_key}}">{{chap.title}}</a> </td>
+	    <td> {{chap.status}} </td>
+    </tr>
     {% endfor %}
+    </table>
+    {% else %}
+    There are no chapters in this textbook as of now.<br />
+    {% endif %}
+
 
     
     

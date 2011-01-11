@@ -335,7 +335,7 @@ def browse_textbooks(request):
                "comp_textbooks": comp_textbooks,
               }
 
-    if user.is_authenticated() and user.get_profile().rights != "CT":
+    if user.is_authenticated() and user.get_profile().rights in ["DC", "MG"]:
         unpub_textbooks = TextBook.objects.filter(status="UP")
 
         context.update({"unpub_textbooks": unpub_textbooks})
