@@ -100,7 +100,7 @@ def view_task(request, tid):
     user = request.user
 
     if not user.is_authenticated():
-        return render_to_response("/task/view.html", {"task": task})
+        return render_to_response("task/view.html", {"task": task})
 
     profile = user.get_profile()
 
@@ -317,7 +317,7 @@ def view_work(request, tid):
               }
 
     if not user.is_authenticated():
-        return render_to_response("/task/view_work.html", context)
+        return render_to_response("task/view_work.html", context)
 
     profile = user.get_profile()
 
