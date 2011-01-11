@@ -5,4 +5,8 @@ syntax: glob
 *~
 *.bak
 *.db
-
+bin/*
+develop-eggs/*
+downloads/*
+eggs/*
+parts/*
