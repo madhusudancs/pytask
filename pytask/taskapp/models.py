@@ -112,7 +112,7 @@ class ReportComment(models.Model):
     comment_datetime = models.DateTimeField()
     is_deleted = models.BooleanField(default=False)
 
-class PyntRequests(models.Model):
+class PyntRequest(models.Model):
 
     uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey(Task, related_name = "pynt_requests")
