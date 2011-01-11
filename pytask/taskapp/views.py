@@ -498,3 +498,45 @@ def select_user(request, tid):
     else:
         raise Http404
 
+@login_required
+def approve_textbook(request, tid):
+
+    user = request.user
+    profile = user.get_profile()
+
+    textbook_url = "/task/view/tid=%s"%tid
+    textbook = getTextBook(tid)
+
+    if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
+        raise Http404
+
+    context = {"user": user,
+               "profile": profile,
+               "textbook": textbook,
+              }
+
+    return render_to_response("task/confirm_textbook_approval.html", context)
+
+@login_required
+def approved_textbook(request, tid):
+
+    user = request.user
+    profile = user.get_profile()
+
+    textbook_url = "/task/view/tid=%s"%tid
+    textbook = getTextBook(tid)
+
+    if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
+        raise Http404
+
+    textbook.approved_by = user
+    textbook.approval_datetime = datetime.now()
+    textbook.status = "OP"
+    textbook.save()
+
+    context = {"user": user,
+               "profile": profile,
+               "textbook": textbook,
+              }
+
+    return render_to_response("task/approved_textbook.html", context)
