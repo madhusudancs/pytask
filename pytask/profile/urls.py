@@ -2,7 +2,8 @@ from django.conf.urls.defaults import *
 
 from pytask.profile.views import view_profile, edit_profile,\
                                  browse_notifications, view_notification,\
-                                 delete_notification, unread_notification
+                                 delete_notification, unread_notification, \
+                                 view_user
 
 urlpatterns = patterns('',
 
@@ -12,5 +13,7 @@ urlpatterns = patterns('',
             (r'^notf/view/nid=(\w+)$', view_notification),
             (r'^notf/del/nid=(\w+)$', delete_notification),
             (r'^notf/unr/nid=(\w+)$', unread_notification),
+
+            (r'^user/view/uid=(\w+)$', view_user),
 )
 

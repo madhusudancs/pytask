@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+Name: {{viewing_profile.full_name}} <br />
+
+{% if can_view_info %}
+	Gender: {{viewing_profile.gender}} <br />
+	Date of Birth: {{viewing_profile.dob}}<br />
+	<hr />
+	About Me: {{viewing_profile.aboutme|linebreaksbr}} <br />
+	<hr />
+	Address: {{viewing_profile.address|linebreaksbr}} <br />
+	<hr />
+	Phone Number: {{viewing_profile.phonenum}} <br />
+{% endif %}
+
+{% if comp_tasks %}
+Tasks completed by {{viewing_profile.full_name}}:
+<ul>
+	{% for task in comp_tasks %}
+	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	{% endfor %}
+</ul>
+{% endif %}
+
+{% if working_tasks %}
+Tasks {{viewing_profile.full_name}} is currently working on:
+<ul>
+	{% for task in working_tasks %}
+	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	{% endfor %}
+</ul>
+{% endif %}
+
+{% if reviewing_tasks %}
+Tasks reviewed by {{viewing_profile.full_name}}:
+<ul>
+	{% for task in reviewing_tasks %}
+	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	{% endfor %}
+</ul>
+{% endif %}
+
+{% if claimed_tasks and can_view_info %}
+<ul>
+	{% for task in claimed_tasks %}
+	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}

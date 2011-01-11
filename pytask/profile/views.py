@@ -6,7 +6,7 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_protect
 
 from pytask.profile.forms import EditProfileForm
-from pytask.profile.utils import get_notification
+from pytask.profile.utils import get_notification, get_user
 
 @login_required
 def view_profile(request):
@@ -147,3 +147,32 @@ def unread_notification(request, nid):
         redirect_url = "/profile/notf/browse"
 
     return redirect(redirect_url)
+
+@login_required
+def view_user(request, uid):
+
+    user = request.user
+    profile = user.get_profile()
+
+    viewing_user = get_user(uid)
+    viewing_profile = viewing_user.get_profile()
+
+    working_tasks = viewing_user.approved_tasks.filter(status="WR")
+    completed_tasks = viewing_user.approved_tasks.filter(status="CM")
+    reviewing_tasks = viewing_user.reviewing_tasks.all()
+    claimed_tasks = viewing_user.claimed_tasks.all()
+
+    can_view_info = True if profile.rights in ["MG", "DC"] else False
+
+    context = {"user": user,
+               "profile": profile,
+               "viewing_user": viewing_user,
+               "viewing_profile": viewing_profile,
+               "working_tasks": working_tasks,
+               "completed_tasks": completed_tasks,
+               "reviewing_tasks": reviewing_tasks,
+               "claimed_tasks": claimed_tasks,
+               "can_view_info": can_view_info,
+              }
+
+    return render_to_response("profile/view_user.html", context)

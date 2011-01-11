@@ -1,3 +1,5 @@
+from django.http import Http404
+from django.contrib.auth.models import User
 from pytask.profile.models import Notification
 
 def get_notification(nid, user):
@@ -30,3 +32,16 @@ def get_notification(nid, user):
 
     else:
         return None, None, None, None, None
+
+def get_user(uid):
+
+    try:
+        user = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        raise Http404
+
+    if user.is_active:
+        return user
+    else:
+        raise Http404
+
