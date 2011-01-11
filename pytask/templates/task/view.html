@@ -27,12 +27,7 @@
     on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
     
     {% if reviewers %}
-	    {% ifequal task.status "UP" %}
-		Task can be viewed by:
-	    {% else %}
 		Reviewers:
-	    {% endifequal %}
-	    
 	    {% for reviewer in reviewers %}
 		<a href="/profile/user/view/uid={{reviewer.id}}">{{reviewer.username}}</a>
 	    {% endfor %}
@@ -41,11 +36,7 @@
     
     {% if can_mod_reviewers %}
         <a href="/task/addreviewer/tid={{task.uniq_key}}">
-        {% ifequal task.status "UP" %}
-            Request others to view/edit the task
-        {% else %}
-            Add another Reviewer to this task
-        {% endifequal %}</a>
+		Add a Reviewer to this task</a>
     {% endif %}
     <br />
     

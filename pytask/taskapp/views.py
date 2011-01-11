@@ -148,6 +148,9 @@ def view_task(request, tid):
     context['can_comment'] = True if task.status != "UP" or\
                                      profile.rights!="CT" else False
 
+    context['can_mod_reviewers'] = True if profile.rights in ["MG", "DC"] else\
+                                   False
+
 #    if task.status == "CD":
 #        context['closing_notification'] =  Notification.objects.filter(task=task,role="CD")[0]
 #    elif task.status == "CM":
@@ -251,6 +254,53 @@ def approved_task(request, tid):
               }
 
     return render_to_response("task/approved_task.html", context)
+
+@login_required
+def addreviewer(request, tid):
+
+    user = request.user
+    profile = user.get_profile()
+
+    task_url = "/task/view/tid=%s"%tid
+    task = getTask(tid)
+
+    can_mod_reviewers = True if profile.rights in ["MG", "DC"] else False
+    if not can_mod_reviewers:
+        raise Http404
+
+    context = {"user": user,
+               "profile": profile,
+               "task": task,
+              }
+
+    context.update(csrf(request))
+
+
+    # This part has to be made better
+    reviewer_choices = User.objects.filter(is_active=True).\
+                                           exclude(reviewing_tasks__uniq_key=tid).\
+                                           exclude(claimed_tasks__uniq_key=tid).\
+                                           exclude(approved_tasks__uniq_key=tid).\
+                                           exclude(created_tasks__uniq_key=tid)
+    choices = ((a_user.id,a_user.username) for a_user in reviewer_choices)
+    label = "Reviewer"
+
+    if request.method == "POST":
+        form = ChoiceForm(choices, data=request.POST, label=label)
+        if form.is_valid():
+            data = form.cleaned_data.copy()
+            uid = data['choice']
+            reviewer = User.objects.get(id=uid)
+
+            task.reviewers.add(reviewer)
+            return redirect(task_url)
+        else:
+            context.update({"form": form})
+            return render_to_response("task/addreviewer.html", context)
+    else:
+        form = ChoiceForm(choices, label=label)
+        context.update({"form": form})
+        return render_to_response("task/addreviewer.html", context)
 
 @login_required
 def create_textbook(request):

@@ -78,11 +78,11 @@ class ClaimTaskForm(forms.ModelForm):
             raise forms.ValidationError('Enter something as a proposal')
         return data
 
-def ChoiceForm(choices, data=None):
+def ChoiceForm(choices, data=None, label="choice"):
     """ return a form object with appropriate choices """
     
     class myform(forms.Form):
-        choice = forms.ChoiceField(choices=choices, required=True)
+        choice = forms.ChoiceField(choices=choices, required=True, label=label)
     form = myform(data) if data else myform()
     return form
 
@@ -97,14 +97,6 @@ class EditTextbookForm(forms.ModelForm):
     class Meta:
         model = TextBook
         fields = ['name', 'chapters', 'tags_field']
-
-def AddReviewerForm(choices,instance=None):
-    """ return a form object with appropriate choices """
-    
-    class myform(forms.Form):
-        reviewer = forms.ChoiceField(choices=choices, required=True)
-    form = myform(instance) if instance else myform()
-    return form
 
 def AddTaskForm(task_choices, is_plain=False):
     """ if is_plain is true, it means the task has no subs/deps.
