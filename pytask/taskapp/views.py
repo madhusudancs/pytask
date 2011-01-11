@@ -12,11 +12,12 @@ from django.views.decorators.csrf import csrf_protect
 from pytask.utils import make_key
 from pytask.views import show_msg
 
-from pytask.taskapp.models import Task, TaskComment, TaskClaim, TextBook
+from pytask.taskapp.models import Task, TaskComment, TaskClaim, TextBook, \
+        WorkReport
 from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, \
                                  TaskCommentForm, ClaimTaskForm, \
                                  ChoiceForm, EditTaskForm, CreateTextbookForm,\
-                                 EditTextbookForm
+                                 EditTextbookForm, WorkReportForm
 from pytask.taskapp.utils import getTask, getTextBook
 from pytask.profile.utils import get_notification
 
@@ -335,8 +336,75 @@ def view_work(request, tid):
 
 @login_required
 def view_report(request, rid):
-    pass
 
+    try:
+        report = WorkReport.objects.get(uniq_key=rid)
+    except WorkReport.DoesNotExist:
+        raise Http404
+
+    user = request.user
+    context = {"report": report,
+               "user": user,
+              }
+
+    if not user.is_authenticated():
+        return render_to_response("task/view_report.html", context)
+
+    profile = user.get_profile()
+
+    context.update({"profile": profile})
+    return render_to_response("task/view_report.html", context)
+
+@login_required
+def submit_report(request, tid):
+    """ Check if the work is in WR state and the user is in assigned_users.
+    """
+    
+    user = request.user
+    task = getTask(tid)
+    old_reports = task.reports.all()
+
+    if not task.status == "WR":
+        raise Http404
+
+    can_upload = True if user in task.selected_users.all() else False
+
+    context = {
+        'user': user,
+        'task': task,
+        'can_upload': can_upload,
+    }
+
+    context.update(csrf(request))
+
+    if request.method == "POST":
+        if not can_upload:
+            return show_msg(user, "You are not authorised to upload data to this task", task_url, "view the task")
+
+        form = WorkReportForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            data = form.cleaned_data.copy()
+            data.update({"task":task,
+                         "revision": old_reports.count(),
+                         "uniq_key": make_key(WorkReport),
+                         "submitted_by": user,
+                         "submitted_at": datetime.now(),
+                        })
+            r = WorkReport(**data)
+            r.save()
+
+            report_url = "/task/view/report/rid=%s"%r.uniq_key
+            return redirect(report_url)
+
+        else:
+            context.update({"form":form})
+            return render_to_response('task/submit_report.html', context)
+
+    else:
+        form = WorkReportForm()
+        context.update({"form":form})
+        return render_to_response('task/submit_report.html', context)
 
 @login_required
 def create_textbook(request):

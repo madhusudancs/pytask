@@ -4,7 +4,7 @@ from pytask.taskapp.views import create_task, view_task, claim_task, \
         select_user, edit_task, create_textbook, view_textbook, \
         browse_tasks, edit_textbook, approve_task, approved_task,\
         browse_textbooks, approve_textbook, approved_textbook, addreviewer,\
-        view_report, view_work
+        view_report, view_work, submit_report
 
 from pytask.views import under_construction
 
@@ -20,6 +20,7 @@ urlpatterns = patterns('',
             (r'^addreviewer/tid=(\w+)$', addreviewer),
             (r'^view/work/tid=(\w+)$', view_work),
             (r'^view/report/rid=(\w+)$', view_report),
+            (r'^submit/report/tid=(\w+)$', submit_report),
             (r'^browse/$', browse_tasks),
 
             (r'^textbook/create/$', create_textbook),

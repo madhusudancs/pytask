@@ -91,7 +91,7 @@ class WorkReport(models.Model):
     approved_by = models.ForeignKey(User, null = True, blank = True,
                                     related_name = "approved_reports")
 
-    data = models.TextField()
+    data = models.TextField(verbose_name="Report")
     summary = models.CharField(max_length=100, verbose_name="Summary",
                                help_text="A one line summary")
     attachment = models.FileField(upload_to = UPLOADS_DIR)
