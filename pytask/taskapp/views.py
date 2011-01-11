@@ -449,21 +449,25 @@ def view_textbook(request, tid):
 
     textbook = getTextBook(tid)
     textbook_url = "/task/textbook/view/tid=%s"%textbook.uniq_key
+    chapters = textbook.chapters.all()
 
     user = request.user
+
+    context = {"user": user,
+               "textbook": textbook,
+               "chapters": chapters,
+              }
+
     if not user.is_authenticated():
-        return render_to_response("task/view_textbook.html", {"user": user})
+        return render_to_response("task/view_textbook.html", context)
 
     profile = user.get_profile()
 
-    context = {"user": user,
-               "profile": profile,
-               "textbook": textbook,
-              }
+    context.update({"profile": profile,
+                    "textbook": textbook,
+                   })
 
     context.update(csrf(request))
-
-    chapters = Task.objects.filter(status="UP")
 
     can_edit = True if user == textbook.created_by and textbook.status == "UP"\
                        else False
@@ -471,8 +475,7 @@ def view_textbook(request, tid):
     can_approve = True if profile.rights in ["MG", "DC"] and \
                           textbook.status == "UP" else False
 
-    context.update({"chapters": chapters,
-                    "can_edit": can_edit,
+    context.update({"can_edit": can_edit,
                     "can_approve": can_approve})
     return render_to_response("task/view_textbook.html", context)
 
