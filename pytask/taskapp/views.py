@@ -59,6 +59,35 @@ def create_task(request):
     else:
         return show_msg(user, 'You are not authorised to create a task.')
 
+def browse_tasks(request):
+
+    open_tasks = Task.objects.filter(status="OP")
+    working_tasks = Task.objects.filter(status="WR")
+    comp_tasks = Task.objects.filter(status="CM")
+
+    context = {"open_tasks": open_tasks,
+               "working_tasks": working_tasks,
+               "comp_tasks": comp_tasks,
+              }
+
+    user = request.user
+    if not user.is_authenticated():
+        return render_to_response("task/browse.html")
+
+    profile = user.get_profile()
+
+    can_approve = True if profile.rights in ["MG", "DC"] else False
+    unpub_tasks = Task.objects.filter(status="UP").exclude(status="DL")
+    if can_approve:
+        context.update({"unpub_tasks": unpub_tasks})
+
+    context.update({"user": user,
+                    "profile": profile,
+                   })
+
+    return render_to_response("task/browse.html", context)
+
+
 def view_task(request, tid):
     """ get the task depending on its tid and display accordingly if it is a get.
     check for authentication and add a comment if it is a post request.

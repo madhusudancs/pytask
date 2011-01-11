@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% if open_tasks %}
+    Tasks that are open for contribution<ul>
+    {% for task in open_tasks %}
+        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+    {% endfor %}
+    </ul>
+    <br />
+    {% endif %}
+
+    {% if working_tasks %}
+    Tasks that are being worked on<ul>
+    {% for task in working_tasks %}
+        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+    {% endfor %}
+    </ul>
+    <br />
+    {% endif %}
+
+    {% if comp_tasks %}
+    Tasks that were completed recently<ul>
+    {% for task in comp_tasks %}
+        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+    {% endfor %}
+    </ul>
+    <br />
+    {% endif %}
+
+    {% if unpub_tasks %}
+    Tasks that need approval<ul>
+    {% for task in unpub_tasks %}
+        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+    {% endfor %}
+    </ul>
+    <br />
+    {% endif %}
+{% endblock %}
