@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{task.title}}
+{% endblock %}
+{% block content %}
+{% if not old_reports %}
+There are no reports submitted as of now<br />
+{% else %}
+<table >
+{% for rep in old_reports %}
+<tr>
+	<td>{{rep.submitted_by}}</td>
+	<td><a href="/task/view/report/rid={{rep.uniq_key}}">{{rep.data}}</a></td>
+	<td><a href="{{rep.attachment.url}}">{{rep.attachment.name}}</a> </td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+{% if is_working %}
+<a href="/task/submit/report/tid={{task.uniq_key}}">Submit report</a>
+<hr />
+{% endif %}
+{% endblock %}

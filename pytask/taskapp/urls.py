@@ -3,7 +3,8 @@ from django.conf.urls.defaults import *
 from pytask.taskapp.views import create_task, view_task, claim_task, \
         select_user, edit_task, create_textbook, view_textbook, \
         browse_tasks, edit_textbook, approve_task, approved_task,\
-        browse_textbooks, approve_textbook, approved_textbook, addreviewer
+        browse_textbooks, approve_textbook, approved_textbook, addreviewer,\
+        view_report, view_work
 
 from pytask.views import under_construction
 
@@ -17,6 +18,8 @@ urlpatterns = patterns('',
             (r'^approve/tid=(\w+)$', approve_task),
             (r'^approved/tid=(\w+)$', approved_task),
             (r'^addreviewer/tid=(\w+)$', addreviewer),
+            (r'^view/work/tid=(\w+)$', view_work),
+            (r'^view/report/rid=(\w+)$', view_report),
             (r'^browse/$', browse_tasks),
 
             (r'^textbook/create/$', create_textbook),

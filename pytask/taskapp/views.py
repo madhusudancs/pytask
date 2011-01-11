@@ -280,8 +280,9 @@ def addreviewer(request, tid):
     reviewer_choices = User.objects.filter(is_active=True).\
                                            exclude(reviewing_tasks__uniq_key=tid).\
                                            exclude(claimed_tasks__uniq_key=tid).\
-                                           exclude(approved_tasks__uniq_key=tid).\
+                                           exclude(selected_tasks__uniq_key=tid).\
                                            exclude(created_tasks__uniq_key=tid)
+
     choices = ((a_user.id,a_user.username) for a_user in reviewer_choices)
     label = "Reviewer"
 
@@ -301,6 +302,41 @@ def addreviewer(request, tid):
         form = ChoiceForm(choices, label=label)
         context.update({"form": form})
         return render_to_response("task/addreviewer.html", context)
+
+def view_work(request, tid):
+
+    task_url = "/task/view/tid=%s"%tid
+    task = getTask(tid)
+
+    user = request.user
+    old_reports = task.reports.all()
+
+    context = {"task": task,
+               "old_reports": old_reports,
+              }
+
+    if not user.is_authenticated():
+        return render_to_response("/task/view_work.html", context)
+
+    profile = user.get_profile()
+
+    context.update({"user": user,
+                    "profile": profile,
+                   })
+
+    context.update(csrf(request))
+
+    working_users = task.selected_users.all()
+    is_working = True if user in working_users else False
+
+    context.update({"is_working": is_working})
+
+    return render_to_response("task/view_work.html", context)
+
+@login_required
+def view_report(request, rid):
+    pass
+
 
 @login_required
 def create_textbook(request):

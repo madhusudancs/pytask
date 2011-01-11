@@ -87,13 +87,7 @@
 	<a href="/task/claim/tid={{task.uniq_key}}">View claims</a>
     {% endif %}
 
-    {% if can_assign_pynts %}
-        <a href="/task/assignpynts/tid={{task.uniq_key}}">Request assign pynts and mark the task as complete</a>
-    {% endif %}
-    
-    {% if is_selected %}
-        <a href="/task/report/tid={{task.uniq_key}}">Submit Work</a>
-    {% endif %}
+    <a href="/task/view/work/tid={{task.uniq_key}}">View submitted work reports</a>
     
         <hr />
     {% if comments %}
