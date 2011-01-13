@@ -36,17 +36,27 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'static')
+MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/static/'
+MEDIA_URL = '/pytask/media/'
+
+# Absolute path to the directory that holds static files.
+# Example: "/home/static-files/static-files.lawrence.com/"
+STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static')
+
+# URL that handles the static files served from STATIC_ROOT. Make sure to use
+# a trailing slash if there is a path component (optional in other cases).
+# Examples: "http://static-files.lawrence.com",
+# "http://example.com/static-files/"
+STATIC_URL = '/pytask/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/admin/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '^ww=xk&idt)=03kqg*fz8x%=dqbhh1kd2z=f%$m@r9_+9b=&x='
