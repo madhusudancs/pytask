@@ -88,6 +88,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'registration',
     'tagging',
+    'south',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
