@@ -11,27 +11,16 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^pytask/', include('pytask.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
+    (r'^$', home_page),
     (r'^admin/', include(admin.site.urls)),
 
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-            {'document_root': './pytask/static/'}),
-
     url(r'^accounts/register/$', register,
-        {'form_class': CustomRegistrationForm,   
+        {'form_class': CustomRegistrationForm,
          'backend': 'registration.backends.default.DefaultBackend'},
         name='registration_register'),
-
     (r'^accounts/', include('registration.urls')),
     (r'^profile/', include('pytask.profile.urls')),
     (r'^task/', include('pytask.taskapp.urls')),
-    (r'^$', home_page),
 )
 
 # Serve static files in DEVELOPMENT = True mode
