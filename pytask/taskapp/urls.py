@@ -1,33 +1,25 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import url
 
-from pytask.taskapp.views import create_task, view_task, claim_task, \
-        select_user, edit_task, create_textbook, view_textbook, \
-        browse_tasks, edit_textbook, approve_task, approved_task,\
-        browse_textbooks, approve_textbook, approved_textbook, addreviewer,\
-        view_report, view_work, submit_report
 
-from pytask.views import under_construction
+urlpatterns = patterns('pytask.taskapp.views',
+            url(r'^create/$', 'create_task'),
+            url(r'^edit/tid=(\w+)$', 'edit_task'),
+            url(r'^view/tid=(\w+)$', 'view_task'),
+            url(r'^claim/tid=(\w+)$', 'claim_task'),
+            url(r'^select/tid=(\w+)$', 'select_user'),
+            url(r'^approve/tid=(\w+)$', 'approve_task'),
+            url(r'^approved/tid=(\w+)$', 'approved_task'),
+            url(r'^addreviewer/tid=(\w+)$', 'addreviewer'),
+            url(r'^view/work/tid=(\w+)$', 'view_work'),
+            url(r'^view/report/rid=(\w+)$', 'view_report'),
+            url(r'^submit/report/tid=(\w+)$', 'submit_report'),
+            url(r'^browse/$', 'browse_tasks'),
 
-urlpatterns = patterns('',
-
-            (r'^create/$', create_task),
-            (r'^edit/tid=(\w+)$', edit_task),
-            (r'^view/tid=(\w+)$', view_task),
-            (r'^claim/tid=(\w+)$', claim_task),
-            (r'^select/tid=(\w+)$', select_user),
-            (r'^approve/tid=(\w+)$', approve_task),
-            (r'^approved/tid=(\w+)$', approved_task),
-            (r'^addreviewer/tid=(\w+)$', addreviewer),
-            (r'^view/work/tid=(\w+)$', view_work),
-            (r'^view/report/rid=(\w+)$', view_report),
-            (r'^submit/report/tid=(\w+)$', submit_report),
-            (r'^browse/$', browse_tasks),
-
-            (r'^textbook/create/$', create_textbook),
-            (r'^textbook/view/tid=(\w+)/$', view_textbook),
-            (r'^textbook/edit/tid=(\w+)/$', edit_textbook),
-            (r'^textbook/approve/tid=(\w+)/$', approve_textbook),
-            (r'^textbook/approved/tid=(\w+)/$', approved_textbook),
-            (r'^textbook/browse/$', browse_textbooks),
+            url(r'^textbook/create/$', 'create_textbook'),
+            url(r'^textbook/view/tid=(\w+)/$', 'view_textbook'),
+            url(r'^textbook/edit/tid=(\w+)/$', 'edit_textbook'),
+            url(r'^textbook/approve/tid=(\w+)/$', 'approve_textbook'),
+            url(r'^textbook/approved/tid=(\w+)/$', 'approved_textbook'),
+            url(r'^textbook/browse/$', 'browse_textbooks'),
 )
-
