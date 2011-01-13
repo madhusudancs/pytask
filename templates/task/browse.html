@@ -1,8 +1,0 @@
-{% extends 'base.html' %}
-{% block content %}
-    List of all the tasks:<ul>
-    {% for task in task_list %}
-        <li><a href="/task/view/tid={{ task.id }}">{{ task.title }}</a></li>
-    {% endfor %}
-    </ul>
-{% endblock %}

@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-{% block content %}
-    <a href="/task/claim/tid={{task.id}}">click here</a> to return to the claims page.<br /><br />
-    Select a user to assign this task.<br />
-    <form action="" method="POST">
-    {{form.as_table}}
-    <input type="submit" value="Assign Task">
-    </form>
-{% endblock %}
