@@ -41,3 +41,4 @@ apache/*
 *.swo
 *.db-journal
 *.db
+migrations
