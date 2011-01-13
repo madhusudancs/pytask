@@ -1,15 +1,12 @@
+from django.conf import settings
 from django.conf.urls.defaults import *
 
 from registration.views import register
-from registration.backends.default import DefaultBackend
-import pytask.profile.regbackend
 
 from pytask.profile.forms import CustomRegistrationForm
 from pytask.views import home_page
 
-from django.shortcuts import redirect
 
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
@@ -36,3 +33,12 @@ urlpatterns = patterns('',
     (r'^task/', include('pytask.taskapp.urls')),
     (r'^$', home_page),
 )
+
+# Serve static files in DEVELOPMENT = True mode
+if settings.DEVELOPMENT:
+    urlpatterns += patterns('',
+        (r'^pytask/media/(?P<path>.*)$', 'django.views.static.serve',
+         {'document_root': settings.MEDIA_ROOT}),
+        (r'^pytask/static/(?P<path>.*)$', 'django.views.static.serve',
+         {'document_root': settings.STATIC_ROOT}),
+    )
