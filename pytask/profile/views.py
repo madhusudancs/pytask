@@ -1,12 +1,13 @@
-from django.shortcuts import render_to_response, redirect
-from django.http import Http404
-
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
-from django.views.decorators.csrf import csrf_protect
+from django.http import Http404
+from django.shortcuts import redirect
+from django.shortcuts import render_to_response
 
 from pytask.profile.forms import EditProfileForm
-from pytask.profile.utils import get_notification, get_user
+from pytask.profile.utils import get_notification
+from pytask.profile.utils import get_user
+
 
 @login_required
 def view_profile(request):
