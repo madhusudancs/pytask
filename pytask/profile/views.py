@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
+from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
@@ -41,7 +42,7 @@ def edit_profile(request):
 
         if form.is_valid():
             form.save()
-            return redirect("/profile/view")
+            return redirect(reverse('view_profile'))
         else:
             context.update({"form":form})
             return render_to_response("profile/edit.html", context)
@@ -57,7 +58,8 @@ def browse_notifications(request):
 
     user = request.user
 
-    active_notifications = user.notification_sent_to.filter(is_deleted=False).order_by('sent_date').reverse()
+    active_notifications = user.notification_sent_to.filter(
+      is_deleted=False).order_by('-sent_date')
 
     context = {'user':user,
                'notifications':active_notifications,
@@ -104,18 +106,11 @@ def delete_notification(request, nid):
     notification.is_deleted = True
     notification.save()
 
-    context = {'user':user,
-               'notification':notification,
-               'newest':newest,
-               'newer':newer,
-               'older':older,
-               'oldest':oldest,
-              }
-
     if older:
-        redirect_url = "/profile/notf/view/nid=%s"%older.uniq_key
+        redirect_url = reverse('view_notification',
+                               kwargs={'notification_id': older.id})
     else:
-        redirect_url = "/profile/notf/browse"
+        redirect_url = reverse('browse_notifications')
 
     return redirect(redirect_url)
 
@@ -134,18 +129,11 @@ def unread_notification(request, nid):
     notification.is_read = False
     notification.save()
 
-    context = {'user':user,
-               'notification':notification,
-               'newest':newest,
-               'newer':newer,
-               'older':older,
-               'oldest':oldest,
-              }
-
     if older:
-        redirect_url = "/profile/notf/view/nid=%s"%older.uniq_key
+        redirect_url = reverse('view_notification',
+                               kwargs={'notification_id': older.id})
     else:
-        redirect_url = "/profile/notf/browse"
+        redirect_url = reverse('browse_notifications')
 
     return redirect(redirect_url)
 
