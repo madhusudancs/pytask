@@ -22,8 +22,6 @@ TB_STATUS_CHOICES = (
 UPLOADS_DIR = "./pytask/static/uploads"
 
 class Task(models.Model):
-    
-    uniq_key = models.CharField(max_length = 10, unique = True)
     title = models.CharField(max_length = 100, verbose_name = u"Title", 
                              help_text = u"Keep it simple and below 100 chars.")
     desc = models.TextField(verbose_name = u"Description")
@@ -54,7 +52,6 @@ class Task(models.Model):
 
 class TaskComment(models.Model):
 
-    uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey('Task', related_name = "comments")
             
     data = models.TextField(verbose_name="")
@@ -69,8 +66,6 @@ class TaskComment(models.Model):
         return unicode(self.task.title)
 
 class TaskClaim(models.Model):
-
-    uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey('Task', related_name = "claims")
             
     claimed_by = models.ForeignKey(User,
@@ -83,8 +78,6 @@ class TaskClaim(models.Model):
         return unicode(self.task.title)
 
 class WorkReport(models.Model):
-
-    uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey(Task, related_name = "reports")
     submitted_by = models.ForeignKey(User, null = True, blank = True,
                                      related_name = "submitted_reports")
@@ -100,8 +93,6 @@ class WorkReport(models.Model):
     submitted_at = models.DateTimeField()
 
 class ReportComment(models.Model):
-
-    uniq_key = models.CharField(max_length = 10, unique = True)
     report = models.ForeignKey('WorkReport', related_name = "%(class)s_report")
             
     data = models.TextField()
@@ -113,8 +104,6 @@ class ReportComment(models.Model):
     is_deleted = models.BooleanField(default=False)
 
 class PyntRequest(models.Model):
-
-    uniq_key = models.CharField(max_length = 10, unique = True)
     task = models.ForeignKey(Task, related_name = "pynt_requests")
     pynts = models.PositiveIntegerField(default=0, help_text="No.of pynts")
 
@@ -135,7 +124,6 @@ class PyntRequest(models.Model):
 
 class TextBook(models.Model):
 
-    uniq_key = models.CharField(max_length = 10, unique = True)
     name = models.CharField(max_length = 100)
     chapters = models.ManyToManyField(Task, related_name="textbooks")
     tags_field = TagField(verbose_name="Tags")

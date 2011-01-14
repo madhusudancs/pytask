@@ -5,21 +5,18 @@ from django.contrib.auth.models import User
 GENDER_CHOICES = (( 'M', 'Male'), ('F', 'Female'))
 
 RIGHTS_CHOICES = (
-	("DC", "Director"),
-	("MG", "Manager"),
-        ("CR", "Co-ordinator"),
-	("CT", "Contributor"),)
+  ("DC", "Director"),
+  ("MG", "Manager"),
+  ("CR", "Co-ordinator"),
+  ("CT", "Contributor"),)
 
 ROLE_CHOICES = (
-	("DC", "Request sent by Director \
+  ("DC", "Request sent by Director \
                 to a user at lower level, asking him to act as a director"),
-	("MG", "Request sent by Manager \
+  ("MG", "Request sent by Manager \
                 to a user at lower level, asking him to act as a manager"),)
 
 class Profile(models.Model):
-    
-    uniq_key = models.CharField(max_length=20)
-
     full_name = models.CharField(max_length=50, verbose_name="Name as on bank\
                                  account", help_text="Any DD/Cheque will be\
                                  issued on this name")
@@ -46,8 +43,6 @@ class Notification(models.Model):
     Hence there is no sent_from option.
     """
 
-    uniq_key = models.CharField(max_length=20)
-
     sent_to = models.ForeignKey(User, related_name = "%(class)s_sent_to", blank = False)
 
     subject = models.CharField(max_length=100, blank=True)
@@ -62,7 +57,6 @@ class RoleRequest(models.Model):
     Typically requesting to raise one's status.
     """
 
-    uniq_key = models.CharField(max_length=20)
     role = models.CharField(max_length=2, choices=ROLE_CHOICES)
     is_accepted = models.BooleanField(default=False)
 
@@ -74,4 +68,3 @@ class RoleRequest(models.Model):
     sent_date = models.DateTimeField()
     is_read = models.BooleanField(default = False)
     is_deleted = models.BooleanField(default = False)
-
