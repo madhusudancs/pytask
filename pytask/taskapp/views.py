@@ -1,25 +1,30 @@
 from datetime import datetime
 
-from django.contrib.auth.models import User
-
-from django.shortcuts import render_to_response, redirect
 from django.http import Http404
-
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.context_processors import csrf
-from django.views.decorators.csrf import csrf_protect
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+from django.shortcuts import render_to_response
 
-from pytask.utils import make_key
+from pytask.taskapp.forms import ChoiceForm
+from pytask.taskapp.forms import ClaimTaskForm
+from pytask.taskapp.forms import CreateTaskForm
+from pytask.taskapp.forms import CreateTextbookForm
+from pytask.taskapp.forms import EditTaskForm
+from pytask.taskapp.forms import EditTextbookForm
+from pytask.taskapp.forms import TaskCommentForm
+from pytask.taskapp.forms import WorkReportForm
+from pytask.taskapp.models import Task
+from pytask.taskapp.models import TaskComment
+from pytask.taskapp.models import TaskClaim
+from pytask.taskapp.models import TextBook
+from pytask.taskapp.models import WorkReport
+from pytask.taskapp.utils import getTask
+from pytask.taskapp.utils import getTextBook
+
 from pytask.views import show_msg
-
-from pytask.taskapp.models import Task, TaskComment, TaskClaim, TextBook, \
-        WorkReport
-from pytask.taskapp.forms import CreateTaskForm, EditTaskForm, \
-                                 TaskCommentForm, ClaimTaskForm, \
-                                 ChoiceForm, EditTaskForm, CreateTextbookForm,\
-                                 EditTextbookForm, WorkReportForm
-from pytask.taskapp.utils import getTask, getTextBook
-from pytask.profile.utils import get_notification
 
 
 @login_required
@@ -44,11 +49,11 @@ def create_task(request):
                              "creation_datetime": datetime.now(),
                              "uniq_key": make_key(Task),
                             })
-                
+
                 task = Task(**data)
                 task.save()
 
-                task_url = '/task/view/tid=%s'%task.uniq_key
+                task_url = reverse('view_task', kwargs={'task_id': task.id})
                 return redirect(task_url)
             else:
                 context.update({'form':form})
@@ -89,13 +94,13 @@ def browse_tasks(request):
     return render_to_response("task/browse.html", context)
 
 
-def view_task(request, tid):
-    """ get the task depending on its tid and display accordingly if it is a get.
+def view_task(request, task_id):
+    """ get the task depending on its task_id and display accordingly if it is a get.
     check for authentication and add a comment if it is a post request.
     """
-    
-    task_url = "/task/view/tid=%s"%tid
-    task = getTask(tid)
+
+    task_url = reverse('view_task', kwargs={'task_id': task_id})
+    task = getTask(task_id)
 
     user = request.user
 
@@ -112,16 +117,19 @@ def view_task(request, tid):
     context.update(csrf(request))
 
     if task.status == "DL":
-        return show_msg(user, 'This task no longer exists', '/task/browse/','browse the tasks')
+        return show_msg(user, 'This task no longer exists',
+                        reverse('browse_tasks'), 'browse the tasks')
 
     task_viewable = True if ( task.status != "UP" ) or profile.rights != "CT"\
                          else False
     if not task_viewable:
-        return show_msg(user, "You are not authorised to view this task", "/task/browse/", "browse the tasks")
+        return show_msg(user, "You are not authorised to view this task",
+                        reverse('browse_tasks'), "browse the tasks")
 
     reviewers = task.reviewers.all()
     is_reviewer = True if user in task.reviewers.all() else False
-    comments = task.comments.filter(is_deleted=False).order_by('comment_datetime')
+    comments = task.comments.filter(
+      is_deleted=False).order_by('comment_datetime')
 
     context.update({'is_reviewer':is_reviewer,
                     'comments':comments,
@@ -152,13 +160,6 @@ def view_task(request, tid):
     context['can_mod_reviewers'] = True if profile.rights in ["MG", "DC"] else\
                                    False
 
-#    if task.status == "CD":
-#        context['closing_notification'] =  Notification.objects.filter(task=task,role="CD")[0]
-#    elif task.status == "CM":
-#        context['completed_notification'] =  Notifications.objects.filter(task=task,role="CM")[0]
-#    elif task.status == "WR":
-#        context['assigned_users'] = task.assigned_users.all()
-   
     if request.method == 'POST':
         form = TaskCommentForm(request.POST)
         if form.is_valid():
@@ -177,7 +178,7 @@ def view_task(request, tid):
         return render_to_response('task/view.html', context)
 
 @login_required
-def edit_task(request, tid):
+def edit_task(request, task_id):
     """ only creator gets to edit the task and that too only before it gets
     approved.
     """
@@ -185,8 +186,8 @@ def edit_task(request, tid):
     user = request.user
     profile = user.get_profile()
 
-    task_url = "/task/view/tid=%s"%tid
-    task = getTask(tid)
+    task_url = reverse('view_task', kwargs={'task_id': task_id})
+    task = getTask(task_id)
 
     is_creator = True if user == task.created_by else False
     can_edit = True if task.status == "UP" and is_creator else False
@@ -214,13 +215,12 @@ def edit_task(request, tid):
         return render_to_response("task/edit.html", context)
 
 @login_required
-def approve_task(request, tid):
+def approve_task(request, task_id):
 
     user = request.user
     profile = user.get_profile()
 
-    task_url = "/task/view/tid=%s"%tid
-    task = getTask(tid)
+    task = getTask(task_id)
 
     if profile.rights not in ["MG", "DC"] or task.status != "UP":
         raise Http404
@@ -233,13 +233,12 @@ def approve_task(request, tid):
     return render_to_response("task/confirm_approval.html", context)
 
 @login_required
-def approved_task(request, tid):
+def approved_task(request, task_id):
 
     user = request.user
     profile = user.get_profile()
 
-    task_url = "/task/view/tid=%s"%tid
-    task = getTask(tid)
+    task = getTask(task_id)
 
     if profile.rights not in ["MG", "DC"] or task.status != "UP":
         raise Http404
@@ -257,13 +256,13 @@ def approved_task(request, tid):
     return render_to_response("task/approved_task.html", context)
 
 @login_required
-def addreviewer(request, tid):
+def addreviewer(request, task_id):
 
     user = request.user
     profile = user.get_profile()
 
-    task_url = "/task/view/tid=%s"%tid
-    task = getTask(tid)
+    task_url = reverse('view_task', kwargs={'task_id': task_id})
+    task = getTask(task_id)
 
     can_mod_reviewers = True if profile.rights in ["MG", "DC"] else False
     if not can_mod_reviewers:
@@ -279,10 +278,10 @@ def addreviewer(request, tid):
 
     # This part has to be made better
     reviewer_choices = User.objects.filter(is_active=True).\
-                                           exclude(reviewing_tasks__uniq_key=tid).\
-                                           exclude(claimed_tasks__uniq_key=tid).\
-                                           exclude(selected_tasks__uniq_key=tid).\
-                                           exclude(created_tasks__uniq_key=tid)
+                                           exclude(reviewing_tasks__uniq_key=task_id).\
+                                           exclude(claimed_tasks__uniq_key=task_id).\
+                                           exclude(selected_tasks__uniq_key=task_id).\
+                                           exclude(created_tasks__uniq_key=task_id)
 
     choices = ((a_user.id,a_user.username) for a_user in reviewer_choices)
     label = "Reviewer"
@@ -304,10 +303,9 @@ def addreviewer(request, tid):
         context.update({"form": form})
         return render_to_response("task/addreviewer.html", context)
 
-def view_work(request, tid):
+def view_work(request, task_id):
 
-    task_url = "/task/view/tid=%s"%tid
-    task = getTask(tid)
+    task = getTask(task_id)
 
     user = request.user
     old_reports = task.reports.all()
@@ -335,10 +333,10 @@ def view_work(request, tid):
     return render_to_response("task/view_work.html", context)
 
 @login_required
-def view_report(request, rid):
+def view_report(request, report_id):
 
     try:
-        report = WorkReport.objects.get(uniq_key=rid)
+        report = WorkReport.objects.get(uniq_key=report_id)
     except WorkReport.DoesNotExist:
         raise Http404
 
@@ -356,12 +354,13 @@ def view_report(request, rid):
     return render_to_response("task/view_report.html", context)
 
 @login_required
-def submit_report(request, tid):
+def submit_report(request, task_id):
     """ Check if the work is in WR state and the user is in assigned_users.
     """
-    
+    task_url = reverse('view_task', kwargs={'task_id': task_id})
+    task = getTask(task_id)
+
     user = request.user
-    task = getTask(tid)
     old_reports = task.reports.all()
 
     if not task.status == "WR":
@@ -394,7 +393,7 @@ def submit_report(request, tid):
             r = WorkReport(**data)
             r.save()
 
-            report_url = "/task/view/report/rid=%s"%r.uniq_key
+            report_url = reverse('view_report', kwargs={'report_id': r.id})
             return redirect(report_url)
 
         else:
@@ -435,7 +434,8 @@ def create_textbook(request):
 
             new_textbook.chapters = form.cleaned_data['chapters']
 
-            textbook_url = "/task/textbook/view/tid=%s"%new_textbook.uniq_key
+            textbook_url = reverse(
+              'view_textbook', kwargs={'task_id': new_textbook.id})
             return redirect(textbook_url)
         else:
             context.update({"form": form})
@@ -445,10 +445,9 @@ def create_textbook(request):
         context.update({"form": form})
         return render_to_response("task/create_textbook.html", context)
 
-def view_textbook(request, tid):
+def view_textbook(request, task_id):
 
-    textbook = getTextBook(tid)
-    textbook_url = "/task/textbook/view/tid=%s"%textbook.uniq_key
+    textbook = getTextBook(task_id)
     chapters = textbook.chapters.all()
 
     user = request.user
@@ -500,13 +499,14 @@ def browse_textbooks(request):
     return render_to_response("task/browse_textbooks.html", context)
 
 @login_required
-def edit_textbook(request, tid):
+def edit_textbook(request, task_id):
 
     user = request.user
     profile = user.get_profile()
 
-    textbook = getTextBook(tid)
-    textbook_url = "/task/textbook/view/tid=%s"%textbook.uniq_key
+    textbook = getTextBook(task_id)
+    textbook_url = reverse(
+      'view_textbook', kwargs={'task_id': textbook.id})
 
     can_edit = True if user == textbook.created_by and textbook.status == "UP"\
                        else False
@@ -535,11 +535,10 @@ def edit_textbook(request, tid):
         return render_to_response("task/edit_textbook.html", context)
 
 @login_required
-def claim_task(request, tid):
+def claim_task(request, task_id):
 
-    task_url = "/task/view/tid=%s"%tid
-    claim_url = "/task/claim/tid=%s"%tid
-    task = getTask(tid)
+    claim_url = "/task/claim/task_id=%s"%task_id
+    task = getTask(task_id)
 
     if task.status == "UP":
         raise Http404
@@ -556,7 +555,6 @@ def claim_task(request, tid):
 
     reviewers = task.reviewers.all()
     claimed_users = task.claimed_users.all()
-    selected_users = task.selected_users.all()
 
     is_creator = True if user == task.created_by else False
     is_reviewer = True if user in reviewers else False
@@ -599,17 +597,17 @@ def claim_task(request, tid):
         return render_to_response("task/claim.html", context)
 
 @login_required
-def select_user(request, tid):
+def select_user(request, task_id):
     """ first get the status of the task and then select one of claimed users
     generate list of claimed users by passing it as an argument to a function.
     """
-    
-    task_url = "/task/view/tid=%s"%tid
-    
+
+    task_url = reverse('view_task', kwargs={'task_id': task_id})
+
     user = request.user
     profile = user.get_profile()
-    task = getTask(tid)
-    
+    task = getTask(task_id)
+
     context = {"user": user,
                "profile": profile,
                "task": task,
@@ -618,7 +616,6 @@ def select_user(request, tid):
     context.update(csrf(request))
 
     claimed_users = task.claimed_users.all()
-    selected_users = task.selected_users.all()
     task_claimed = True if claimed_users else False
     
     is_creator = True if user == task.created_by else False
@@ -656,13 +653,12 @@ def select_user(request, tid):
         raise Http404
 
 @login_required
-def approve_textbook(request, tid):
+def approve_textbook(request, task_id):
 
     user = request.user
     profile = user.get_profile()
 
-    textbook_url = "/task/view/tid=%s"%tid
-    textbook = getTextBook(tid)
+    textbook = getTextBook(task_id)
 
     if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
         raise Http404
@@ -675,13 +671,12 @@ def approve_textbook(request, tid):
     return render_to_response("task/confirm_textbook_approval.html", context)
 
 @login_required
-def approved_textbook(request, tid):
+def approved_textbook(request, task_id):
 
     user = request.user
     profile = user.get_profile()
 
-    textbook_url = "/task/view/tid=%s"%tid
-    textbook = getTextBook(tid)
+    textbook = getTextBook(task_id)
 
     if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
         raise Http404
