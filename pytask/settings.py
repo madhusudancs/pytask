@@ -54,7 +54,7 @@ STATIC_URL = '/pytask/static/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/pytask/admin/media/'
+ADMIN_MEDIA_PREFIX = '/pytask/admin_media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '^ww=xk&idt)=03kqg*fz8x%=dqbhh1kd2z=f%$m@r9_+9b=&x='
