@@ -5,7 +5,6 @@ from django import forms
 from registration.forms import RegistrationFormUniqueEmail
 from registration.models import RegistrationProfile
 
-from pytask.utils import make_key
 from pytask.profile.models import GENDER_CHOICES, Profile
 
 class CustomRegistrationForm(RegistrationFormUniqueEmail):
