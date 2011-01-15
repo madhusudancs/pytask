@@ -1,30 +1,16 @@
 from datetime import datetime
 
+from django import shortcuts
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from django.shortcuts import render_to_response
-
-from pytask.taskapp.forms import ChoiceForm
-from pytask.taskapp.forms import ClaimTaskForm
-from pytask.taskapp.forms import CreateTaskForm
-from pytask.taskapp.forms import CreateTextbookForm
-from pytask.taskapp.forms import EditTaskForm
-from pytask.taskapp.forms import EditTextbookForm
-from pytask.taskapp.forms import TaskCommentForm
-from pytask.taskapp.forms import WorkReportForm
-from pytask.taskapp.models import Task
-from pytask.taskapp.models import TaskComment
-from pytask.taskapp.models import TaskClaim
-from pytask.taskapp.models import TextBook
-from pytask.taskapp.models import WorkReport
-from pytask.taskapp.utils import getTask
-from pytask.taskapp.utils import getTextBook
 
 from pytask.views import show_msg
+
+from pytask.taskapp import forms as taskapp_forms
+from pytask.taskapp import models as taskapp_models
 
 
 @login_required
@@ -42,34 +28,34 @@ def create_task(request):
     can_create_task = False if profile.rights == "CT" else True
     if can_create_task:
         if request.method == "POST":
-            form = CreateTaskForm(request.POST)
+            form = taskapp_forms.CreateTaskForm(request.POST)
             if form.is_valid():
                 data = form.cleaned_data.copy()
                 data.update({"created_by": user,
                              "creation_datetime": datetime.now(),
-                             "uniq_key": make_key(Task),
                             })
 
-                task = Task(**data)
+                task = taskapp_models.Task(**data)
                 task.save()
 
                 task_url = reverse('view_task', kwargs={'task_id': task.id})
-                return redirect(task_url)
+                return shortcuts.redirect(task_url)
             else:
                 context.update({'form':form})
-                return render_to_response('task/create.html', context)
+                return shortcuts.render_to_response(
+                  'task/create.html', context)
         else:
-            form = CreateTaskForm()
+            form = taskapp_forms.CreateTaskForm()
             context.update({'form':form})
-            return render_to_response('task/create.html', context)
+            return shortcuts.render_to_response('task/create.html', context)
     else:
         return show_msg(user, 'You are not authorised to create a task.')
 
 def browse_tasks(request):
 
-    open_tasks = Task.objects.filter(status="OP")
-    working_tasks = Task.objects.filter(status="WR")
-    comp_tasks = Task.objects.filter(status="CM")
+    open_tasks = taskapp_models.Task.objects.filter(status="OP")
+    working_tasks = taskapp_models.Task.objects.filter(status="WR")
+    comp_tasks = taskapp_models.Task.objects.filter(status="CM")
 
     context = {"open_tasks": open_tasks,
                "working_tasks": working_tasks,
@@ -78,12 +64,12 @@ def browse_tasks(request):
 
     user = request.user
     if not user.is_authenticated():
-        return render_to_response("task/browse.html")
+        return shortcuts.render_to_response("task/browse.html")
 
     profile = user.get_profile()
 
     can_approve = True if profile.rights in ["MG", "DC"] else False
-    unpub_tasks = Task.objects.filter(status="UP").exclude(status="DL")
+    unpub_tasks = taskapp_models.Task.objects.filter(status="UP").exclude(status="DL")
     if can_approve:
         context.update({"unpub_tasks": unpub_tasks})
 
@@ -91,7 +77,7 @@ def browse_tasks(request):
                     "profile": profile,
                    })
 
-    return render_to_response("task/browse.html", context)
+    return shortcuts.render_to_response("task/browse.html", context)
 
 
 def view_task(request, task_id):
@@ -100,12 +86,12 @@ def view_task(request, task_id):
     """
 
     task_url = reverse('view_task', kwargs={'task_id': task_id})
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     user = request.user
 
     if not user.is_authenticated():
-        return render_to_response("task/view.html", {"task": task})
+        return shortcuts.render_to_response("task/view.html", {"task": task})
 
     profile = user.get_profile()
 
@@ -136,11 +122,9 @@ def view_task(request, task_id):
                     'reviewers':reviewers,
                    })
 
-    claimed_users = task.claimed_users.all()
     selected_users = task.selected_users.all()
 
     is_creator = True if user == task.created_by else False
-    has_claimed = True if user in claimed_users else False
 
     context['selected_users'] = selected_users
     context['is_selected'] = True if user in selected_users else False
@@ -161,21 +145,21 @@ def view_task(request, task_id):
                                    False
 
     if request.method == 'POST':
-        form = TaskCommentForm(request.POST)
+        form = taskapp_forms.TaskCommentForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data['data']
-            new_comment = TaskComment(task=task, data=data,
-                                      uniq_key=make_key(TaskComment),
-                                      commented_by=user, comment_datetime=datetime.now())
+            new_comment = taskapp_forms.TaskComment(
+              task=task, data=data, commented_by=user,
+              comment_datetime=datetime.now())
             new_comment.save()
-            return redirect(task_url)
+            return shortcuts.redirect(task_url)
         else:
             context['form'] = form
-            return render_to_response('task/view.html', context)
+            return shortcuts.render_to_response('task/view.html', context)
     else:
-        form = TaskCommentForm()
+        form = taskapp_forms.TaskCommentForm()
         context['form'] = form
-        return render_to_response('task/view.html', context)
+        return shortcuts.render_to_response('task/view.html', context)
 
 @login_required
 def edit_task(request, task_id):
@@ -187,7 +171,7 @@ def edit_task(request, task_id):
     profile = user.get_profile()
 
     task_url = reverse('view_task', kwargs={'task_id': task_id})
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     is_creator = True if user == task.created_by else False
     can_edit = True if task.status == "UP" and is_creator else False
@@ -202,17 +186,17 @@ def edit_task(request, task_id):
     context.update(csrf(request))
 
     if request.method == "POST":
-        form = EditTaskForm(request.POST, instance=task)
+        form = taskapp_forms.EditTaskForm(request.POST, instance=task)
         if form.is_valid():
             form.save()
-            return redirect(task_url)
+            return shortcuts.redirect(task_url)
         else:
             context.update({"form": form})
-            return render_to_response("task/edit.html", context)
+            return shortcuts.render_to_response("task/edit.html", context)
     else:
-        form = EditTaskForm(instance=task)
+        form = taskapp_forms.EditTaskForm(instance=task)
         context.update({"form": form})
-        return render_to_response("task/edit.html", context)
+        return shortcuts.render_to_response("task/edit.html", context)
 
 @login_required
 def approve_task(request, task_id):
@@ -220,7 +204,7 @@ def approve_task(request, task_id):
     user = request.user
     profile = user.get_profile()
 
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or task.status != "UP":
         raise Http404
@@ -230,7 +214,7 @@ def approve_task(request, task_id):
                "task": task,
               }
 
-    return render_to_response("task/confirm_approval.html", context)
+    return shortcuts.render_to_response("task/confirm_approval.html", context)
 
 @login_required
 def approved_task(request, task_id):
@@ -238,7 +222,7 @@ def approved_task(request, task_id):
     user = request.user
     profile = user.get_profile()
 
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or task.status != "UP":
         raise Http404
@@ -253,7 +237,7 @@ def approved_task(request, task_id):
                "task": task,
               }
 
-    return render_to_response("task/approved_task.html", context)
+    return shortcuts.render_to_response("task/approved_task.html", context)
 
 @login_required
 def addreviewer(request, task_id):
@@ -262,7 +246,7 @@ def addreviewer(request, task_id):
     profile = user.get_profile()
 
     task_url = reverse('view_task', kwargs={'task_id': task_id})
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     can_mod_reviewers = True if profile.rights in ["MG", "DC"] else False
     if not can_mod_reviewers:
@@ -278,34 +262,34 @@ def addreviewer(request, task_id):
 
     # This part has to be made better
     reviewer_choices = User.objects.filter(is_active=True).\
-                                           exclude(reviewing_tasks__uniq_key=task_id).\
-                                           exclude(claimed_tasks__uniq_key=task_id).\
-                                           exclude(selected_tasks__uniq_key=task_id).\
-                                           exclude(created_tasks__uniq_key=task_id)
+                                           exclude(reviewing_tasks__id=task_id).\
+                                           exclude(claimed_tasks__id=task_id).\
+                                           exclude(selected_tasks__id=task_id).\
+                                           exclude(created_tasks__id=task_id)
 
     choices = ((a_user.id,a_user.username) for a_user in reviewer_choices)
     label = "Reviewer"
 
     if request.method == "POST":
-        form = ChoiceForm(choices, data=request.POST, label=label)
+        form = taskapp_forms.ChoiceForm(choices, data=request.POST, label=label)
         if form.is_valid():
             data = form.cleaned_data.copy()
             uid = data['choice']
             reviewer = User.objects.get(id=uid)
 
             task.reviewers.add(reviewer)
-            return redirect(task_url)
+            return shortcuts.redirect(task_url)
         else:
             context.update({"form": form})
-            return render_to_response("task/addreviewer.html", context)
+            return shortcuts.render_to_response("task/addreviewer.html", context)
     else:
-        form = ChoiceForm(choices, label=label)
+        form = taskapp_forms.ChoiceForm(choices, label=label)
         context.update({"form": form})
-        return render_to_response("task/addreviewer.html", context)
+        return shortcuts.render_to_response("task/addreviewer.html", context)
 
 def view_work(request, task_id):
 
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     user = request.user
     old_reports = task.reports.all()
@@ -315,7 +299,7 @@ def view_work(request, task_id):
               }
 
     if not user.is_authenticated():
-        return render_to_response("task/view_work.html", context)
+        return shortcuts.render_to_response("task/view_work.html", context)
 
     profile = user.get_profile()
 
@@ -330,14 +314,14 @@ def view_work(request, task_id):
 
     context.update({"is_working": is_working})
 
-    return render_to_response("task/view_work.html", context)
+    return shortcuts.render_to_response("task/view_work.html", context)
 
 @login_required
 def view_report(request, report_id):
 
     try:
-        report = WorkReport.objects.get(uniq_key=report_id)
-    except WorkReport.DoesNotExist:
+        report = taskapp_models.WorkReport.objects.get(pk=report_id)
+    except taskapp_models.WorkReport.DoesNotExist:
         raise Http404
 
     user = request.user
@@ -346,19 +330,19 @@ def view_report(request, report_id):
               }
 
     if not user.is_authenticated():
-        return render_to_response("task/view_report.html", context)
+        return shortcuts.render_to_response("task/view_report.html", context)
 
     profile = user.get_profile()
 
     context.update({"profile": profile})
-    return render_to_response("task/view_report.html", context)
+    return shortcuts.render_to_response("task/view_report.html", context)
 
 @login_required
 def submit_report(request, task_id):
     """ Check if the work is in WR state and the user is in assigned_users.
     """
     task_url = reverse('view_task', kwargs={'task_id': task_id})
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     user = request.user
     old_reports = task.reports.all()
@@ -380,30 +364,29 @@ def submit_report(request, task_id):
         if not can_upload:
             return show_msg(user, "You are not authorised to upload data to this task", task_url, "view the task")
 
-        form = WorkReportForm(request.POST, request.FILES)
+        form = taskapp_forms.WorkReportForm(request.POST, request.FILES)
 
         if form.is_valid():
             data = form.cleaned_data.copy()
             data.update({"task":task,
                          "revision": old_reports.count(),
-                         "uniq_key": make_key(WorkReport),
                          "submitted_by": user,
                          "submitted_at": datetime.now(),
                         })
-            r = WorkReport(**data)
+            r = taskapp_models.WorkReport(**data)
             r.save()
 
             report_url = reverse('view_report', kwargs={'report_id': r.id})
-            return redirect(report_url)
+            return shortcuts.redirect(report_url)
 
         else:
             context.update({"form":form})
-            return render_to_response('task/submit_report.html', context)
+            return shortcuts.render_to_response('task/submit_report.html', context)
 
     else:
-        form = WorkReportForm()
+        form = taskapp_forms.WorkReportForm()
         context.update({"form":form})
-        return render_to_response('task/submit_report.html', context)
+        return shortcuts.render_to_response('task/submit_report.html', context)
 
 @login_required
 def create_textbook(request):
@@ -422,32 +405,31 @@ def create_textbook(request):
     context.update(csrf(request))
 
     if request.method == "POST":
-        form = CreateTextbookForm(request.POST)
+        form = taskapp_forms.CreateTextbookForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data.copy()
-            data.update({"uniq_key": make_key(TextBook),
-                         "created_by": user,
+            data.update({"created_by": user,
                          "creation_datetime": datetime.now()})
             del data['chapters']
-            new_textbook = TextBook(**data)
+            new_textbook = taskapp_models.TextBook(**data)
             new_textbook.save()
 
             new_textbook.chapters = form.cleaned_data['chapters']
 
             textbook_url = reverse(
               'view_textbook', kwargs={'task_id': new_textbook.id})
-            return redirect(textbook_url)
+            return shortcuts.redirect(textbook_url)
         else:
             context.update({"form": form})
-            return render_to_response("task/create_textbook.html", context)
+            return shortcuts.render_to_response("task/create_textbook.html", context)
     else:
-        form = CreateTextbookForm()
+        form = taskapp_forms.CreateTextbookForm()
         context.update({"form": form})
-        return render_to_response("task/create_textbook.html", context)
+        return shortcuts.render_to_response("task/create_textbook.html", context)
 
 def view_textbook(request, task_id):
 
-    textbook = getTextBook(task_id)
+    textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
     chapters = textbook.chapters.all()
 
     user = request.user
@@ -458,7 +440,7 @@ def view_textbook(request, task_id):
               }
 
     if not user.is_authenticated():
-        return render_to_response("task/view_textbook.html", context)
+        return shortcuts.render_to_response("task/view_textbook.html", context)
 
     profile = user.get_profile()
 
@@ -476,15 +458,15 @@ def view_textbook(request, task_id):
 
     context.update({"can_edit": can_edit,
                     "can_approve": can_approve})
-    return render_to_response("task/view_textbook.html", context)
+    return shortcuts.render_to_response("task/view_textbook.html", context)
 
 def browse_textbooks(request):
 
     user = request.user
 
-    open_textbooks = TextBook.objects.filter(status="OP").\
+    open_textbooks = taskapp_models.TextBook.objects.filter(status="OP").\
                                       order_by("creation_datetime")
-    comp_textbooks = TextBook.objects.filter(status="CM").\
+    comp_textbooks = taskapp_models.TextBook.objects.filter(status="CM").\
                                       order_by("creation_datetime")
     context = {"user": user,
                "open_textbooks": open_textbooks,
@@ -492,11 +474,11 @@ def browse_textbooks(request):
               }
 
     if user.is_authenticated() and user.get_profile().rights in ["DC", "MG"]:
-        unpub_textbooks = TextBook.objects.filter(status="UP")
+        unpub_textbooks = taskapp_models.TextBook.objects.filter(status="UP")
 
         context.update({"unpub_textbooks": unpub_textbooks})
 
-    return render_to_response("task/browse_textbooks.html", context)
+    return shortcuts.render_to_response("task/browse_textbooks.html", context)
 
 @login_required
 def edit_textbook(request, task_id):
@@ -504,7 +486,7 @@ def edit_textbook(request, task_id):
     user = request.user
     profile = user.get_profile()
 
-    textbook = getTextBook(task_id)
+    textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
     textbook_url = reverse(
       'view_textbook', kwargs={'task_id': textbook.id})
 
@@ -522,23 +504,23 @@ def edit_textbook(request, task_id):
     context.update(csrf(request))
 
     if request.method == "POST":
-        form = EditTextbookForm(request.POST, instance=textbook)
+        form = taskapp_forms.EditTextbookForm(request.POST, instance=textbook)
         if form.is_valid():
             form.save()
-            return redirect(textbook_url)
+            return shortcuts.redirect(textbook_url)
         else:
             context.update({"form": form})
-            return render_to_response("task/edit_textbook.html", context)
+            return shortcuts.render_to_response("task/edit_textbook.html", context)
     else:
-        form = EditTextbookForm(instance=textbook)
+        form = taskapp_forms.EditTextbookForm(instance=textbook)
         context.update({"form": form})
-        return render_to_response("task/edit_textbook.html", context)
+        return shortcuts.render_to_response("task/edit_textbook.html", context)
 
 @login_required
 def claim_task(request, task_id):
 
     claim_url = "/task/claim/task_id=%s"%task_id
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     if task.status == "UP":
         raise Http404
@@ -573,28 +555,27 @@ def claim_task(request, task_id):
                     "old_claims": old_claims})
 
     if request.method == "POST" and can_claim:
-        form = ClaimTaskForm(request.POST)
+        form = taskapp_forms.ClaimTaskForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data.copy()
-            data.update({"uniq_key": make_key(TaskClaim),
-                         "task": task,
+            data.update({"task": task,
                          "claim_datetime": datetime.now(),
                          "claimed_by": user,})
-            new_claim = TaskClaim(**data)
+            new_claim = taskapp_models.TaskClaim(**data)
             new_claim.save()
 
             task.claimed_users.add(user)
             task.save()
 
-            return redirect(claim_url)
+            return shortcuts.redirect(claim_url)
 
         else:
             context.update({"form": form})
-            return render_to_response("task/claim.html", context)
+            return shortcuts.render_to_response("task/claim.html", context)
     else:
-        form = ClaimTaskForm()
+        form = taskapp_forms.ClaimTaskForm()
         context.update({"form": form})
-        return render_to_response("task/claim.html", context)
+        return shortcuts.render_to_response("task/claim.html", context)
 
 @login_required
 def select_user(request, task_id):
@@ -606,7 +587,7 @@ def select_user(request, task_id):
 
     user = request.user
     profile = user.get_profile()
-    task = getTask(task_id)
+    task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     context = {"user": user,
                "profile": profile,
@@ -628,7 +609,7 @@ def select_user(request, task_id):
             user_list = ((user.id,user.username) for user in claimed_users)
 
             if request.method == "POST":
-                form = ChoiceForm(user_list, request.POST)
+                form = taskapp_forms.ChoiceForm(user_list, request.POST)
                 if form.is_valid():
                     uid = form.cleaned_data['choice']
                     selected_user = User.objects.get(id=uid)
@@ -638,14 +619,14 @@ def select_user(request, task_id):
                     task.status = "WR"
                     task.save()
 
-                    return redirect(task_url)
+                    return shortcuts.redirect(task_url)
                 else:
                     context.update({"form": form})
-                    return render_to_response('task/select_user.html', context)
+                    return shortcuts.render_to_response('task/select_user.html', context)
             else:
-                form = ChoiceForm(user_list)
+                form = taskapp_forms.ChoiceForm(user_list)
                 context.update({"form": form})
-                return render_to_response('task/select_user.html', context)
+                return shortcuts.render_to_response('task/select_user.html', context)
         else:
             return show_msg(user, 'There are no pending claims for this task',
                             task_url, 'view the task')
@@ -658,7 +639,7 @@ def approve_textbook(request, task_id):
     user = request.user
     profile = user.get_profile()
 
-    textbook = getTextBook(task_id)
+    textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
         raise Http404
@@ -668,7 +649,7 @@ def approve_textbook(request, task_id):
                "textbook": textbook,
               }
 
-    return render_to_response("task/confirm_textbook_approval.html", context)
+    return shortcuts.render_to_response("task/confirm_textbook_approval.html", context)
 
 @login_required
 def approved_textbook(request, task_id):
@@ -676,7 +657,7 @@ def approved_textbook(request, task_id):
     user = request.user
     profile = user.get_profile()
 
-    textbook = getTextBook(task_id)
+    textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
         raise Http404
@@ -691,4 +672,4 @@ def approved_textbook(request, task_id):
                "textbook": textbook,
               }
 
-    return render_to_response("task/approved_textbook.html", context)
+    return shortcuts.render_to_response("task/approved_textbook.html", context)
