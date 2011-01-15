@@ -1,9 +1,9 @@
+from django import shortcuts
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.shortcuts import redirect
-from django.shortcuts import render_to_response
 
 from pytask.profile.forms import EditProfileForm
 from pytask.profile.utils import get_notification
@@ -21,7 +21,21 @@ def view_profile(request):
     context = {"user": user,
                "profile": profile,
               }
-    return render_to_response("profile/view.html", context)
+    return shortcuts.render_to_response("profile/view.html", context)
+
+@login_required
+def view_user_profile(request, user_id):
+    """ Display the profile information of the user specified in the ID.
+    """
+
+    
+    user = shortcuts.get_object_or_404(User, pk=user_id)
+    profile = user.get_profile()
+
+    context = {"user": user,
+               "profile": profile,
+              }
+    return shortcuts.render_to_response("profile/view.html", context)
 
 @login_required
 def edit_profile(request):
@@ -42,14 +56,14 @@ def edit_profile(request):
 
         if form.is_valid():
             form.save()
-            return redirect(reverse('view_profile'))
+            return shortcuts.redirect(reverse('view_profile'))
         else:
             context.update({"form":form})
-            return render_to_response("profile/edit.html", context)
+            return shortcuts.render_to_response("profile/edit.html", context)
     else:
         form = EditProfileForm(instance=profile)
         context.update({"form":form})
-        return render_to_response("profile/edit.html", context)
+        return shortcuts.render_to_response("profile/edit.html", context)
 
 @login_required
 def browse_notifications(request):
@@ -65,16 +79,17 @@ def browse_notifications(request):
                'notifications':active_notifications,
               }                               
 
-    return render_to_response('profile/browse_notifications.html', context)
+    return shortcuts.render_to_response('profile/browse_notifications.html', context)
 
 @login_required
-def view_notification(request, nid):
+def view_notification(request, notification_id):
     """ get the notification depending on nid.
     Display it.
     """
 
     user = request.user
-    newest, newer, notification, older, oldest = get_notification(nid, user)
+    newest, newer, notification, older, oldest = get_notification(
+      notification_id, user)
 
     if not notification:
         raise Http404
@@ -90,15 +105,17 @@ def view_notification(request, nid):
                'oldest':oldest,
               }
 
-    return render_to_response('profile/view_notification.html', context)
+    return shortcuts.render_to_response(
+      'profile/view_notification.html', context)
 
 @login_required
-def delete_notification(request, nid):
+def delete_notification(request, notification_id):
     """ check if the user owns the notification and delete it.
     """
 
     user = request.user
-    newest, newer, notification, older, oldest = get_notification(nid, user)
+    newest, newer, notification, older, oldest = get_notification(
+      notification_id, user)
 
     if not notification:
         raise Http404
@@ -112,16 +129,17 @@ def delete_notification(request, nid):
     else:
         redirect_url = reverse('browse_notifications')
 
-    return redirect(redirect_url)
+    return shortcuts.redirect(redirect_url)
 
 @login_required
-def unread_notification(request, nid):
+def unread_notification(request, notification_id):
 
     """ check if the user owns the notification and delete it.
     """
 
     user = request.user
-    newest, newer, notification, older, oldest = get_notification(nid, user)
+    newest, newer, notification, older, oldest = get_notification(
+      notification_id, user)
 
     if not notification:
         raise Http404
@@ -135,7 +153,7 @@ def unread_notification(request, nid):
     else:
         redirect_url = reverse('browse_notifications')
 
-    return redirect(redirect_url)
+    return shortcuts.redirect(redirect_url)
 
 @login_required
 def view_user(request, uid):
@@ -164,4 +182,4 @@ def view_user(request, uid):
                "can_view_info": can_view_info,
               }
 
-    return render_to_response("profile/view_user.html", context)
+    return shortcuts.render_to_response("profile/view_user.html", context)
