@@ -3,7 +3,7 @@
     {% if comp_textbooks %}
     Textbooks that were completed recently<ul>
     {% for textbook in comp_textbooks %}
-        <li><a href="/task/textbook/view/tid={{ textbook.uniq_key }}">{{ textbook.name }}</a></li>
+        <li><a href="{% url view_textbook textbook.id %}">{{ textbook.name }}</a></li>
     {% endfor %}
     </ul>
     <br />
@@ -12,7 +12,7 @@
     {% if open_textbooks %}
     Textbooks that are open for contribution<ul>
     {% for textbook in open_textbooks %}
-        <li><a href="/task/textbook/view/tid={{ textbook.uniq_key }}">{{ textbook.name }}</a></li>
+        <li><a href="{% url view_textbook textbook.id %}">{{ textbook.name }}</a></li>
     {% endfor %}
     </ul>
     <br />
@@ -21,7 +21,7 @@
     {% if unpub_textbooks %}
     Textbooks that need approval<ul>
     {% for textbook in unpub_textbooks %}
-        <li><a href="/task/textbook/view/tid={{ textbook.uniq_key }}">{{ textbook.name }}</a></li>
+        <li><a href="{% url view_textbook textbook.id %}">{{ textbook.name }}</a></li>
     {% endfor %}
     </ul>
     <br />

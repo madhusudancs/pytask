@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-You are about to approve the textbook <a href="/textbook/textbook/view/tid={{textbook.uniq_key}}">{{textbook.name}}</a><br />
+You are about to approve the textbook <a href="{% url view_textbook textbook.id %}">{{textbook.name}}</a><br />
 This action cannot be undone. Please confirm <br /> <br />
 
-<a href="/task/textbook/approved/tid={{textbook.uniq_key}}">Yes, I approve the textbook</a><br />
-<a href="/task/textbook/view/tid={{textbook.uniq_key}}">No, take me back to the textbook</a> <br />
+<a href="{% url approve_textbook textbook.id %}">Yes, I approve the textbook</a><br />
+<a href="{% url view_textbook textbook.id %}">No, take me back to the textbook</a> <br />
 {% endblock %}

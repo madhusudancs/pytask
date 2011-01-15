@@ -5,7 +5,7 @@ You have no notifications.
 {% else %}
 Notifications: <br />
 {% for notification in notifications %}
-<a href="/profile/notf/view/nid={{notification.uniq_key}}">
+<a href="{% url view_notification notification.id %}">
 {% if not notification.is_read %} <b> {% endif %}
 {{notification.subject}}
 {% if not notification.is_read %} </b> {% endif %}</a><br />

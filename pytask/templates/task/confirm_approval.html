@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-You are about to approve the task <a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a><br />
+You are about to approve the task <a href="{% url view_task task.id %}">{{task.title}}</a><br />
 This action cannot be undone. Please confirm <br /> <br />
 
-<a href="/task/approved/tid={{task.uniq_key}}">Yes, I approve the task</a><br />
-<a href="/task/view/tid={{task.uniq_key}}">No, take me back to the task</a> <br />
+<a href="{% url approve_task task.id %}">Yes, I approve the task</a><br />
+<a href="{% url view_task task.id %}">No, take me back to the task</a> <br />
 {% endblock %}

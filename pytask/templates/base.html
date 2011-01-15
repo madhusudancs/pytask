@@ -8,26 +8,26 @@
 <body>
 <div id="wrapper">
     <div id="header">
-        <h2><a href="/">PyTasks</a></h2>
+        <h2><a href="{% url home_page %}">PyTasks</a></h2>
     </div>
     <div id="container">
         <div id="left">
         <ul id="nav">
-            <li><a href="/" title="home">home</a></li>
+            <li><a href="{% url home_page %}" title="home">Home</a></li>
 	    <br />
-                <li><a href="/task/browse/" title="tasks">tasks</a></li>
-                <li><a href="/task/textbook/browse/" title="textbook">textbooks</a></li>
+                <li><a href="{% url browse_tasks %}" title="tasks">Tasks</a></li>
+                <li><a href="{% url browse_textbooks %}" title="textbook">Textbooks</a></li>
                 <br />
             {% if user.is_authenticated %}
-                <li><a href="/profile/notf/browse/" title="notifications">
-			{{ user|notf_dsp }}
+                <li><a href="{% url browse_notifications %}" title="notifications">
+                  {{ user|notf_dsp }}
                 </a></li>
                 <br>
-                <li><a href="/profile/view">profile</a></li>
-                <li><a href="/accounts/logout/">logout</a></li>
+                <li><a href="{% url view_profile %}">Profile</a></li>
+                <li><a href="{% url auth_logout %}">Logout</a></li>
             {% else %}
-                <li><a href="/accounts/register/" title="register">register</a></li>
-                <li><a href="/accounts/login/" title="login">login</a></li>
+                <li><a href="{% url registration_register %}" title="register">Register</a></li>
+                <li><a href="{% url auth_login %}" title="login">Login</a></li>
             {% endif %}
         </ul>
         </div>
@@ -35,9 +35,6 @@
             {% block content %}This is the default content{% endblock %}
         </div>
         <div id="right">
-            <!--{% if user.is_authenticated %}
-            <a href="/accounts/logout">logout</a> 
-            {% endif %}-->
         </div>
         <div class="clearer">
         </div>

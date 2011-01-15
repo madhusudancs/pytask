@@ -4,7 +4,7 @@
     {% if open_tasks %}
     Tasks that are open for contribution<ul>
     {% for task in open_tasks %}
-        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+        <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
     {% endfor %}
     </ul>
     <br />
@@ -13,7 +13,7 @@
     {% if working_tasks %}
     Tasks that are being worked on<ul>
     {% for task in working_tasks %}
-        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+        <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
     {% endfor %}
     </ul>
     <br />
@@ -22,7 +22,7 @@
     {% if comp_tasks %}
     Tasks that were completed recently<ul>
     {% for task in comp_tasks %}
-        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+        <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
     {% endfor %}
     </ul>
     <br />
@@ -31,7 +31,7 @@
     {% if unpub_tasks %}
     Tasks that need approval<ul>
     {% for task in unpub_tasks %}
-        <li><a href="/task/view/tid={{ task.uniq_key }}">{{ task.title }}</a></li>
+        <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
     {% endfor %}
     </ul>
     <br />

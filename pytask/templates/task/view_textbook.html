@@ -6,17 +6,17 @@
     <h3>{{ textbook.name }}</h3>
 
     {% if can_edit %}
-        <a href="/task/textbook/edit/tid={{textbook.uniq_key}}">Edit Text book</a>
+        <a href="{% url edit_textbook textbook.id %}">Edit Text book</a>
     {% endif %}
     
     {% if can_approve %}
-        <a href="/task/textbook/approve/tid={{textbook.uniq_key}}">Approve Text book</a>
+        <a href="{% url approve_textbook textbook.id %}">Approve Text book</a>
     {% endif %}
 
-    <hr />created by <a href="/profile/user/view/uid={{ textbook.created_by.id }}">{{ textbook.created_by.username }}</a>
+    <hr />created by <a href="{% url view_textbook textbook.created_by.id %}">{{ textbook.created_by.username }}</a>
     on {{textbook.creation_datetime|date:"D d M Y"}} at {{textbook.creation_datetime|time:"H:i"}}<br />
     <hr />
-    
+
     {% if textbook.tags.count %}
         Tags: 
         {% for tag in textbook.tags %}
@@ -30,7 +30,7 @@
     <table>
     {% for chap in chapters %}
     <tr>
-	    <td><a href="/task/view/tid={{chap.uniq_key}}">{{chap.title}}</a> </td>
+	    <td><a href="{% url view_task chap.id %}">{{chap.title}}</a> </td>
 	    <td> {{chap.status}} </td>
     </tr>
     {% endfor %}
@@ -39,14 +39,11 @@
     There are no chapters in this textbook as of now.<br />
     {% endif %}
 
-
-    
-    
         <hr />
     {% if comments %}
         comments:<br /><br />
         {% for comment in comments %}
-            <a href="/profile/user/view/uid={{comment.commented_by.id}}">{{ comment.commented_by.username }}</a> 
+            <a href="{% url view_profile comment.commented_by.id %}">{{ comment.commented_by.username }}</a> 
             on {{ comment.comment_datetime|date:"D d M Y"}} at {{comment.comment_datetime|time:"H:i"}} wrote:<br />
         {{ comment.data|linebreaksbr }}<br />
         {% endfor %}

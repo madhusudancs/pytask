@@ -4,10 +4,10 @@
     Propose a claim to work on this task.<br />
     {% endif %}
     {% if old_claims %}
-        List of all the claims for the task <a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a><br />
+        List of all the claims for the task <a href="{% url view_task task.id %}">{{task.title}}</a><br />
         {% for claim in old_claims %}
             <hr />
-            <a href="/profile/user/view/uid={{claim.claimed_by.id}}">{{claim.claimed_by.username}}</a>
+            <a href="{% url view_profile claim.claimed_by.id %}">{{claim.claimed_by.username}}</a>
             on {{claim.claim_datetime|date:"D d M Y"}} at {{claim.claim_datetime|time:"H:i"}} wrote:<br />
             {{claim.proposal|linebreaksbr}}<br />
         {% endfor %}
@@ -23,7 +23,7 @@
     {% endif %}
     {% if old_claims and is_creator %}
     <hr />
-        <a href="/task/select/tid={{task.uniq_key}}">Select a user to assign the work</a>
+        <a href="{% url select_task task.id %}">Select a user to assign the work</a>
     {% endif %}
 
     {% if can_claim %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <a href="/task/claim/tid={{task.uniq_key}}">click here</a> to return to the claims page.<br /><br />
+    <a href="{% url claim_task task.id %}">click here</a> to return to the claims page.<br /><br />
     Select a user to assign this task.<br />
     <form action="" method="POST">
 	    {% csrf_token %}

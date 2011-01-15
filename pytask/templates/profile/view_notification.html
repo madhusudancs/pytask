@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
 {% if newest %}
-<a href="/profile/notf/view/nid={{newest.uniq_key}}">&lt;&lt;newest</a>
+<a href="{% url view_notification newest.id %}">&lt;&lt;newest</a>
 {% endif %}
 {% if newer %}
-<a href="/profile/notf/view/nid={{newer.uniq_key}}">&lt;newer</a>
+<a href="{% url view_notification newer.id %}">&lt;newer</a>
 {% endif %}
 {% if older %}
-<a href="/profile/notf/view/nid={{older.uniq_key}}">older&gt;</a>
+<a href="{% url view_notification older.id %}">older&gt;</a>
 {% endif %}
 {% if oldest %}
-<a href="/profile/notf/view/nid={{oldest.uniq_key}}">oldest&gt;&gt;</a>
+<a href="{% url view_notification oldest.id %}">oldest&gt;&gt;</a>
 {% endif %}
 <br />
 
 <br />
-sent on {{notification.sent_date|date:"D d M Y"}} at {{notification.sent_date|time:"H:i"}}<br />
+Sent on {{notification.sent_date|date:"D d M Y"}} at {{notification.sent_date|time:"H:i"}}<br />
 Sub: {{notification.subject}}<br />
 <br />
 {{notification.message|safe}}
 <br />
-<a href="/profile/notf/del/nid={{notification.uniq_key}}">Delete</a>
-<a href="/profile/notf/unr/nid={{notification.uniq_key}}">Keep Unread</a>
+<a href="{% url delete_notification notification.id %}">Delete</a>
+<a href="{% url unread_notification notification.id %}">Keep Unread</a>
 {% endblock %}

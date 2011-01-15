@@ -9,15 +9,15 @@
     {% endif %}
 
     {% if can_create_task %}
-    	<a href="/task/textbook/create/">Add a new textbook</a><br />
-        <a href="/task/create/">Create a task</a><br />
+    	<a href="{% url create_textbook %}">Add a new textbook</a><br />
+        <a href="{% url create_task %}">Create a task</a><br />
     <br />
     {% endif %}
     
     {% if unpublished_tasks %}
     Tasks created by you that need approval:<ul>
         {% for a_task in unpublished_tasks %}
-            <li><a href="/task/view/tid={{a_task.uniq_key}}">{{a_task.title}}</a></li>
+            <li><a href="{% url view_task a_task.id %}">{{a_task.title}}</a></li>
         {% endfor %}
         </ul>
     <br />
@@ -26,7 +26,7 @@
     {% if reviewing_tasks %}
     Tasks you are reviewering:<ul>
         {% for a_task in reviewing_tasks %}
-            <li><a href="/task/view/tid={{a_task.uniq_key}}">{{a_task.title}}</a></li>
+            <li><a href="{% url view_task a_task.id %}">{{a_task.title}}</a></li>
         {% endfor %}
         </ul>
     <br />
@@ -35,7 +35,7 @@
     {% if selected_tasks %}
     Tasks that have been assigned to you:<ul>
         {% for a_task in selected_tasks %}
-            <li><a href="/task/view/tid={{a_task.uniq_key}}">{{a_task.title}}</a></li>
+            <li><a href="{% url view_task a_task.id %}">{{a_task.title}}</a></li>
         {% endfor %}
         </ul>
     <br />
@@ -44,7 +44,7 @@
     {% if claimed_tasks %}
     Tasks claimed but still not assigned to you:<ul>
         {% for a_task in claimed_tasks %}
-            <li><a href="/task/view/tid={{a_task.uniq_key}}">{{a_task.title}}</a></li>
+            <li><a href="{% url view_task a_task.id %}">{{a_task.title}}</a></li>
         {% endfor %}
         </ul>
     <br />

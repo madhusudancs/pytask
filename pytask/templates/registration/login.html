@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-<form action="/accounts/login/" method="post">
+<form action="{% url auth_login %}" method="post">
 {% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Login" />
 </form>
-<a href="/accounts/password/reset">Forgot password?</a>
+<a href="{% url auth_password_reset %}">Forgot password?</a>
 {% endblock %}

@@ -17,7 +17,7 @@ Name: {{viewing_profile.full_name}} <br />
 Tasks completed by {{viewing_profile.full_name}}:
 <ul>
 	{% for task in comp_tasks %}
-	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
 	{% endfor %}
 </ul>
 {% endif %}
@@ -26,7 +26,7 @@ Tasks completed by {{viewing_profile.full_name}}:
 Tasks {{viewing_profile.full_name}} is currently working on:
 <ul>
 	{% for task in working_tasks %}
-	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
 	{% endfor %}
 </ul>
 {% endif %}
@@ -35,7 +35,7 @@ Tasks {{viewing_profile.full_name}} is currently working on:
 Tasks reviewed by {{viewing_profile.full_name}}:
 <ul>
 	{% for task in reviewing_tasks %}
-	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
 	{% endfor %}
 </ul>
 {% endif %}
@@ -43,7 +43,7 @@ Tasks reviewed by {{viewing_profile.full_name}}:
 {% if claimed_tasks and can_view_info %}
 <ul>
 	{% for task in claimed_tasks %}
-	<li><a href="/task/view/tid={{task.uniq_key}}">{{task.title}}</a></li>
+	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
 	{% endfor %}
 </ul>
 {% endif %}

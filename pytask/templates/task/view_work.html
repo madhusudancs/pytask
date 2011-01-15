@@ -10,14 +10,14 @@ There are no reports submitted as of now<br />
 {% for rep in old_reports %}
 <tr>
 	<td>{{rep.submitted_by}}</td>
-	<td><a href="/task/view/report/rid={{rep.uniq_key}}">{{rep.data}}</a></td>
+	<td><a href="{% url view_report rep.id %}">{{rep.data}}</a></td>
 	<td><a href="{{rep.attachment.url}}">{{rep.attachment.name}}</a> </td>
 </tr>
 {% endfor %}
 </table>
 {% endif %}
 {% if is_working %}
-<a href="/task/submit/report/tid={{task.uniq_key}}">Submit report</a>
+<a href="{% url submit_report rep.id %}">Submit report</a>
 <hr />
 {% endif %}
 {% endblock %}
