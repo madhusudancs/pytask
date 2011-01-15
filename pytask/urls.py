@@ -1,17 +1,16 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
+from django.contrib import admin
 
 from registration.views import register
 
 from pytask.profile.forms import CustomRegistrationForm
-from pytask.views import home_page
 
 
-from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', home_page),
+    url(r'^$', 'pytask.views.home_page', name='home_page'),
     (r'^admin/', include(admin.site.urls)),
 
     url(r'^accounts/register/$', register,
