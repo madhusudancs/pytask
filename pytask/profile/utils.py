@@ -1,3 +1,4 @@
+from django import shortcuts
 from django.http import Http404
 from django.contrib.auth.models import User
 from pytask.profile.models import Notification
@@ -35,13 +36,9 @@ def get_notification(nid, user):
 
 def get_user(uid):
 
-    try:
-        user = User.objects.get(id=uid)
-    except User.DoesNotExist:
-        raise Http404
+    user = shortcuts.get_object_or_404(User, pk=uid)
 
     if user.is_active:
         return user
     else:
         raise Http404
-
