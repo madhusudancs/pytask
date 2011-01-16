@@ -8,6 +8,8 @@ from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.utils import simplejson as json
 
+from tagging.models import Tag
+
 from pytask.views import show_msg
 
 from pytask.taskapp import forms as taskapp_forms
@@ -686,13 +688,4 @@ def suggest_task_tags(request):
       response = [tag.name for tag in tag_entities]
 
     json_response = json.dumps(response)
-    return http.HttpResponse(json_response)
-
-def suggest_task_tags(request):
-    """Returns the tags matching the query for the AJAXy autocomplete
-    to get tags related to tasks.
-    """
-
-    taskapp_models.Task.objects.filter(tags)
-    json_response = json.dumps(['abc', 'bca', 'bowbow'])
     return http.HttpResponse(json_response)
