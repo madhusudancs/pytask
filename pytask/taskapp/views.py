@@ -46,11 +46,11 @@ def create_task(request):
             else:
                 context.update({'form':form})
                 return shortcuts.render_to_response(
-                  'task/create.html', context)
+                  'task/edit.html', context)
         else:
             form = taskapp_forms.CreateTaskForm()
             context.update({'form': form})
-            return shortcuts.render_to_response('task/create.html', context)
+            return shortcuts.render_to_response('task/edit.html', context)
     else:
         return show_msg(user, 'You are not authorised to create a task.')
 
