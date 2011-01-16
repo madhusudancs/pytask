@@ -1,8 +1,22 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load form_helpers %}
+{% block css %}
+
+  <style>
+    .ui-autocomplete-loading {
+      background: white url('images/ui-anim_basic_16x16.gif') right center no-repeat;
+    }
+  </style>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript"
+        src="/pytask/static/js/create_task_form.js">
+    </script>
+    <script type="text/javascript">
+      create_form("{% url suggest_task_tags %}");
+    </script>
+{% endblock %}
+
 {% block content %}
-<form action="" method="post">
-{% csrf_token %}
-{{form.as_p}}
-<input type="submit" value="Create">
-</form>
+  {% as_div_form form "Create Task Form" csrf_token "" "Create" %}
 {% endblock %}

@@ -1,11 +1,12 @@
 from datetime import datetime
 
 from django import shortcuts
-from django.http import Http404
+from django import http
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
+from django.utils import simplejson as json
 
 from pytask.views import show_msg
 
@@ -46,7 +47,7 @@ def create_task(request):
                   'task/create.html', context)
         else:
             form = taskapp_forms.CreateTaskForm()
-            context.update({'form':form})
+            context.update({'form': form})
             return shortcuts.render_to_response('task/create.html', context)
     else:
         return show_msg(user, 'You are not authorised to create a task.')
@@ -176,7 +177,7 @@ def edit_task(request, task_id):
     is_creator = True if user == task.created_by else False
     can_edit = True if task.status == "UP" and is_creator else False
     if not can_edit:
-        raise Http404
+        raise http.Http404
 
     context = {"user": user,
                "profile": profile,
@@ -207,7 +208,7 @@ def approve_task(request, task_id):
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or task.status != "UP":
-        raise Http404
+        raise http.Http404
 
     context = {"user": user,
                "profile": profile,
@@ -225,7 +226,7 @@ def approved_task(request, task_id):
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or task.status != "UP":
-        raise Http404
+        raise http.Http404
 
     task.approved_by = user
     task.approval_datetime = datetime.now()
@@ -250,7 +251,7 @@ def addreviewer(request, task_id):
 
     can_mod_reviewers = True if profile.rights in ["MG", "DC"] else False
     if not can_mod_reviewers:
-        raise Http404
+        raise http.Http404
 
     context = {"user": user,
                "profile": profile,
@@ -319,10 +320,8 @@ def view_work(request, task_id):
 @login_required
 def view_report(request, report_id):
 
-    try:
-        report = taskapp_models.WorkReport.objects.get(pk=report_id)
-    except taskapp_models.WorkReport.DoesNotExist:
-        raise Http404
+    report = shortcuts.get_object_or_404(taskapp_models.WorkReport,
+                                         pk=report_id)
 
     user = request.user
     context = {"report": report,
@@ -348,7 +347,7 @@ def submit_report(request, task_id):
     old_reports = task.reports.all()
 
     if not task.status == "WR":
-        raise Http404
+        raise http.Http404
 
     can_upload = True if user in task.selected_users.all() else False
 
@@ -396,7 +395,7 @@ def create_textbook(request):
 
     can_create = True if profile.rights != "CT" else False
     if not can_create:
-        raise Http404
+        raise http.Http404
 
     context = {"user": user,
                "profile": profile,
@@ -494,7 +493,7 @@ def edit_textbook(request, task_id):
                        else False
 
     if not can_edit:
-        raise Http404
+        raise http.Http404
 
     context = {"user": user,
                "profile": profile,
@@ -523,7 +522,7 @@ def claim_task(request, task_id):
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     if task.status == "UP":
-        raise Http404
+        raise http.Http404
 
     user = request.user
     profile = user.get_profile()
@@ -631,7 +630,7 @@ def select_user(request, task_id):
             return show_msg(user, 'There are no pending claims for this task',
                             task_url, 'view the task')
     else:
-        raise Http404
+        raise http.Http404
 
 @login_required
 def approve_textbook(request, task_id):
@@ -642,7 +641,7 @@ def approve_textbook(request, task_id):
     textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
-        raise Http404
+        raise http.Http404
 
     context = {"user": user,
                "profile": profile,
@@ -660,7 +659,7 @@ def approved_textbook(request, task_id):
     textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
 
     if profile.rights not in ["MG", "DC"] or textbook.status != "UP":
-        raise Http404
+        raise http.Http404
 
     textbook.approved_by = user
     textbook.approval_datetime = datetime.now()
@@ -673,3 +672,12 @@ def approved_textbook(request, task_id):
               }
 
     return shortcuts.render_to_response("task/approved_textbook.html", context)
+
+def suggest_task_tags(request):
+    """Returns the tags matching the query for the AJAXy autocomplete
+    to get tags related to tasks.
+    """
+
+    taskapp_models.Task.objects.filter(tags)
+    json_response = json.dumps(['abc', 'bca', 'bowbow'])
+    return http.HttpResponse(json_response)

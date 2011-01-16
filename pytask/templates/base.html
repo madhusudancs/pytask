@@ -1,8 +1,25 @@
 <html>
 <head>
     <title>{% block title %}PyTasks{% endblock %}</title>
-    {% block js_script %} {% endblock %}
+    {% comment %}Load site wide CSS here. Additional styling must be
+    loaded in the block that follows{% endcomment %}
     <link rel=stylesheet href="/pytask/static/css/base.css" type="text/css" >
+    <link type="text/css"
+        href="/pytask/static/css/jquery/ui/cupertino/jquery-ui-1.8.8.custom.css"
+        rel="stylesheet" /> 
+    {% block css %}
+    {% endblock %}
+
+    {% comment %}Load site wide javascript here. Additional scripts must
+    be loaded in the block that follows{% endcomment %}
+    <script type="text/javascript"
+        src="/pytask/static/jquery/jquery-1.4.4.min.js">
+    </script>
+    <script type="text/javascript"
+        src="/pytask/static/jquery/jquery-ui-1.8.8.custom.min.js">
+    </script>
+    {% block js %}
+    {% endblock %}
 </head>
 {% load user_tags %}
 <body>
