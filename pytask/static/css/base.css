@@ -8,12 +8,11 @@ body {
 }
 
 #wrapper {
-  width: 956px;
+  width: auto;
   padding: 10px;
   margin: 0px auto 0px auto;
   height: auto;
   text-align: left;
-  border: 1px solid #ddd;
 }
 
 #header {
@@ -23,6 +22,10 @@ body {
   width: auto;
   text-align: center;
   background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  -moz-box-shadow: 0 0 1em darkslategray;
+  -webkit-box-shadow: 0 0 1em darkslategray;
+  box-shadow: 0 0 1em darkslategray;
 }
 
 #container {
@@ -38,9 +41,24 @@ body {
 
 #left {
   margin: 0px;
-  width: 160px;
+  width: 15%;
   padding: 10px 20px 10px 20px;
   float: left;
+  border: 1px solid #ddd;
+}
+
+div #navheader {
+  margin-bottom: 15;
+  padding: 5px 0px 5px 0px;
+  height: auto;
+  width: auto;
+  text-align: center;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  text-indent: center;
+  color: #a92;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 #nav {
@@ -76,13 +94,17 @@ body {
 
 #center {
   height: auto;
-  width: 504px;
+  width: 54%;
   padding: 10px 20px 10px 20px;
   float: left;
   margin: 0px 0px 0px 6px;
   line-height: 1.8em;
+  border: 1px solid #ddd;
 }
 
+hr {
+  color: #999;
+}
 h1 {
   font-size: 14px;
   margin: 0px;
@@ -92,9 +114,10 @@ h1 {
 #right {
   padding: 10px 20px 10px 20px;
   height: auto;
-  width: 160px;
+  width: 20%;
   float: left;
   margin: 0px 0px 0px 6px;
+  border: 1px solid #ddd;
 }
 
 .clearer {
@@ -104,15 +127,16 @@ h1 {
   margin: 0px;
   padding: 0px;
   clear: both;
-  height: 0px;
+  height: auto;
   width: auto;
 }
 
 #footer {
   margin: 10px 0px 0px 0px;
-  text-align: left;
+  text-align: center;
   padding: 5px 0px 5px 0px;
   background-color: #f1f1f1;
+  clear: both;
 }
 
 #footer p {
@@ -190,4 +214,17 @@ div #form button {
   color:#fff;
   cursor:pointer;
   text-align:center;
+}
+
+button.green {
+  width:150px;
+  height:37px;
+  padding-bottom: 5px;
+  border:none;
+  background:url('/pytask/static/images/form/form_button_green.png') no-repeat 0 0;
+  color:#fff;
+  cursor:pointer;
+  text-align:center;
+  font-size: 16px;
+  font-weight: bold;
 }
