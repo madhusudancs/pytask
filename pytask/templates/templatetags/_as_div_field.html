@@ -1,0 +1,11 @@
+{% load form_helpers %}
+
+{%if field.field.required %}
+<div id="field-required">
+{% else %}
+<div id="field">
+{% endif %}
+  {{ field.errors }}
+  {{ field.label_tag }}
+  {{ field }}
+</div>

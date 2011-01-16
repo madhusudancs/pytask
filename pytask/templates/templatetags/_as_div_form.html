@@ -1,0 +1,12 @@
+{% load form_helpers %}
+
+<form action="{{ action_url }}" method="post">
+  {% csrf_token %}
+  <div id="form">
+    {% for field in form %}
+      {% as_div_field field %}
+    {% endfor %}
+    <p class="submit"><button type="submit">{{ button_label }}</button></p>
+  </div>
+</form>
+  

@@ -93,6 +93,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
+    'pytask',
     'pytask.profile',
     'pytask.taskapp',
 )
