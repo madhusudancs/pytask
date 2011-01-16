@@ -1,63 +1,64 @@
 <html>
 <head>
-    <title>{% block title %}PyTasks{% endblock %}</title>
-    {% comment %}Load site wide CSS here. Additional styling must be
-    loaded in the block that follows{% endcomment %}
-    <link rel=stylesheet href="/pytask/static/css/base.css" type="text/css" >
-    <link type="text/css"
-        href="/pytask/static/css/jquery/ui/cupertino/jquery-ui-1.8.8.custom.css"
-        rel="stylesheet" /> 
-    {% block css %}
-    {% endblock %}
+  <title>
+    {% block title %}PyTasks{% endblock %}
+  </title>
 
-    {% comment %}Load site wide javascript here. Additional scripts must
-    be loaded in the block that follows{% endcomment %}
-    <script type="text/javascript"
-        src="/pytask/static/jquery/jquery-1.4.4.min.js">
-    </script>
-    <script type="text/javascript"
-        src="/pytask/static/jquery/jquery-ui-1.8.8.custom.min.js">
-    </script>
-    {% block js %}
-    {% endblock %}
+  {% comment %}Load site wide CSS here. Additional styling must be
+  loaded in the block that follows{% endcomment %}
+  <link rel=stylesheet href="/pytask/static/css/base.css" type="text/css" >
+  <link type="text/css"
+      href="/pytask/static/css/jquery/ui/cupertino/jquery-ui-1.8.8.custom.css"
+      rel="stylesheet" />
+
+  {% block css %}
+  {% endblock %}
+
+
+  {% comment %}Load site wide javascript here. Additional scripts must
+  be loaded in the block that follows{% endcomment %}
+
+  <script type="text/javascript"
+      src="/pytask/static/jquery/jquery-1.4.4.min.js">
+  </script>
+  <script type="text/javascript"
+      src="/pytask/static/jquery/jquery-ui-1.8.8.custom.min.js">
+  </script>
+  {% block js %}
+  {% endblock %}
 </head>
-{% load user_tags %}
+
+
 <body>
-<div id="wrapper">
+  <div id="wrapper">
     <div id="header">
-        <h2><a href="{% url home_page %}">PyTasks</a></h2>
+      <h2><a href="{% url home_page %}">PyTask</a></h2>
     </div>
+
     <div id="container">
-        <div id="left">
-        <ul id="nav">
-            <li><a href="{% url home_page %}" title="home">Home</a></li>
-	    <br />
-                <li><a href="{% url browse_tasks %}" title="tasks">Tasks</a></li>
-                <li><a href="{% url browse_textbooks %}" title="textbook">Textbooks</a></li>
-                <br />
-            {% if user.is_authenticated %}
-                <li><a href="{% url browse_notifications %}" title="notifications">
-                  {{ user|notf_dsp }}
-                </a></li>
-                <br>
-                <li><a href="{% url view_profile %}">Profile</a></li>
-                <li><a href="{% url auth_logout %}">Logout</a></li>
-            {% else %}
-                <li><a href="{% url registration_register %}" title="register">Register</a></li>
-                <li><a href="{% url auth_login %}" title="login">Login</a></li>
-            {% endif %}
-        </ul>
-        </div>
-        <div id="center">
-            {% block content %}This is the default content{% endblock %}
-        </div>
-        <div id="right">
-        </div>
-        <div class="clearer">
-        </div>
+      <div id="left">
+        {% include '_left_sidebar.html' %}
+
+        {% block leftsidebar %}
+          {% comment %}Additional Left Sidebar elements go here{% endcomment %}
+        {% endblock leftsidebar %}
+      </div>
+
+      <div id="center">
+        {% block content %}This is the default content{% endblock content %}
+      </div>
+
+      <div id="right">
+        {% block rightsidebar %}
+          {% comment %}Additional Right Sidebar elements go here{% endcomment %}
+        {% endblock rightsidebar %}
+      </div>
+
+      <div class="clearer">
+      </div>
     </div>
     <div id="footer">
-    Designed by <a href="http://fossee.in">FOSSEE</a>
+      Designed by <a href="http://fossee.in">FOSSEE</a>
     </div>
 </div> 
 

@@ -1,0 +1,39 @@
+{% load user_tags %}
+
+<div id="navheader">
+Navigation
+</div>
+<ul id="nav">
+  <li><a href="{% url home_page %}" title="home">Home</a></li>
+  <br />
+  <li><a href="{% url browse_tasks %}" title="tasks">Tasks</a></li>
+  <li><a href="{% url browse_textbooks %}" title="textbook">Textbooks</a></li>
+  <br />
+
+  {% if user.is_authenticated %}
+
+    <li>
+      <a href="{% url browse_notifications %}" title="notifications">
+        {{ user|notf_dsp }}
+      </a>
+    </li>
+    <br>
+    <li><a href="{% url view_profile %}">Profile</a></li>
+    <li><a href="{% url auth_logout %}">Logout</a></li>
+
+  {% else %}
+
+    <li>
+      <a href="{% url registration_register %}" title="register">
+        Register
+      </a>
+    </li>
+    <li>
+      <a href="{% url auth_login %}" title="login">
+        Login
+      </a>
+    </li>
+
+  {% endif %}
+
+</ul>
