@@ -28,7 +28,6 @@ def view_user_profile(request, user_id):
     """ Display the profile information of the user specified in the ID.
     """
 
-    
     user = shortcuts.get_object_or_404(User, pk=user_id)
     profile = user.get_profile()
 
@@ -164,12 +163,13 @@ def view_user(request, uid):
     viewing_user = get_user(uid)
     viewing_profile = viewing_user.get_profile()
 
-    working_tasks = viewing_user.approved_tasks.filter(status="WR")
-    completed_tasks = viewing_user.approved_tasks.filter(status="CM")
+    working_tasks = viewing_user.approved_tasks.filter(status="Working")
+    completed_tasks = viewing_user.approved_tasks.filter(status="Completed")
     reviewing_tasks = viewing_user.reviewing_tasks.all()
     claimed_tasks = viewing_user.claimed_tasks.all()
 
-    can_view_info = True if profile.rights in ["MG", "DC"] else False
+    can_view_info = True if profile.role in [
+      'Administrator', 'Coordinator'] else False
 
     context = {"user": user,
                "profile": profile,

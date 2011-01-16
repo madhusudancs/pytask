@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 GENDER_CHOICES = (
-  ( 'Male', 'Male'),
+  ('Male', 'Male'),
   ('Female', 'Female'),
 )
 
