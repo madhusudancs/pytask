@@ -1,14 +1,27 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-{% if not notifications %}
-You have no notifications.
-{% else %}
-Notifications: <br />
-{% for notification in notifications %}
-<a href="{% url view_notification notification.id %}">
-{% if not notification.is_read %} <b> {% endif %}
-{{notification.subject}}
-{% if not notification.is_read %} </b> {% endif %}</a><br />
-{% endfor %}
-{% endif %}
+  {% if not notifications %}
+    You have no notifications.
+  {% else %}
+
+    Notifications: <br />
+    {% for notification in notifications %}
+      <a href="{% url view_notification notification.id %}">
+
+        {% if not notification.is_read %}
+          <b>
+        {% endif %}
+  
+        {{ notification.subject }}
+  
+        {% if not notification.is_read %}
+          </b>
+        {% endif %}
+
+      </a>
+      <br />
+    {% endfor %}
+
+  {% endif %}
 {% endblock %}

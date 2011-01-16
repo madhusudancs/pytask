@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load form_helpers %}
+
 {% block title %}
   {{task.title}}
 {% endblock %}
@@ -16,7 +18,7 @@
   {% endif %}
 
   {% if can_close %}
-      <a href="{% url close_task task.id %}">Close task</a>
+    <a href="{% url close_task task.id %}">Close task</a>
   {% endif %}
 
   <hr />created by
