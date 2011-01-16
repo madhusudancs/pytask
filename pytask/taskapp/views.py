@@ -420,11 +420,11 @@ def create_textbook(request):
             return shortcuts.redirect(textbook_url)
         else:
             context.update({"form": form})
-            return shortcuts.render_to_response("task/create_textbook.html", context)
+            return shortcuts.render_to_response("task/edit.html", context)
     else:
         form = taskapp_forms.CreateTextbookForm()
         context.update({"form": form})
-        return shortcuts.render_to_response("task/create_textbook.html", context)
+        return shortcuts.render_to_response("task/edit.html", context)
 
 def view_textbook(request, task_id):
 
@@ -509,11 +509,11 @@ def edit_textbook(request, task_id):
             return shortcuts.redirect(textbook_url)
         else:
             context.update({"form": form})
-            return shortcuts.render_to_response("task/edit_textbook.html", context)
+            return shortcuts.render_to_response("task/edit.html", context)
     else:
         form = taskapp_forms.EditTextbookForm(instance=textbook)
         context.update({"form": form})
-        return shortcuts.render_to_response("task/edit_textbook.html", context)
+        return shortcuts.render_to_response("task/edit.html", context)
 
 @login_required
 def claim_task(request, task_id):
@@ -672,6 +672,21 @@ def approved_textbook(request, task_id):
               }
 
     return shortcuts.render_to_response("task/approved_textbook.html", context)
+
+def suggest_task_tags(request):
+    """Returns the tags matching the query for the AJAXy autocomplete
+    to get tags related to tasks.
+    """
+
+    term = request.GET.get('term', None)
+    response = []
+
+    if term:
+      tag_entities = Tag.objects.filter(name__icontains=term)
+      response = [tag.name for tag in tag_entities]
+
+    json_response = json.dumps(response)
+    return http.HttpResponse(json_response)
 
 def suggest_task_tags(request):
     """Returns the tags matching the query for the AJAXy autocomplete
