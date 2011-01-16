@@ -520,7 +520,7 @@ def edit_textbook(request, task_id):
 @login_required
 def claim_task(request, task_id):
 
-    claim_url = "/task/claim/task_id=%s"%task_id
+    claim_url = reverse('claim_task', kwargs={'task_id': task_id})
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     if task.status == "UP":
