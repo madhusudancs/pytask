@@ -1,6 +1,11 @@
 {% load form_helpers %}
 
-<form action="{{ action_url }}" method="post">
+<form action="{{ action_url }}" method="post"
+    {% if file_support %}
+      enctype="multipart/form-data"
+    {% else %}
+      >
+    {% endif %}
   {% csrf_token %}
   <div id="form">
     {% for field in form %}

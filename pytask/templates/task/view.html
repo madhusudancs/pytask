@@ -1,82 +1,98 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block title %}
-    {{task.title}}
+  {{task.title}}
 {% endblock %}
+
 {% block content %}
-    <h3>{{ task.title }}</h3>
+  <h3>{{ task.title }}</h3>
 
-    {% if can_edit %}
-        <a href="{% url edit_task task.id %}">Edit task</a>
-    {% endif %}
+  {% if can_edit %}
+    <a href="{% url edit_task task.id %}">Edit task</a>
+  {% endif %}
 
-    {% if can_approve %}
-        <a href="{% url approve_task task.id %}">Approve task</a>
-    {% endif %}
+  {% if can_approve %}
+    <a href="{% url approve_task task.id %}">Approve task</a>
+  {% endif %}
 
-    {% if can_close %}
-        <a href="{% url close_task task.id %}">Close task</a>
-    {% endif %}
+  {% if can_close %}
+      <a href="{% url close_task task.id %}">Close task</a>
+  {% endif %}
 
-    <hr />created by <a href="{% url view_user_profile task.created_by.id %}">{{ task.created_by.username }}</a>
-    on {{task.creation_datetime|date:"D d M Y"}} at {{task.creation_datetime|time:"H:i"}}<br />
-    
-    {% if reviewers %}
+  <hr />created by
+  <a href="{% url view_user_profile task.created_by.id %}">
+    {{ task.created_by.username }}
+  </a>
+  on {{task.creation_datetime|date:"D d M Y"}} at 
+  {{task.creation_datetime|time:"H:i"}}
+  <br />
+
+  {% if reviewers %}
     Reviewers:
-	    {% for reviewer in reviewers %}
-		<a href="{% url view_user_profile reviewer.id %}">{{reviewer.username}}</a>
-	    {% endfor %}
-    {% endif %}
+    {% for reviewer in reviewers %}
+      <a href="{% url view_user_profile reviewer.id %}">{{reviewer.username}}</a>
+    {% endfor %}
+  {% endif %}
 
-    {% if can_mod_reviewers %}
-        <a href="{% url addreviewer_task task.id %}">
-		Add a Reviewer to this task</a>
-    {% endif %}
+  {% if can_mod_reviewers %}
+    <a href="{% url addreviewer_task task.id %}">
+    Add a Reviewer to this task</a>
+  {% endif %}
+  <br />
+
+  <hr />
+  <b>Description:</b><br />
+
+  {{ task.desc|linebreaksbr }}
+  <br /><br /><hr />
+
+  {% if task.tags.count %}
+
+    Tags: 
+    {% for tag in task.tags %}
+      {{tag}}
+    {% endfor %}
+    <hr />
+
+  {% endif %}
+
+  {% if selected_users %}
+
+    Users working on this task:
+    {% for user in selected_users %}
+      <a href="{% url view_profile user.id %}">{{user.username}}</a>
+    {% endfor %}
     <br />
-    
-    <hr />
-    <b>Description:</b><br />
-    {{ task.desc|linebreaksbr }}
-    <br /><br /><hr />
-    {% if task.tags.count %}
-        Tags: 
-        {% for tag in task.tags %}
-            {{tag}}
-        {% endfor %}
-        <hr />
-    {% endif %}
 
-    {% if selected_users %}
-        Users working on this task:
-        {% for user in selected_users %}
-            <a href="{% url view_profile user.id %}">{{user.username}}</a>
-        {% endfor %}
-        <br />
-    {% endif %}
-    
-    {% if task_claimable %}
-  <a href="{% url claim_task task.id %}">View claims</a>
-    {% endif %}
+  {% endif %}
 
-    <a href="{% url view_work task.id %}">View submitted work reports</a>
+  {% if task_claimable %}
+    <a href="{% url claim_task task.id %}">View claims</a>
+  {% endif %}
 
-        <hr />
-    {% if comments %}
-        comments:<br /><br />
-        {% for comment in comments %}
-            <a href="{% url view_profile comment.commented_by.id %}">{{ comment.commented_by.username }}</a> 
-            on {{ comment.comment_datetime|date:"D d M Y"}} at {{comment.comment_datetime|time:"H:i"}} wrote:<br />
-        {{ comment.data|linebreaksbr }}<br />
-        {% endfor %}
-    {% endif %}
-    <hr />
+  <a href="{% url view_work task.id %}">View submitted work reports</a>
+  <hr />
 
-    {% if can_comment %}
+
+  {% if comments %}
+
+    comments:<br /><br />
+    {% for comment in comments %}
+      <a href="{% url view_profile comment.commented_by.id %}">
+        {{ comment.commented_by.username }}
+      </a> 
+      on {{ comment.comment_datetime|date:"D d M Y"}} at 
+      {{comment.comment_datetime|time:"H:i"}} wrote:
+      <br />
+      {{ comment.data|linebreaksbr }}<br />
+    {% endfor %}
+
+  {% endif %}
+  <hr />
+
+  {% if can_comment %}
     Add comment:<br />
-	<form action="" method="post">
-	    {% csrf_token %}
-	    {{form.as_p}}
-	<input type="submit" value="Submit">
-	</form>                
-    {% endif %}
+    {% as_div_form form "Comment Form" csrf_token "Submit" %}
+  {% endif %}
 
 {% endblock %}

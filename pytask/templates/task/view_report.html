@@ -1,12 +1,19 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
 Report for {{report.task.title}} <br />
 
 <hr />
-Description:<br />
+Description:
+<br />
+
 {{ report.data|linebreaksbr }}
+
 <hr />
-Summary: {{ report.summary }} <br />
+Summary: {{ report.summary }}
+<br />
 <hr />
-Attachment: <a href="{{report.attachment.url}}">{{report.attachment.name}}</a> 
+
+Attachment: <a href="{{report.attachment.url}}">{{report.attachment.name}}</a>
+ 
 {% endblock %}

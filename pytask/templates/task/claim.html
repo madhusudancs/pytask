@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
     {% if can_claim %}
     Propose a claim to work on this task.<br />
@@ -27,13 +28,10 @@
     {% endif %}
 
     {% if can_claim %}
-        <hr />
-        <form action="" method="post">
-	{% csrf_token %}
-        {{form.as_p}}
-        <input type="submit" value="Submit Claim"><br />
-        Please note that you can claim only once and so write your proposal carefully.<br />
-        </form>
+      <hr />
+      Please note that you can claim only once and so write your
+      proposal carefully.<br />
+      {% as_div_form form "Task Claim Form" csrf_token "Request Claim" %}
     {% endif %}
 
 {% endblock %}

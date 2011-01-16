@@ -1,9 +1,7 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-    Select a user as a reviewer for this task.<br />
-    <form action="" method="POST">
-	    {% csrf_token %}
-    {{form.as_table}}
-    <input type="submit" value="Select">
-    </form>
+  Select a user as a reviewer for this task.<br />
+
+  {% as_div_form form "Add Reviewer Form" csrf_token "Select" %}
 {% endblock %}

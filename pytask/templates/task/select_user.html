@@ -1,10 +1,10 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-    <a href="{% url claim_task task.id %}">click here</a> to return to the claims page.<br /><br />
-    Select a user to assign this task.<br />
-    <form action="" method="POST">
-	    {% csrf_token %}
-    {{form.as_table}}
-    <input type="submit" value="Assign Task">
-    </form>
+  <a href="{% url claim_task task.id %}">
+    Click here
+  </a> to return to the claims page.
+  <br /><br />
+  Select a user to assign this task.<br />
+  {% as_div_form form "Assign Task Form" csrf_token "Assign Task" %}
 {% endblock %}

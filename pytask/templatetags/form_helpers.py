@@ -14,7 +14,8 @@ register = template.Library()
 
 
 @register.inclusion_tag('templatetags/_as_div_form.html')
-def as_div_form(form, form_name, csrf_token, action_url, button_label):
+def as_div_form(form, form_name, csrf_token, button_label,
+                action_url='', file_support=False):
     """Returns a form to be constructed by the template specified.
     """
 
@@ -24,6 +25,7 @@ def as_div_form(form, form_name, csrf_token, action_url, button_label):
       'csrf_token': csrf_token,
       'action_url': action_url,
       'button_label': button_label,
+      'file_support': file_support,
     }
 
 

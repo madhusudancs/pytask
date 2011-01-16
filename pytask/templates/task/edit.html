@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% load form_helpers %}
 
 {% block css %}
@@ -19,5 +20,5 @@
 {% endblock %}
 
 {% block content %}
-  {% as_div_form form "Create Task Form" csrf_token "" "Submit" %}
+  {% as_div_form form "Create Task Form" csrf_token "Submit" %}
 {% endblock %}

@@ -1,5 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-The task <a href="{% url view_task task.id %}">{{task.title}}</a> has been approved.<br />
+The task <a href="{% url view_task task.id %}">{{task.title}}</a>
+has been approved.
+<br />
+
 The task will be public. Now users can claim the task and work on it.
 {% endblock %}
