@@ -1,0 +1,38 @@
+{% load user_tags %}
+
+<div id="navheader">
+  {% if user.is_authenticated %}
+    {{ user.username }} Actions
+  {% else %}
+    Login Form
+  {% endif %}
+</div>
+<ul id="nav">
+
+  {% if user.is_authenticated %}
+
+    <li>
+      <a href="{% url browse_notifications %}" title="notifications">
+        {{ user|notf_dsp }}
+      </a>
+    </li>
+    <br>
+    <li><a href="{% url view_profile %}">Profile</a></li>
+    <li><a href="{% url auth_logout %}">Logout</a></li>
+
+  {% else %}
+
+    <li>
+      <a href="{% url registration_register %}" title="register">
+        Register
+      </a>
+    </li>
+    <li>
+      <a href="{% url auth_login %}" title="login">
+        Login
+      </a>
+    </li>
+
+  {% endif %}
+
+</ul>
