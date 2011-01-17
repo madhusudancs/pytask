@@ -7,32 +7,42 @@
     Login Form
   {% endif %}
 </div>
-<ul id="nav">
 
-  {% if user.is_authenticated %}
-
+{% if user.is_authenticated %}
+  <ul id="nav">
     <li>
       <a href="{% url browse_notifications %}" title="notifications">
         {{ user|notf_dsp }}
       </a>
     </li>
     <br>
-    <li><a href="{% url view_profile %}">Profile</a></li>
+    <li><a href="{% url view_profile %}">View Profile</a></li>
     <li><a href="{% url auth_logout %}">Logout</a></li>
+  </ul>
+{% else %}
 
-  {% else %}
+  <form action="{% url auth_login %}" method="post">
+    <div id="loginform">
+      <div id="field">
+        <label for="username">Username</label>
+        <input type="text" name="username" />
+      </div>
+      <div id="field">
+        <label for="password">Password</label>
+        <input type="password" name="password" />
+      </div>
+      <p class="submit"><button type="submit">Login</button></p>
+      </div>
+  </form>
 
-    <li>
+  <div id="rightnav">
+    <div id="register">
       <a href="{% url registration_register %}" title="register">
         Register
       </a>
-    </li>
-    <li>
-      <a href="{% url auth_login %}" title="login">
-        Login
-      </a>
-    </li>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="{% url auth_password_reset %}">Forgot password?</a>
+    </div>
+  </div>
 
-  {% endif %}
-
-</ul>
+{% endif %}
