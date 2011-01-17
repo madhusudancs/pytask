@@ -31,7 +31,7 @@ def create_task(request):
     context.update(csrf(request))
 
     can_create_task = False if (
-      profile.role == profile_models.ROLE_CHOICES[3][0]) else True
+      profile.role == profile_models.ROLES_CHOICES[3][0]) else True
     if can_create_task:
         if request.method == "POST":
             form = taskapp_forms.CreateTaskForm(request.POST)
@@ -74,7 +74,7 @@ def browse_tasks(request):
 
     profile = user.get_profile()
 
-    can_approve = True if profile.role in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] else False
+    can_approve = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] else False
     unpub_tasks = taskapp_models.Task.objects.filter(status=taskapp_models.TASK_STATUS_CHOICES[0][0]).exclude(status=taskapp_models.TASK_STATUS_CHOICES[5][0])
     if can_approve:
         context.update({"unpub_tasks": unpub_tasks})
@@ -112,7 +112,7 @@ def view_task(request, task_id):
         return show_msg(user, 'This task no longer exists',
                         reverse('browse_tasks'), 'browse the tasks')
 
-    task_viewable = True if ( task.status != taskapp_models.TASK_STATUS_CHOICES[0][0] ) or profile.role != profile_models.ROLE_CHOICES[3][0] \
+    task_viewable = True if ( task.status != taskapp_models.TASK_STATUS_CHOICES[0][0] ) or profile.role != profile_models.ROLES_CHOICES[3][0] \
                          else False
     if not task_viewable:
         return show_msg(user, "You are not authorised to view this task",
@@ -135,7 +135,7 @@ def view_task(request, task_id):
     context['selected_users'] = selected_users
     context['is_selected'] = True if user in selected_users else False
     context['can_approve'] = True if task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] and\
-                                     profile.role in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]]\
+                                     profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]]\
                                      else False
     context['can_edit'] = True if is_creator and task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] else False
     context['can_close'] = True if task.status not in [taskapp_models.TASK_STATUS_CHOICES[0][0], taskapp_models.TASK_STATUS_CHOICES[4][0], taskapp_models.TASK_STATUS_CHOICES[6][0]] and is_reviewer else False
@@ -145,9 +145,9 @@ def view_task(request, task_id):
     context['task_claimable'] = True if task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0], taskapp_models.TASK_STATUS_CHOICES[3][0]] else False
 
     context['can_comment'] = True if task.status != taskapp_models.TASK_STATUS_CHOICES[0][0] or\
-                                     profile.role != profile_models.ROLE_CHOICES[3][0] else False
+                                     profile.role != profile_models.ROLES_CHOICES[3][0] else False
 
-    context['can_mod_reviewers'] = True if profile.role in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] else\
+    context['can_mod_reviewers'] = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] else\
                                    False
 
     if request.method == 'POST':
@@ -212,7 +212,7 @@ def approve_task(request, task_id):
 
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
-    if profile.role not in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] or task.status != taskapp_models.TASK_STATUS_CHOICES[0][0]:
+    if profile.role not in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] or task.status != taskapp_models.TASK_STATUS_CHOICES[0][0]:
         raise http.Http404
 
     context = {"user": user,
@@ -230,7 +230,7 @@ def approved_task(request, task_id):
 
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
-    if profile.role not in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] or task.status != taskapp_models.TASK_STATUS_CHOICES[0][0]:
+    if profile.role not in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] or task.status != taskapp_models.TASK_STATUS_CHOICES[0][0]:
         raise http.Http404
 
     task.approved_by = user
@@ -254,7 +254,7 @@ def addreviewer(request, task_id):
     task_url = reverse('view_task', kwargs={'task_id': task_id})
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
-    can_mod_reviewers = True if profile.role in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] else False
+    can_mod_reviewers = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] else False
     if not can_mod_reviewers:
         raise http.Http404
 
@@ -398,7 +398,7 @@ def create_textbook(request):
     user = request.user
     profile = user.get_profile()
 
-    can_create = True if profile.role != profile_models.ROLE_CHOICES[3][0] else False
+    can_create = True if profile.role != profile_models.ROLES_CHOICES[3][0] else False
     if not can_create:
         raise http.Http404
 
@@ -457,7 +457,7 @@ def view_textbook(request, task_id):
     can_edit = True if user == textbook.created_by and textbook.status == taskapp_models.TB_STATUS_CHOICES[0][0]\
                        else False
 
-    can_approve = True if profile.role in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] and \
+    can_approve = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] and \
                           textbook.status == taskapp_models.TB_STATUS_CHOICES[0][0] else False
 
     context.update({"can_edit": can_edit,
@@ -477,7 +477,7 @@ def browse_textbooks(request):
                "comp_textbooks": comp_textbooks,
               }
 
-    if user.is_authenticated() and user.get_profile().role in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]]:
+    if user.is_authenticated() and user.get_profile().role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]]:
         unpub_textbooks = taskapp_models.TextBook.objects.filter(status=taskapp_models.TB_STATUS_CHOICES[0][0])
 
         context.update({"unpub_textbooks": unpub_textbooks})
@@ -605,7 +605,7 @@ def select_user(request, task_id):
     
     is_creator = True if user == task.created_by else False
 
-    if (is_creator or profile.role in [profile_models.ROLE_CHOICES[1][0], profile_models.ROLE_CHOICES[2][0]]) and \
+    if (is_creator or profile.role in [profile_models.ROLES_CHOICES[1][0], profile_models.ROLES_CHOICES[2][0]]) and \
        task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0], taskapp_models.TASK_STATUS_CHOICES[3][0]]:
 
         if task_claimed:
@@ -645,7 +645,7 @@ def approve_textbook(request, task_id):
 
     textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
 
-    if profile.role not in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] or textbook.status != taskapp_models.TB_STATUS_CHOICES[0][0]:
+    if profile.role not in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] or textbook.status != taskapp_models.TB_STATUS_CHOICES[0][0]:
         raise http.Http404
 
     context = {"user": user,
@@ -663,7 +663,7 @@ def approved_textbook(request, task_id):
 
     textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
 
-    if profile.role not in [profile_models.ROLE_CHOICES[0][0], profile_models.ROLE_CHOICES[1][0]] or textbook.status != taskapp_models.TB_STATUS_CHOICES[0][0]:
+    if profile.role not in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] or textbook.status != taskapp_models.TB_STATUS_CHOICES[0][0]:
         raise http.Http404
 
     textbook.approved_by = user
