@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
+from django.template import RequestContext
 from django.utils import simplejson as json
 
 from tagging.models import Tag
@@ -49,11 +50,12 @@ def create_task(request):
             else:
                 context.update({'form':form})
                 return shortcuts.render_to_response(
-                  'task/edit.html', context)
+                  'task/edit.html', RequestContext(request, context))
         else:
             form = taskapp_forms.CreateTaskForm()
             context.update({'form': form})
-            return shortcuts.render_to_response('task/edit.html', context)
+            return shortcuts.render_to_response(
+              'task/edit.html', RequestContext(request, context))
     else:
         return show_msg(user, 'You are not authorised to create a task.')
 
@@ -83,7 +85,8 @@ def browse_tasks(request):
                     "profile": profile,
                    })
 
-    return shortcuts.render_to_response("task/browse.html", context)
+    return shortcuts.render_to_response("task/browse.html",
+                                        RequestContext(request, context))
 
 
 def view_task(request, task_id):
@@ -161,11 +164,13 @@ def view_task(request, task_id):
             return shortcuts.redirect(task_url)
         else:
             context['form'] = form
-            return shortcuts.render_to_response('task/view.html', context)
+            return shortcuts.render_to_response(
+              'task/view.html', RequestContext(request, context))
     else:
         form = taskapp_forms.TaskCommentForm()
         context['form'] = form
-        return shortcuts.render_to_response('task/view.html', context)
+        return shortcuts.render_to_response(
+          'task/view.html', RequestContext(request, context))
 
 @login_required
 def edit_task(request, task_id):
@@ -198,11 +203,13 @@ def edit_task(request, task_id):
             return shortcuts.redirect(task_url)
         else:
             context.update({"form": form})
-            return shortcuts.render_to_response("task/edit.html", context)
+            return shortcuts.render_to_response(
+              "task/edit.html", RequestContext(request, context))
     else:
         form = taskapp_forms.EditTaskForm(instance=task)
         context.update({"form": form})
-        return shortcuts.render_to_response("task/edit.html", context)
+        return shortcuts.render_to_response("task/edit.html",
+                                            RequestContext(request, context))
 
 @login_required
 def approve_task(request, task_id):
@@ -220,7 +227,8 @@ def approve_task(request, task_id):
                "task": task,
               }
 
-    return shortcuts.render_to_response("task/confirm_approval.html", context)
+    return shortcuts.render_to_response(
+      "task/confirm_approval.html", RequestContext(request, context))
 
 @login_required
 def approved_task(request, task_id):
@@ -243,7 +251,8 @@ def approved_task(request, task_id):
                "task": task,
               }
 
-    return shortcuts.render_to_response("task/approved_task.html", context)
+    return shortcuts.render_to_response(
+      "task/approved_task.html", RequestContext(request, context))
 
 @login_required
 def addreviewer(request, task_id):
@@ -287,11 +296,13 @@ def addreviewer(request, task_id):
             return shortcuts.redirect(task_url)
         else:
             context.update({"form": form})
-            return shortcuts.render_to_response("task/addreviewer.html", context)
+            return shortcuts.render_to_response(
+              "task/addreviewer.html", RequestContext(request, context))
     else:
         form = taskapp_forms.ChoiceForm(choices, label=label)
         context.update({"form": form})
-        return shortcuts.render_to_response("task/addreviewer.html", context)
+        return shortcuts.render_to_response(
+          "task/addreviewer.html", RequestContext(request, context))
 
 def view_work(request, task_id):
 
@@ -305,7 +316,8 @@ def view_work(request, task_id):
               }
 
     if not user.is_authenticated():
-        return shortcuts.render_to_response("task/view_work.html", context)
+        return shortcuts.render_to_response(
+          "task/view_work.html", RequestContext(request, context))
 
     profile = user.get_profile()
 
@@ -320,7 +332,8 @@ def view_work(request, task_id):
 
     context.update({"is_working": is_working})
 
-    return shortcuts.render_to_response("task/view_work.html", context)
+    return shortcuts.render_to_response("task/view_work.html",
+                                        RequestContext(request, context))
 
 @login_required
 def view_report(request, report_id):
@@ -334,12 +347,14 @@ def view_report(request, report_id):
               }
 
     if not user.is_authenticated():
-        return shortcuts.render_to_response("task/view_report.html", context)
+        return shortcuts.render_to_response(
+          "task/view_report.html", RequestContext(request, context))
 
     profile = user.get_profile()
 
     context.update({"profile": profile})
-    return shortcuts.render_to_response("task/view_report.html", context)
+    return shortcuts.render_to_response("task/view_report.html",
+                                        RequestContext(request, context))
 
 @login_required
 def submit_report(request, task_id):
@@ -385,12 +400,14 @@ def submit_report(request, task_id):
 
         else:
             context.update({"form":form})
-            return shortcuts.render_to_response('task/submit_report.html', context)
+            return shortcuts.render_to_response(
+              'task/submit_report.html', RequestContext(request, context))
 
     else:
         form = taskapp_forms.WorkReportForm()
         context.update({"form":form})
-        return shortcuts.render_to_response('task/submit_report.html', context)
+        return shortcuts.render_to_response(
+          'task/submit_report.html', RequestContext(request, context))
 
 @login_required
 def create_textbook(request):
@@ -425,11 +442,13 @@ def create_textbook(request):
             return shortcuts.redirect(textbook_url)
         else:
             context.update({"form": form})
-            return shortcuts.render_to_response("task/edit.html", context)
+            return shortcuts.render_to_response(
+              "task/edit.html", RequestContext(request, context))
     else:
         form = taskapp_forms.CreateTextbookForm()
         context.update({"form": form})
-        return shortcuts.render_to_response("task/edit.html", context)
+        return shortcuts.render_to_response(
+          "task/edit.html", RequestContext(request, context))
 
 def view_textbook(request, task_id):
 
@@ -444,7 +463,8 @@ def view_textbook(request, task_id):
               }
 
     if not user.is_authenticated():
-        return shortcuts.render_to_response("task/view_textbook.html", context)
+        return shortcuts.render_to_response("task/view_textbook.html",
+                                            RequestContext(request, context))
 
     profile = user.get_profile()
 
@@ -462,7 +482,8 @@ def view_textbook(request, task_id):
 
     context.update({"can_edit": can_edit,
                     "can_approve": can_approve})
-    return shortcuts.render_to_response("task/view_textbook.html", context)
+    return shortcuts.render_to_response("task/view_textbook.html",
+                                        RequestContext(request, context))
 
 def browse_textbooks(request):
 
@@ -482,7 +503,8 @@ def browse_textbooks(request):
 
         context.update({"unpub_textbooks": unpub_textbooks})
 
-    return shortcuts.render_to_response("task/browse_textbooks.html", context)
+    return shortcuts.render_to_response("task/browse_textbooks.html",
+                                        RequestContext(request, context))
 
 @login_required
 def edit_textbook(request, task_id):
@@ -514,11 +536,13 @@ def edit_textbook(request, task_id):
             return shortcuts.redirect(textbook_url)
         else:
             context.update({"form": form})
-            return shortcuts.render_to_response("task/edit.html", context)
+            return shortcuts.render_to_response(
+              "task/edit.html", RequestContext(request, context))
     else:
         form = taskapp_forms.EditTextbookForm(instance=textbook)
         context.update({"form": form})
-        return shortcuts.render_to_response("task/edit.html", context)
+        return shortcuts.render_to_response("task/edit.html",
+                                            RequestContext(request, context))
 
 @login_required
 def claim_task(request, task_id):
@@ -575,11 +599,13 @@ def claim_task(request, task_id):
 
         else:
             context.update({"form": form})
-            return shortcuts.render_to_response("task/claim.html", context)
+            return shortcuts.render_to_response(
+              "task/claim.html", RequestContext(request, context))
     else:
         form = taskapp_forms.ClaimTaskForm()
         context.update({"form": form})
-        return shortcuts.render_to_response("task/claim.html", context)
+        return shortcuts.render_to_response(
+          "task/claim.html", RequestContext(request, context))
 
 @login_required
 def select_user(request, task_id):
@@ -626,11 +652,15 @@ def select_user(request, task_id):
                     return shortcuts.redirect(task_url)
                 else:
                     context.update({"form": form})
-                    return shortcuts.render_to_response('task/select_user.html', context)
+                    return shortcuts.render_to_response(
+                      'task/select_user.html',
+                      RequestContext(request, context))
             else:
                 form = taskapp_forms.ChoiceForm(user_list)
                 context.update({"form": form})
-                return shortcuts.render_to_response('task/select_user.html', context)
+                return shortcuts.render_to_response(
+                  'task/select_user.html',
+                  RequestContext(request, context))
         else:
             return show_msg(user, 'There are no pending claims for this task',
                             task_url, 'view the task')
@@ -653,7 +683,9 @@ def approve_textbook(request, task_id):
                "textbook": textbook,
               }
 
-    return shortcuts.render_to_response("task/confirm_textbook_approval.html", context)
+    return shortcuts.render_to_response(
+      "task/confirm_textbook_approval.html",
+      RequestContext(request, context))
 
 @login_required
 def approved_textbook(request, task_id):
@@ -676,7 +708,8 @@ def approved_textbook(request, task_id):
                "textbook": textbook,
               }
 
-    return shortcuts.render_to_response("task/approved_textbook.html", context)
+    return shortcuts.render_to_response(
+      "task/approved_textbook.html", RequestContext(request, context))
 
 def suggest_task_tags(request):
     """Returns the tags matching the query for the AJAXy autocomplete
