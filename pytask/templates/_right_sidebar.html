@@ -1,48 +1,8 @@
-{% load user_tags %}
+{% comment %}
+  Currently this template only includes the user actions for logged
+  in and non-logged in users. This can be extended to include other,
+  side-wide actions on right sidemenu bar.
+{% endcomment %}
 
-<div id="navheader">
-  {% if user.is_authenticated %}
-    {{ user.username }} Actions
-  {% else %}
-    Login Form
-  {% endif %}
-</div>
 
-{% if user.is_authenticated %}
-  <ul id="nav">
-    <li>
-      <a href="{% url browse_notifications %}" title="notifications">
-        {{ user|notf_dsp }}
-      </a>
-    </li>
-    <br>
-    <li><a href="{% url view_profile %}">View Profile</a></li>
-    <li><a href="{% url auth_logout %}">Logout</a></li>
-  </ul>
-{% else %}
-
-  <form action="{% url auth_login %}" method="post">
-    <div id="loginform">
-      <div id="field">
-        <label for="username">Username</label>
-        <input type="text" name="username" />
-      </div>
-      <div id="field">
-        <label for="password">Password</label>
-        <input type="password" name="password" />
-      </div>
-      <p class="submit"><button type="submit">Login</button></p>
-      </div>
-  </form>
-
-  <div id="rightnav">
-    <div id="register">
-      <a href="{% url registration_register %}" title="register">
-        Register
-      </a>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <a href="{% url auth_password_reset %}">Forgot password?</a>
-    </div>
-  </div>
-
-{% endif %}
+{% include "_user_login.html" %}

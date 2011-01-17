@@ -1,0 +1,47 @@
+{% load user_tags %}
+
+<div id="useraction">
+  {% if user.is_authenticated %}
+    <div id="navheader">
+      Welcome {{ user.first_name }}!
+    </div>
+    <ul id="nav">
+      <li>
+        <a href="{% url browse_notifications %}" title="notifications">
+          {{ user|notf_dsp }}
+        </a>
+      </li>
+      <br>
+      <li><a href="{% url view_profile %}">View Profile</a></li>
+      <li><a href="{% url auth_logout %}">Logout</a></li>
+    </ul>
+  {% else %}
+    <div id="navheader">
+      Login Form
+    </div>
+    <form id="form_login" method="post">
+      <div id="loginform">
+      {% csrf_token %}
+        <div id="field">
+          <label for="username">Username</label>
+          <input id="username" type="text" name="username" />
+        </div>
+        <div id="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password" />
+        </div>
+        <p class="submit"><button type="submit">Login</button></p>
+        </div>
+    </form>
+  
+    <div id="rightnav">
+      <div id="register">
+        <a href="{% url registration_register %}" title="register">
+          Register
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="{% url auth_password_reset %}">Forgot password?</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
