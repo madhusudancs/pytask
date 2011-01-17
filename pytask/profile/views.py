@@ -190,4 +190,20 @@ def view_user(request, uid):
                "can_view_info": can_view_info,
               }
 
-    return shortcuts.render_to_response("profile/view_user.html", context)
+    return shortcuts.render_to_response("profile/view_user.html",
+                                        RequestContext(request, context))
+
+@login_required
+def login_proceed(request):
+  """View that handles the successful login.
+  """
+
+  template_name = '_user_login.html'
+  response = {
+    'authentication': 'success',
+    'markup': loader.render_to_string(template_name,
+                                      RequestContext(request, {}))
+  }
+
+  json_response = json.dumps(response)
+  return http.HttpResponse(json_response)

@@ -17,4 +17,5 @@ urlpatterns = patterns('pytask.profile.views',
       'unread_notification', name='unread_notification'),
   url(r'^user/view/(?P<user_id>\d+)$', 'view_user',
       name='view_user'),
+  url(r'^login/proceed$', 'login_proceed', name='login_proceed'),
 )
