@@ -103,5 +103,3 @@ AUTH_PROFILE_MODULE = 'profile.Profile'
 #django-registration
 ACCOUNT_ACTIVATION_DAYS = 7
 DEFAULT_FROM_EMAIL = 'FOSSEE Admin <admin@fossee.in>'
-
-LOGIN_REDIRECT_URL = '/profile/login/proceed'
