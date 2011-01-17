@@ -32,9 +32,9 @@ class Profile(models.Model):
 
     user = models.ForeignKey(User, unique = True)
 
-    role = models.CharField(max_length=2,
-                              choices=ROLES_CHOICES,
-                              default=u"Contributor")
+    role = models.CharField(max_length=255,
+                            choices=ROLES_CHOICES,
+                            default=u"Contributor")
 
     pynts = models.PositiveSmallIntegerField(default=0)
 
