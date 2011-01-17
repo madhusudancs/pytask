@@ -24,6 +24,12 @@
   <script type="text/javascript"
       src="/pytask/static/jquery/jquery-ui-1.8.8.custom.min.js">
   </script>
+  <script type="text/javascript"
+      src="/pytask/static/js/login.js">
+  </script>
+  <script type="text/javascript">
+    login_user("{% url auth_login %}");
+  </script>
   {% block js %}
   {% endblock %}
 </head>
@@ -52,7 +58,7 @@
         {% block rightsidebar %}
           {% comment %}Additional Right Sidebar elements go here{% endcomment %}
         {% endblock rightsidebar %}
-        {% include '_right_sidebar.html' %}
+        {% include "_right_sidebar.html" %}
       </div>
 
       <div class="clearer">
