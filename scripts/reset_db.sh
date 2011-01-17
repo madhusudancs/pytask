@@ -10,4 +10,4 @@ rm -r pytask/taskapp/migrations/
 ./bin/django migrate profile
 ./bin/django migrate taskapp
 ./bin/django loaddata sites_fixture.json 
-
+./bin/django loaddata profile_fixture.json
