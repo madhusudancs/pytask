@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response
+from django.template import RequestContext
 
 from pytask.profile import models as profile_models
 
@@ -6,10 +7,14 @@ from pytask.profile import models as profile_models
 def show_msg(user, message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
 
-    return render_to_response('show_msg.html',{'user': user,
-                                               'message': message,
-                                               'redirect_url': redirect_url,
-                                               'url_desc': url_desc})
+    context = {
+      'user': user,
+      'message': message,
+      'redirect_url': redirect_url,
+      'url_desc': url_desc
+    }
+
+    return render_to_response('show_msg.html', context)
 
 def home_page(request):
     """ get the user and display info about the project if not logged in.
@@ -28,8 +33,7 @@ def home_page(request):
     unpublished_tasks = user.created_tasks.filter(status="UP").all()
     can_create_task = True if profile.role != profile_models.ROLES_CHOICES[3][0] else False
 
-    context = {"user": user,
-               "profile": profile,
+    context = {"profile": profile,
                "claimed_tasks": claimed_tasks,
                "selected_tasks": selected_tasks,
                "reviewing_tasks": reviewing_tasks,
@@ -37,7 +41,7 @@ def home_page(request):
                "can_create_task": can_create_task
               }
 
-    return render_to_response("index.html", context)
+    return render_to_response("index.html", RequestContext(request, context))
 
 def under_construction(request):
 
