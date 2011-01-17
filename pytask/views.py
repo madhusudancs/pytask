@@ -1,5 +1,8 @@
 from django.shortcuts import render_to_response
 
+from pytask.profile import models as profile_models
+
+
 def show_msg(user, message, redirect_url=None, url_desc=None):
     """ simply redirect to homepage """
 
@@ -23,7 +26,7 @@ def home_page(request):
     selected_tasks = user.selected_tasks.all()
     reviewing_tasks = user.reviewing_tasks.all()
     unpublished_tasks = user.created_tasks.filter(status="UP").all()
-    can_create_task = True if profile.rights != "CT" else False
+    can_create_task = True if profile.role != profile_models.ROLES_CHOICES[3][0] else False
 
     context = {"user": user,
                "profile": profile,
