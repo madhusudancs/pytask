@@ -1,9 +1,12 @@
+from django import http
 from django import shortcuts
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.template import loader
+from django.template import RequestContext
+from django.utils import simplejson as json
 
 from pytask.profile.forms import EditProfileForm
 from pytask.profile.utils import get_notification
@@ -21,7 +24,8 @@ def view_profile(request):
     context = {"user": user,
                "profile": profile,
               }
-    return shortcuts.render_to_response("profile/view.html", context)
+    return shortcuts.render_to_response("profile/view.html",
+                                        RequestContext(request, context))
 
 @login_required
 def view_user_profile(request, user_id):
@@ -34,7 +38,8 @@ def view_user_profile(request, user_id):
     context = {"user": user,
                "profile": profile,
               }
-    return shortcuts.render_to_response("profile/view.html", context)
+    return shortcuts.render_to_response("profile/view.html",
+                                        RequestContext(request, context))
 
 @login_required
 def edit_profile(request):
@@ -58,11 +63,13 @@ def edit_profile(request):
             return shortcuts.redirect(reverse('view_profile'))
         else:
             context.update({"form":form})
-            return shortcuts.render_to_response("profile/edit.html", context)
+            return shortcuts.render_to_response(
+              "profile/edit.html", RequestContext(request, context))
     else:
         form = EditProfileForm(instance=profile)
         context.update({"form":form})
-        return shortcuts.render_to_response("profile/edit.html", context)
+        return shortcuts.render_to_response(
+          "profile/edit.html", RequestContext(request, context))
 
 @login_required
 def browse_notifications(request):
@@ -78,7 +85,8 @@ def browse_notifications(request):
                'notifications':active_notifications,
               }                               
 
-    return shortcuts.render_to_response('profile/browse_notifications.html', context)
+    return shortcuts.render_to_response('profile/browse_notifications.html',
+                                        RequestContext(request, context))
 
 @login_required
 def view_notification(request, notification_id):
@@ -91,7 +99,7 @@ def view_notification(request, notification_id):
       notification_id, user)
 
     if not notification:
-        raise Http404
+        raise http.Http404
 
     notification.is_read = True
     notification.save()
@@ -105,7 +113,7 @@ def view_notification(request, notification_id):
               }
 
     return shortcuts.render_to_response(
-      'profile/view_notification.html', context)
+      'profile/view_notification.html', RequestContext(request, context))
 
 @login_required
 def delete_notification(request, notification_id):
@@ -117,7 +125,7 @@ def delete_notification(request, notification_id):
       notification_id, user)
 
     if not notification:
-        raise Http404
+        raise http.Http404
 
     notification.is_deleted = True
     notification.save()
@@ -141,7 +149,7 @@ def unread_notification(request, notification_id):
       notification_id, user)
 
     if not notification:
-        raise Http404
+        raise http.Http404
 
     notification.is_read = False
     notification.save()
