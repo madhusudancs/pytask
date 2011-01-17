@@ -92,6 +92,19 @@ div #navheader {
   text-decoration: none;
 }
 
+#rightnav #register a:link,
+#rightnav #register a:visited,
+#rightnav #register a:active {
+  color: #666;
+  text-decoration: none;
+}
+
+#rightnav #register a:hover,
+#rightnav #login a:hover {
+  color: #999;
+  text-decoration: none;
+}
+
 #center {
   height: auto;
   width: 54%;
@@ -205,7 +218,21 @@ div #form p.submit {
   margin:0;
 }
 
-div #form button {
+/* Login Form related CSS */
+div #loginform #field {
+  margin: .5em 0;
+}
+
+div #loginform #field input {
+  width: 100%;
+  clear: left;
+  border:1px solid #ddd;
+  background:#fff url('/pytask/static/images/form/form_input.gif') repeat-x;
+  padding: 3px;
+}
+
+/* Buttons to be used in forms and other places */
+div button {
   width:150px;
   height:37px;
   line-height:37px;
