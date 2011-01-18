@@ -231,6 +231,15 @@ div #loginform #field input {
   padding: 3px;
 }
 
+div #loginform #error {
+  width: 100%;
+  clear: left;
+  color: red;
+  text-align: center;
+  display: none;
+}
+
+
 /* Buttons to be used in forms and other places */
 div button {
   width:150px;
