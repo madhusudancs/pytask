@@ -84,6 +84,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'django_extensions',
     'registration',
     'tagging',
     'south',
