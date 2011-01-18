@@ -6,6 +6,17 @@ from registration.views import register
 
 from pytask.profile.forms import CustomRegistrationForm
 
+# This import is not used anywhere else, but is very important to register
+# the user registered signal receiver. So please don't remove it. Although
+# it against style to put any imports in the end of the file, this is
+# intentional so that this import may not be removed accidentally when
+# cleaning up other unused imports.
+# Although this import is not directly used in this module, but it is
+# imported here so that it executes the code which connects the
+# user_registered signal sent by the django-registration app. Also, to
+# avoid cyclic imports, there is no better place than here.
+import pytask.profile.regbackend
+
 
 admin.autodiscover()
 
