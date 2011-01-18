@@ -1,15 +1,15 @@
-from pytask.profile.models import Profile
 from pytask.profile.forms import CreateProfileForm
-from pytask.utils import make_key
 
 from registration.signals import user_registered
 
-def user_created(sender, user, request, **kwargs):
 
+def user_created(sender, user, request, **kwargs):
     data = request.POST.copy()
-    data.update({"user": user.id, "uniq_key": make_key(Profile)})
+    data.update({
+      "user": user.id,
+      })
     form = CreateProfileForm(data)
     form.save()
 
-user_registered.connect(user_created)
 
+user_registered.connect(user_created)

@@ -9,7 +9,7 @@ def get_notification(nid, user):
     """
 
     user_notifications = user.notification_sent_to.filter(is_deleted=False).order_by('sent_date')
-    current_notifications = user_notifications.filter(uniq_key=nid)
+    current_notifications = user_notifications.filter(pk=nid)
     if user_notifications:
         current_notification = current_notifications[0]
 
