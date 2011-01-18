@@ -26,12 +26,16 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
                              )
 
     
-    dob = forms.DateField(help_text = "YYYY-MM-DD", required=True, label=u'date of birth')
-    gender = forms.ChoiceField(choices = GENDER_CHOICES, required=True, label=u'gender')
+    dob = forms.DateField(help_text = "YYYY-MM-DD", required=True,
+                          label=u'Date of birth')
 
-    address = forms.CharField(required=True, max_length=200,
-                              widget=forms.Textarea, help_text="This \
-                              information will be used while sending DD/Cheque")
+    gender = forms.ChoiceField(choices = GENDER_CHOICES,
+                               required=True, label=u'Gender')
+
+    address = forms.CharField(
+      required=True, max_length=200, widget=forms.Textarea,
+      help_text="This information will be used while sending DD/Cheque")
+
     phonenum = forms.CharField(required=True, max_length=10, 
                                label="Phone Number")
 

@@ -46,7 +46,8 @@ class Profile(models.Model):
     dob = models.DateField(verbose_name=u"Date of Birth",
                            help_text="YYYY-MM-DD")
 
-    gender = models.CharField(max_length=24, choices=GENDER_CHOICES)
+    gender = models.CharField(verbose_name=u'Gender',
+                              max_length=24, choices=GENDER_CHOICES)
 
     address = models.TextField(
       blank=False, help_text="This information will be used to send "
