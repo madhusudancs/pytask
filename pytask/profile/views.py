@@ -1,3 +1,5 @@
+from urllib2 import urlparse
+
 from django import http
 from django import shortcuts
 from django.contrib.auth.decorators import login_required
@@ -195,15 +197,25 @@ def view_user(request, uid):
 
 @login_required
 def login_proceed(request):
-  """View that handles the successful login.
-  """
+    """View that handles the successful login.
+    """
 
-  template_name = '_user_login.html'
-  response = {
-    'authentication': 'success',
-    'markup': loader.render_to_string(template_name,
-                                      RequestContext(request, {}))
-  }
+    template_name = '_user_login.html'
 
-  json_response = json.dumps(response)
-  return http.HttpResponse(json_response)
+    # Check if the request came from logout page, if so set
+    # authentication to redirect to home page
+    if reverse('auth_logout') == urlparse.urlsplit(
+      request.META['HTTP_REFERER'])[2]:
+      response = {
+        'authentication': 'success',
+        'redirect': reverse('home_page'),
+        }
+    else:
+        response = {
+          'authentication': 'success',
+          'markup': loader.render_to_string(template_name,
+                                            RequestContext(request, {}))
+        }
+
+    json_response = json.dumps(response)
+    return http.HttpResponse(json_response)
