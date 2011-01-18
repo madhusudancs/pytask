@@ -94,7 +94,7 @@ class CreateProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        exclude = ['pynts', 'rights']
+        exclude = ['pynts', 'role']
 
 class EditProfileForm(forms.ModelForm):
 
