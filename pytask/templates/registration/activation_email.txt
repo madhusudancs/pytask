@@ -2,8 +2,8 @@ Welcome to PyTasks
 
 You are just a step away from using the website.
 
-Click on the following link 
-http://{site}}/accounts/activate/{{activation_key}} to activate your account.
+Click on the following link:
+http://{{ site.domain }}/accounts/activate/{{activation_key}} to activate your account.
 
 Note that the account has to activated within {{expiration_days}} days
 
