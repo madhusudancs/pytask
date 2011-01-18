@@ -103,3 +103,12 @@ class RoleRequest(models.Model):
     is_read = models.BooleanField(default = False)
 
     is_deleted = models.BooleanField(default = False)
+
+
+# This import is not used anywhere else, but is very important to register
+# the user registered signal receiver. So please don't remove it. Although
+# it against style to put any imports in the end of the file, this is
+# intentional so that this import may not be removed accidentally when
+# cleaning up other unused imports.
+# Although this import is not directly used in this f
+import pytask.profile.regbackend
