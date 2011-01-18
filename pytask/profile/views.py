@@ -204,11 +204,16 @@ def login_proceed(request):
 
     # Check if the request came from logout page, if so set
     # authentication to redirect to home page
-    if reverse('auth_logout') == urlparse.urlsplit(
-      request.META['HTTP_REFERER'])[2]:
+    referer_path = urlparse.urlsplit(request.META['HTTP_REFERER'])[2]
+    if referer_path == reverse('auth_logout'):
       response = {
         'authentication': 'success',
         'redirect': reverse('home_page'),
+        }
+    elif referer_path == reverse('registration_activation_complete'):
+      response = {
+        'authentication': 'success',
+        'redirect': reverse('view_profile'),
         }
     else:
         response = {
