@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% load form_helpers %}
+
+{% block content %}
+  {% url auth_login as login_url %}
+  {% as_div_form form "Login Form" csrf_token "Login" login_url %}
+  <a href="{% url auth_password_reset %}">Forgot password?</a>
+{% endblock %}
