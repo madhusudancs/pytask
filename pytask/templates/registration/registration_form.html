@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% load form_helpers %}
+
 {% block content %}
-<form action="/accounts/register/" method="post">
-{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Submit" />
-</form>
+  {% url registration_register as registration_url %}
+  {% as_div_form form "Create Task Form" csrf_token "Submit" registration_url %}
 {% endblock %}
