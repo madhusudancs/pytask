@@ -1,5 +1,6 @@
 {% load form_helpers %}
 
+
 {%if field.field.required %}
 <div id="field-required">
 {% else %}
@@ -9,3 +10,25 @@
   {{ field.label_tag }}
   {{ field }}
 </div>
+
+{% if field.help_text %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#{{ field.auto_id }}").qtip({
+      content: "{{ field.help_text }}",
+      style: { 
+        name: "green",
+        tip: true
+      },
+      position: {
+        corner: {
+           target: 'rightMiddle',
+           tooltip: 'leftMiddle'
+        }
+      },
+      show: "focus",
+      hide: "blur",
+   });
+  });
+</script>
+{% endif %}
