@@ -71,7 +71,7 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
         return data
 
     
-    def save(self,profile_callback=None):
+    def save(self, profile_callback=None):
 
         new_user = RegistrationProfile.objects.create_inactive_user(
                        username=self.cleaned_data['username'],
@@ -87,8 +87,9 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
                               uniq_key=make_key(Profile),
                              )
         new_profile.save()
-        
+
         return new_user
+
 
 class CreateProfileForm(forms.ModelForm):
 
