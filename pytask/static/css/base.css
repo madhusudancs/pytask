@@ -28,7 +28,14 @@ body {
   box-shadow: 0 0 1em darkslategray;
 }
 
-#container {
+/* Taken from http://www.maxdesign.com.au/articles/css-layouts/three-liquid/# */
+#container1 {
+  float: left;
+  width: 100%;
+}
+
+/* Taken from http://www.maxdesign.com.au/articles/css-layouts/three-liquid/# */
+#container2 {
   padding: 0px;
   margin: 10px 0px 0px 0px;
   background-attachment: scroll;
@@ -36,15 +43,17 @@ body {
   background-repeat: repeat-y;
   background-position: 0px 0px;
   height: auto; #default was 1%
-  width: auto;
+  float: left;
+  width: 100%;
 }
 
 #left {
-  margin: 0px;
+  margin: 0;
   width: 15%;
-  padding: 10px 20px 10px 20px;
+  padding: 1% 1% 1% 1%;
   float: left;
   border: 1px solid #ddd;
+  display: inline;
 }
 
 div #navheader {
@@ -106,11 +115,10 @@ div #navheader {
 }
 
 #center {
-  height: auto;
-  width: 54%;
-  padding: 10px 20px 10px 20px;
+  width: 56%;
+  padding: 1% 1% 1% 1%;
   float: left;
-  margin: 0px 0px 0px 6px;
+  margin: 0 0 0 1%;
   line-height: 1.8em;
   border: 1px solid #ddd;
 }
@@ -125,12 +133,12 @@ h1 {
 }
 
 #right {
-  padding: 10px 20px 10px 20px;
+  padding: 1% 1% 1% 1%;
   height: auto;
   width: 20%;
-  float: left;
-  margin: 0px 0px 0px 6px;
+  float: right;
   border: 1px solid #ddd;
+  display: inline;
 }
 
 .clearer {
