@@ -2,6 +2,24 @@
 
 {% load form_helpers %}
 
+
+{% block js %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#id_dob").datepicker({
+      dateFormat: 'yy-mm-dd',
+      changeMonth: true,
+      changeYear: true,
+      minDate: "-90y",
+      maxDate: "+0D",
+      yearRange: "-90",
+      defaultDate: '1985-01-01'
+    });
+  });
+</script>
+{% endblock %}
+
+
 {% block content %}
   {% url registration_register as registration_url %}
   {% as_div_form form "Create Profile Form" csrf_token "Submit" registration_url %}
