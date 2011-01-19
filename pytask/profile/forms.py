@@ -25,9 +25,9 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
                               field of interests etc.,"
                              )
 
-    
-    dob = forms.DateField(help_text = "YYYY-MM-DD", required=True,
-                          label=u'Date of birth')
+
+    dob = forms.DateField(help_text = "yyyy-mm-dd", required=True,
+                          label=u'Date of Birth')
 
     gender = forms.ChoiceField(choices = GENDER_CHOICES,
                                required=True, label=u'Gender')
