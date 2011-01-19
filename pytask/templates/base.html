@@ -44,6 +44,8 @@
       <h2><a href="{% url home_page %}">PyTask</a></h2>
     </div>
 
+    <!-- Additional container divs are used here to do the liquid 3-column
+         layout trick in CSS. -->
     <div id="container1">
     <div id="container2">
       <div id="left">
@@ -64,15 +66,23 @@
         {% endblock rightsidebar %}
         {% include "_right_sidebar.html" %}
       </div>
-
-      <div class="clearer">
-      </div>
     </div>
+    </div>
+    <div class="clearer">
     </div>
     <div id="footer">
-      Designed by <a href="http://fossee.in">FOSSEE</a>
+      <div id="designed">
+        Designed by <a href="http://fossee.in">FOSSEE</a>
+      </div>
+
+      <div id="contact">
+        If you have any trouble using this website, please write to
+        <a href="mailto:madhusudancs@fossee.in?subject=Trouble in using PyTask website">
+        "Madhusudan C.S. &lt;madhusudancs [ symbol looking like a ] fossee [symbol when you are done] in&gt;"
+        </a>
+      </div>
     </div>
-</div> 
+  </div> 
 
 </body>
 </html>

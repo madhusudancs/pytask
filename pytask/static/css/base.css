@@ -153,11 +153,18 @@ h1 {
 }
 
 #footer {
-  margin: 10px 0px 0px 0px;
-  text-align: center;
-  padding: 5px 0px 5px 0px;
+  margin: 20px 0px 0px 0px;
+  padding: 5px 20px 5px 20px;
   background-color: #f1f1f1;
   clear: both;
+}
+
+#footer #designed {
+  text-align: left;
+}
+
+#footer #contact {
+  text-align: right;
 }
 
 #footer p {
