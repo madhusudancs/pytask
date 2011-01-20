@@ -62,7 +62,7 @@
 
     Users working on this task:
     {% for user in selected_users %}
-      <a href="{% url view_profile user.id %}">{{user.username}}</a>
+      <a href="{% url view_user_profile user.id %}">{{user.username}}</a>
     {% endfor %}
     <br />
 
@@ -80,7 +80,7 @@
 
     comments:<br /><br />
     {% for comment in comments %}
-      <a href="{% url view_profile comment.commented_by.id %}">
+      <a href="{% url view_user_profile comment.commented_by.id %}">
         {{ comment.commented_by.username }}
       </a> 
       on {{ comment.comment_datetime|date:"D d M Y"}} at 
