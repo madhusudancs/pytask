@@ -487,20 +487,27 @@ def view_textbook(request, task_id):
                                         RequestContext(request, context))
 
 def browse_textbooks(request):
+    """View to list all the open textbooks. This view fetches tasks
+    tagged with Textbook.
+    """
 
     user = request.user
 
-    open_textbooks = taskapp_models.TextBook.objects.filter(status=taskapp_models.TB_STATUS_CHOICES[1][0]).\
-                                      order_by("creation_datetime")
-    comp_textbooks = taskapp_models.TextBook.objects.filter(status=taskapp_models.TB_STATUS_CHOICES[3][0]).\
-                                      order_by("creation_datetime")
-    context = {"user": user,
-               "open_textbooks": open_textbooks,
-               "comp_textbooks": comp_textbooks,
-              }
+    # Fetch all the tasks tagged with Textbook
+    textbooks = taskapp_models.Task.tagged.with_any(['Textbook'])
 
-    if user.is_authenticated() and user.get_profile().role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]]:
-        unpub_textbooks = taskapp_models.TextBook.objects.filter(status=taskapp_models.TB_STATUS_CHOICES[0][0])
+    # Get all the textbooks that are Open.
+    open_textbooks = textbooks.filter(
+      status=taskapp_models.TASK_STATUS_CHOICES[1][0]).order_by(
+      'creation_datetime')
+
+    context = {'open_textbooks': open_textbooks,}
+
+    # Nothing
+    if user.is_authenticated() and (user.get_profile().role in
+      [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]]):
+        unpub_textbooks = taskapp_models.TextBook.objects.filter(
+          status=taskapp_models.TB_STATUS_CHOICES[0][0])
 
         context.update({"unpub_textbooks": unpub_textbooks})
 
