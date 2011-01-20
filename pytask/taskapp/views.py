@@ -72,7 +72,8 @@ def browse_tasks(request):
 
     user = request.user
     if not user.is_authenticated():
-        return shortcuts.render_to_response("task/browse.html")
+        return shortcuts.render_to_response("task/browse.html",
+                                            RequestContext(request, context))
 
     profile = user.get_profile()
 
