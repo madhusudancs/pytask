@@ -178,7 +178,10 @@ class PyntRequest(models.Model):
                                          default=datetime.now())
 
 
+# THIS MODEL IS DEPRECATED AND WILL BE REMOVED IN FUTURE VERSIONS.
 class TextBook(models.Model):
+    """THIS MODEL IS DEPRECATED AND WILL BE REMOVED IN FUTURE VERSIONS.
+    """
 
     name = models.CharField(max_length=1024)
 
