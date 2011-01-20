@@ -25,11 +25,14 @@ def as_list_textbooks(textbooks, title):
       }
 
 
-@register.inclusion_tag('templatetags/_as_div_field.html')
-def as_div_field(field):
-    """Returns the field for each div form field.
+@register.inclusion_tag('templatetags/_as_modification_display.html')
+def as_modification_display(title, user, creation_datatime):
+    """Returns a context dictionary containing the fields necessary
+    to render the creation/modification
     """
 
     return {
-      'field': field,
+      'title': title,
+      'user': user,
+      'modification_datetime': creation_datatime,
       }

@@ -1,0 +1,6 @@
+<div id="modification">
+  Created on {{ modification_datetime|date:"r" }} by
+  <a href="{% url view_user_profile user.id %}">
+    {{ user.get_profile.full_name }}
+  </a>
+</div>

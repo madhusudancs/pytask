@@ -279,3 +279,24 @@ button.green {
   font-size: 16px;
   font-weight: bold;
 }
+
+/* CSS required for tasks and other document pages. */
+div #modification {
+  font-size: small;
+  color: #aa9922;
+  text-align: right;
+}
+
+div #modification a:link,
+div #modification a:visited,
+div #modification a:active {
+  color: #b004fe;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+div #modification a:hover {
+  color: #fb06d0;
+  font-weight: bold;
+  text-decoration: none;
+}

@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
 {% load form_helpers %}
+{% load browse_helpers %}
+
 
 {% block title %}
     {{textbook.name}}
 {% endblock %}
 
 {% block content %}
-    <h3>{{ textbook.name }}</h3>
+    {% as_modification_display "Created by" textbook.created_by textbook.creation_datetime %}
+    <h3>{{ textbook.title }}</h3>
 
     {% if can_edit %}
         <a href="{% url edit_textbook textbook.id %}">Edit Text book</a>
@@ -17,8 +20,6 @@
         <a href="{% url approve_textbook textbook.id %}">Approve Text book</a>
     {% endif %}
 
-    <hr />created by <a href="{% url view_textbook textbook.created_by.id %}">{{ textbook.created_by.username }}</a>
-    on {{textbook.creation_datetime|date:"D d M Y"}} at {{textbook.creation_datetime|time:"H:i"}}<br />
     <hr />
 
     {% if textbook.tags.count %}
