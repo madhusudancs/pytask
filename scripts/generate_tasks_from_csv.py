@@ -45,7 +45,7 @@ def get_textbooks_from_csv(directory, file_name):
 
     textbooks = []
     for line in csv_obj:
-        if len(line) == 2:
+        if len(line) == 2 and line[0]:
             sep = ' by '
         else:
             sep = ''
@@ -55,6 +55,7 @@ def get_textbooks_from_csv(directory, file_name):
           'desc': '(To be filled in by the Coordinator or the T/A.)',
           'tags_field': ', '. join(['Textbook', branch_name, line[1]]),
           'pynts': 10,
+          'status': 'Open',
           })
 
     return textbooks
