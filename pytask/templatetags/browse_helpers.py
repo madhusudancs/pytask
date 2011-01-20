@@ -28,7 +28,7 @@ def as_list_textbooks(textbooks, title):
 @register.inclusion_tag('templatetags/_as_modification_display.html')
 def as_modification_display(title, user, creation_datatime):
     """Returns a context dictionary containing the fields necessary
-    to render the creation/modification
+    to render the creation/modification.
     """
 
     return {

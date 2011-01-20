@@ -66,28 +66,48 @@ def browse_tasks(request):
     working_tasks = taskapp_models.Task.objects.filter(status=taskapp_models.TASK_STATUS_CHOICES[3][0])
     comp_tasks = taskapp_models.Task.objects.filter(status=taskapp_models.TASK_STATUS_CHOICES[6][0])
 
-    context = {"open_tasks": open_tasks,
-               "working_tasks": working_tasks,
-               "comp_tasks": comp_tasks,
-              }
+    # TODO(disable): Disable once the tasks can be claimed
+    context['uberbar_message'] = DONT_CLAIM_TASK_MSG
+
+    open_tasks = taskapp_models.Task.objects.filter(
+      status=taskapp_models.TASK_STATUS_CHOICES[1][0])
+    working_tasks = taskapp_models.Task.objects.filter(
+      status=taskapp_models.TASK_STATUS_CHOICES[3][0])
+    comp_tasks = taskapp_models.Task.objects.filter(
+      status=taskapp_models.TASK_STATUS_CHOICES[6][0])
+
+    context.update({
+      'open_tasks': open_tasks,
+      'working_tasks': working_tasks,
+      'comp_tasks': comp_tasks,
+      })
 
     user = request.user
     if not user.is_authenticated():
-        return shortcuts.render_to_response("task/browse.html",
+        return shortcuts.render_to_response('task/browse.html',
                                             RequestContext(request, context))
 
     profile = user.get_profile()
 
-    can_approve = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] else False
-    unpub_tasks = taskapp_models.Task.objects.filter(status=taskapp_models.TASK_STATUS_CHOICES[0][0]).exclude(status=taskapp_models.TASK_STATUS_CHOICES[5][0])
-    if can_approve:
-        context.update({"unpub_tasks": unpub_tasks})
 
-    context.update({"user": user,
-                    "profile": profile,
+    if profile.role in [profile_models.ROLES_CHOICES[0][0],
+                        profile_models.ROLES_CHOICES[1][0]]:
+        can_approve = True
+    else:
+        can_approve = False
+
+    unpub_tasks = taskapp_models.Task.objects.filter(
+      status=taskapp_models.TASK_STATUS_CHOICES[0][0]).exclude(
+        status=taskapp_models.TASK_STATUS_CHOICES[5][0])
+
+    if can_approve:
+        context.update({'unpub_tasks': unpub_tasks})
+
+    context.update({'user': user,
+                    'profile': profile,
                    })
 
-    return shortcuts.render_to_response("task/browse.html",
+    return shortcuts.render_to_response('task/browse.html',
                                         RequestContext(request, context))
 
 
@@ -102,14 +122,15 @@ def view_task(request, task_id):
     user = request.user
 
     if not user.is_authenticated():
-        return shortcuts.render_to_response("task/view.html", {"task": task})
+        return shortcuts.render_to_response('task/view.html', {'task': task})
 
     profile = user.get_profile()
 
-    context = {"user": user,
-               "profile": profile,
-               "task": task,
-              }
+    context.update({
+      'user': user,
+      'profile': profile,
+      'task': task,
+      })
 
     context.update(csrf(request))
 
@@ -117,11 +138,15 @@ def view_task(request, task_id):
         return show_msg(user, 'This task no longer exists',
                         reverse('browse_tasks'), 'browse the tasks')
 
-    task_viewable = True if ( task.status != taskapp_models.TASK_STATUS_CHOICES[0][0] ) or profile.role != profile_models.ROLES_CHOICES[3][0] \
-                         else False
+    if ((task.status != taskapp_models.TASK_STATUS_CHOICES[0][0] )
+      or profile.role != profile_models.ROLES_CHOICES[3][0]):
+        task_viewable = True
+    else:
+        task_viewable = False
+
     if not task_viewable:
-        return show_msg(user, "You are not authorised to view this task",
-                        reverse('browse_tasks'), "browse the tasks")
+        return show_msg(user, 'You are not authorised to view this task',
+                        reverse('browse_tasks'), 'browse the tasks')
 
     reviewers = task.reviewers.all()
     is_reviewer = True if user in task.reviewers.all() else False
@@ -138,22 +163,56 @@ def view_task(request, task_id):
     is_creator = True if user == task.created_by else False
 
     context['selected_users'] = selected_users
+
     context['is_selected'] = True if user in selected_users else False
-    context['can_approve'] = True if task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] and\
-                                     profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]]\
-                                     else False
-    context['can_edit'] = True if is_creator and task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] else False
-    context['can_close'] = True if task.status not in [taskapp_models.TASK_STATUS_CHOICES[0][0], taskapp_models.TASK_STATUS_CHOICES[4][0], taskapp_models.TASK_STATUS_CHOICES[6][0]] and is_reviewer else False
-    context['can_delete'] = True if task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] and is_creator else False
 
-    context['can_assign_pynts'] = True if task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0], taskapp_models.TASK_STATUS_CHOICES[3][0]] and is_reviewer else False
-    context['task_claimable'] = True if task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0], taskapp_models.TASK_STATUS_CHOICES[3][0]] else False
+    if (task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] and
+      profile.role in [profile_models.ROLES_CHOICES[0][0],
+      profile_models.ROLES_CHOICES[1][0]]):
+        context['can_approve'] = True
+    else:
+        context['can_approve'] = False
 
-    context['can_comment'] = True if task.status != taskapp_models.TASK_STATUS_CHOICES[0][0] or\
-                                     profile.role != profile_models.ROLES_CHOICES[3][0] else False
+    if is_creator and task.status == taskapp_models.TASK_STATUS_CHOICES[0][0]:
+        context['can_edit'] = True
+    else:
+        context['can_edit'] = False
 
-    context['can_mod_reviewers'] = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] else\
-                                   False
+    if (task.status not in [taskapp_models.TASK_STATUS_CHOICES[0][0],
+      taskapp_models.TASK_STATUS_CHOICES[4][0],
+      taskapp_models.TASK_STATUS_CHOICES[6][0]] and is_reviewer):
+        context['can_close'] = True
+    else:
+        context['can_close'] = False
+
+    if task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] and is_creator:
+        context['can_delete'] = True
+    else:
+        context['can_delete'] = False
+
+    if (task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0],
+      taskapp_models.TASK_STATUS_CHOICES[3][0]] and is_reviewer):
+        context['can_assign_pynts'] = True
+    else:
+        context['can_assign_pynts'] = False
+
+    if (task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0],
+      taskapp_models.TASK_STATUS_CHOICES[3][0]]):
+        context['task_claimable'] = True
+    else:
+        context['task_claimable'] = False
+
+    if (task.status != taskapp_models.TASK_STATUS_CHOICES[0][0] or\
+      profile.role != profile_models.ROLES_CHOICES[3][0]):
+        context['can_comment'] = True
+    else:
+        context['can_comment'] = False
+
+    if (profile.role in [profile_models.ROLES_CHOICES[0][0],
+      profile_models.ROLES_CHOICES[1][0]]):
+        context['can_mod_reviewers'] = True
+    else:
+        context['can_mod_reviewers'] = False
 
     if request.method == 'POST':
         form = taskapp_forms.TaskCommentForm(request.POST)
@@ -597,10 +656,11 @@ def claim_task(request, task_id):
     user = request.user
     profile = user.get_profile()
 
-    context = {"user": user,
-               "profile": profile,
-               "task": task,
-              }
+    context.update({
+      'user': user,
+      'profile': profile,
+      'task': task,
+      })
 
     context.update(csrf(request))
 
