@@ -16,7 +16,7 @@ body {
 }
 
 #header {
-   margin-bottom: 30px;
+  margin-bottom: 30px;
   padding: 5px 0px 5px 0px;
   height: auto;
   width: auto;
@@ -303,4 +303,18 @@ div #modification a:hover {
   color: #fb06d0;
   font-weight: bold;
   text-decoration: none;
+}
+
+/* Uberbar is the sticky bar at the top of the page */
+/* Code taken from http://davidwalsh.name/persistent-header-opacity#bottom */
+#uberbar  {
+  border-bottom:1px solid #eb7429;
+  background:#fc9453;
+  padding:10px 20px 0px 10px;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:2000;
+  width:98%;
+  text-align: center;
 }

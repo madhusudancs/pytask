@@ -1,3 +1,5 @@
+{% load browse_helpers %}
+
 <html>
 <head>
   <title>
@@ -48,6 +50,13 @@
          layout trick in CSS. -->
     <div id="container1">
     <div id="container2">
+
+      <!-- Generate Uberbar if the uberbar_message is present -->
+      {% if uberbar_message %}
+        {% as_uberbar uberbar_message %}
+      {% endif %}
+
+
       <div id="left">
         {% include '_left_sidebar.html' %}
 

@@ -36,3 +36,14 @@ def as_modification_display(title, user, creation_datatime):
       'user': user,
       'modification_datetime': creation_datatime,
       }
+
+
+@register.inclusion_tag('templatetags/_as_uberbar.html')
+def as_uberbar(message):
+    """Returns a context dictionary containing the fields necessary
+    to render the uberbar.
+    """
+
+    return {
+      'message': message,
+      }
