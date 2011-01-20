@@ -8,6 +8,7 @@ from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.utils import simplejson as json
+from django.utils.translation import ugettext
 
 from tagging.managers import TaggedItem
 from tagging.models import Tag
@@ -18,6 +19,14 @@ from pytask.profile import models as profile_models
 
 from pytask.taskapp import forms as taskapp_forms
 from pytask.taskapp import models as taskapp_models
+
+
+DONT_CLAIM_TASK_MSG = ugettext(
+  "Please don't submit any claims for the tasks until the workshop is "
+  "over. During the workshop we will introduce you to the work-flow of "
+  "this entire project. Also please be warned that the task claim work-"
+  "flow may change. So all the claims submitted before the workshop may "
+  "not be valid.")
 
 
 @login_required
@@ -62,9 +71,7 @@ def create_task(request):
 
 def browse_tasks(request):
 
-    open_tasks = taskapp_models.Task.objects.filter(status=taskapp_models.TASK_STATUS_CHOICES[1][0])
-    working_tasks = taskapp_models.Task.objects.filter(status=taskapp_models.TASK_STATUS_CHOICES[3][0])
-    comp_tasks = taskapp_models.Task.objects.filter(status=taskapp_models.TASK_STATUS_CHOICES[6][0])
+    context = {}
 
     # TODO(disable): Disable once the tasks can be claimed
     context['uberbar_message'] = DONT_CLAIM_TASK_MSG
@@ -115,6 +122,11 @@ def view_task(request, task_id):
     """ get the task depending on its task_id and display accordingly if it is a get.
     check for authentication and add a comment if it is a post request.
     """
+
+    context = {}
+
+    # TODO(disable): Disable once the tasks can be claimed
+    context['uberbar_message'] = DONT_CLAIM_TASK_MSG
 
     task_url = reverse('view_task', kwargs={'task_id': task_id})
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
@@ -646,6 +658,11 @@ def edit_textbook(request, task_id):
 
 @login_required
 def claim_task(request, task_id):
+
+    context = {}
+
+    # TODO(disable): Disable once the tasks can be claimed
+    context['uberbar_message'] = DONT_CLAIM_TASK_MSG
 
     claim_url = reverse('claim_task', kwargs={'task_id': task_id})
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
