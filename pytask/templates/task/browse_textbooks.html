@@ -1,18 +1,36 @@
 {% extends "base.html" %}
 
+
+{% load browse_helpers %}
+
+
 {% block content %}
-  {% if open_textbooks %}
-    Textbooks that are open for contribution
-    <ul>
-      {% for textbook in open_textbooks %}
-        <li>
-          <a href="{% url view_textbook textbook.id %}">
-            {{ textbook.title }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-    <br />
+  {% if aero_textbooks %}
+    {% as_list_textbooks aero_textbooks "Aerospace Engineering" %}
+  {% endif %}
+
+  {% if chemical_textbooks %}
+    {% as_list_textbooks chemical_textbooks "Chemical Engineering" %}
+  {% endif %}
+
+  {% if computerscience_textbooks %}
+    {% as_list_textbooks computerscience_textbooks "Computer Science and Engineering" %}
+  {% endif %}
+
+  {% if electrical_textbooks %}
+    {% as_list_textbooks electrical_textbooks "Electrical Engineering" %}
+  {% endif %}
+
+  {% if engineeringphysics_textbooks %}
+    {% as_list_textbooks engineeringphysics_textbooks "Engineering Physics Engineering" %}
+  {% endif %}
+
+  {% if mechanical_textbooks %}
+    {% as_list_textbooks mechanical_textbooks "Mechanical Engineering" %}
+  {% endif %}
+
+  {% if metallurgical_textbooks %}
+    {% as_list_textbooks metallurgical_textbooks "Metallurgical Engineering and Materials Science" %}
   {% endif %}
 
 

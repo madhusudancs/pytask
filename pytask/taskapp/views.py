@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.utils import simplejson as json
 
+from tagging.managers import TaggedItem
 from tagging.models import Tag
 
 from pytask.views import show_msg
@@ -493,15 +494,29 @@ def browse_textbooks(request):
 
     user = request.user
 
-    # Fetch all the tasks tagged with Textbook
-    textbooks = taskapp_models.Task.tagged.with_any(['Textbook'])
 
     # Get all the textbooks that are Open.
-    open_textbooks = textbooks.filter(
+    open_textbooks = taskapp_models.Task.objects.filter(
       status=taskapp_models.TASK_STATUS_CHOICES[1][0]).order_by(
       'creation_datetime')
 
-    context = {'open_textbooks': open_textbooks,}
+
+    context = {
+      'aero_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Textbook', 'Aerospace']),
+      'chemical_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Textbook', 'Chemical']),
+      'computerscience_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Textbook', 'ComputerScience']),
+      'electrical_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Textbook', 'Electrical']),
+      'engineeringphysics_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Textbook', 'EngineeringPhysics']),
+      'mechanical_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Mechanical', 'Textbook']),
+      'metallurgical_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Textbook', 'Metallurgical']),
+      }
 
     # Nothing
     if user.is_authenticated() and (user.get_profile().role in
