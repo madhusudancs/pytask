@@ -28,6 +28,10 @@ body {
   box-shadow: 0 0 1em darkslategray;
 }
 
+#header a:link, #header a:visited, #header a:active {
+  color: #0000cc;
+}
+
 /* Taken from http://www.maxdesign.com.au/articles/css-layouts/three-liquid/# */
 #container1 {
   float: left;
