@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -26,7 +28,7 @@ UPLOADS_DIR = "/pytask/static/uploads"
 class Task(models.Model):
 
     title = models.CharField(
-      max_length=100, verbose_name=u"Title",
+      max_length=1024, verbose_name=u"Title",
       help_text=u"Keep it simple and below 100 chars.")
 
     desc = models.TextField(verbose_name=u"Description")
@@ -36,10 +38,10 @@ class Task(models.Model):
                               default="Unpublished")
 
     tags_field = TagField(verbose_name=u"Tags", 
-                          help_text=u"Give tags seperated by commas") 
-    
+                          help_text=u"Give tags separated by commas") 
+
     pynts = models.PositiveSmallIntegerField(
-      help_text=u"No.of pynts a user gets on completing the task")
+      help_text=u"Number of Pynts a user gets on completing the task")
 
     created_by = models.ForeignKey(User,
                                    related_name="created_tasks")
@@ -56,9 +58,12 @@ class Task(models.Model):
     selected_users = models.ManyToManyField(User, blank=True, null=True, 
                                             related_name="selected_tasks")
 
-    creation_datetime = models.DateTimeField()
+    creation_datetime = models.DateTimeField(auto_now_add=True)
 
     approval_datetime = models.DateTimeField(blank=True, null=True)
+
+    last_modified = models.DateTimeField(auto_now=True,
+                                         default=datetime.now())
 
     def __unicode__(self):
         return unicode(self.title)
@@ -67,7 +72,7 @@ class Task(models.Model):
 class TaskComment(models.Model):
 
     task = models.ForeignKey('Task', related_name="comments")
-            
+
     data = models.TextField(verbose_name='Comment')
 
     commented_by = models.ForeignKey(User,
@@ -76,9 +81,12 @@ class TaskComment(models.Model):
     deleted_by = models.ForeignKey(User, null=True, blank=True,
                                    related_name="deleted_taskcomments")
 
-    comment_datetime = models.DateTimeField()
+    comment_datetime = models.DateTimeField(auto_now_add=True)
 
     is_deleted = models.BooleanField(default=False)
+
+    last_modified = models.DateTimeField(auto_now=True,
+                                         default=datetime.now())
 
     def __unicode__(self):
         return unicode(self.task.title)
@@ -92,7 +100,7 @@ class TaskClaim(models.Model):
                                    related_name="claimed_claims")
     proposal = models.TextField()
 
-    claim_datetime = models.DateTimeField()
+    claim_datetime = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return unicode(self.task.title)
@@ -110,14 +118,17 @@ class WorkReport(models.Model):
 
     data = models.TextField(verbose_name="Report")
 
-    summary = models.CharField(max_length=100, verbose_name="Summary",
+    summary = models.CharField(max_length=1024, verbose_name="Summary",
                                help_text="A one line summary")
 
     attachment = models.FileField(upload_to=UPLOADS_DIR)
 
     revision = models.PositiveIntegerField(default=0)
 
-    submitted_at = models.DateTimeField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    last_modified = models.DateTimeField(auto_now=True,
+                                         default=datetime.now())
 
 
 class ReportComment(models.Model):
@@ -132,9 +143,12 @@ class ReportComment(models.Model):
     deleted_by = models.ForeignKey(User, null=True, blank=True,
                                    related_name="deleted_reportcomments")
 
-    comment_datetime = models.DateTimeField()
+    comment_datetime = models.DateTimeField(auto_now_add=True)
 
     is_deleted = models.BooleanField(default=False)
+
+    last_modified = models.DateTimeField(auto_now=True,
+                                         default=datetime.now())
 
 
 class PyntRequest(models.Model):
@@ -142,7 +156,7 @@ class PyntRequest(models.Model):
 
     pynts = models.PositiveIntegerField(default=0, help_text="No.of pynts")
 
-    requested_by = models.ForeignKey(User, 
+    requested_by = models.ForeignKey(User,
                                      related_name="requested_by_pynts")
 
     requested_for = models.ForeignKey(User, 
@@ -156,14 +170,17 @@ class PyntRequest(models.Model):
     remarks = models.CharField(max_length=100, blank=True,
                                help_text="Reason in case of rejection")
             
-    request_datetime = models.DateTimeField()
+    request_datetime = models.DateTimeField(auto_now_add=True)
 
     is_responded = models.BooleanField(default=False)
+
+    last_modified = models.DateTimeField(auto_now=True,
+                                         default=datetime.now())
 
 
 class TextBook(models.Model):
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=1024)
 
     chapters = models.ManyToManyField(Task, related_name="textbooks")
 
@@ -178,9 +195,12 @@ class TextBook(models.Model):
                               choices=TB_STATUS_CHOICES,
                               default="Unpublished")
 
-    creation_datetime = models.DateTimeField()
+    creation_datetime = models.DateTimeField(auto_now_add=True)
 
     approval_datetime = models.DateTimeField(blank=True, null=True)
+
+    last_modified = models.DateTimeField(auto_now=True,
+                                         default=datetime.now())
 
 
 tagging.register(Task)
