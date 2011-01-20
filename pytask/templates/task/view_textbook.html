@@ -6,7 +6,7 @@
 
 
 {% block title %}
-    {{textbook.name}}
+    {{ textbook.title }}
 {% endblock %}
 
 {% block content %}
@@ -31,6 +31,7 @@
         <hr />
     {% endif %}
 
+    Chapters: <br />
     {% if chapters %}
       <table>
       {% for chap in chapters %}
@@ -41,7 +42,7 @@
       {% endfor %}
       </table>
     {% else %}
-    There are no chapters in this textbook as of now.<br />
+      (Chapters are yet to be added by the Coordinator or T/A.)<br />
     {% endif %}
 
         <hr />

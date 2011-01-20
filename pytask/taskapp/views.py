@@ -454,14 +454,24 @@ def create_textbook(request):
 
 def view_textbook(request, task_id):
 
-    textbook = shortcuts.get_object_or_404(taskapp_models.TextBook, pk=task_id)
-    chapters = textbook.chapters.all()
+    # Shortcut to get_object_or_404 is not used since django-tagging
+    # api expects a queryset object for tag filtering.
+    task = taskapp_models.Task.objects.filter(pk=task_id)
+
+    textbooks = TaggedItem.objects.get_by_model(task, ['Textbook'])
+
+    if textbooks:
+        textbook = textbooks[0]
+    else:
+        raise http.Http404
+
+    #chapters = textbook.chapters.all()
 
     user = request.user
 
     context = {"user": user,
                "textbook": textbook,
-               "chapters": chapters,
+    #           "chapters": chapters,
               }
 
     if not user.is_authenticated():
