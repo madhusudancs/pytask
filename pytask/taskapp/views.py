@@ -476,11 +476,19 @@ def view_textbook(request, task_id):
 
     context.update(csrf(request))
 
-    can_edit = True if user == textbook.created_by and textbook.status == taskapp_models.TB_STATUS_CHOICES[0][0]\
-                       else False
+    if (user == textbook.created_by and
+      textbook.status == taskapp_models.TB_STATUS_CHOICES[0][0]):
+        can_edit = True
+    else:
+        can_edit = False
 
-    can_approve = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] and \
-                          textbook.status == taskapp_models.TB_STATUS_CHOICES[0][0] else False
+
+    if (profile.role in [profile_models.ROLES_CHOICES[0][0],
+      profile_models.ROLES_CHOICES[1][0]] and
+      textbook.status == taskapp_models.TB_STATUS_CHOICES[0][0]):
+        can_approve = True
+    else:
+        can_approve = False
 
     context.update({"can_edit": can_edit,
                     "can_approve": can_approve})

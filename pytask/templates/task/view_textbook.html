@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% load form_helpers %}
 {% load browse_helpers %}
 
@@ -31,15 +32,14 @@
     {% endif %}
 
     {% if chapters %}
-    Chapters: <br />
-    <table>
-    {% for chap in chapters %}
-    <tr>
-	    <td><a href="{% url view_task chap.id %}">{{chap.title}}</a> </td>
-	    <td> {{chap.status}} </td>
-    </tr>
-    {% endfor %}
-    </table>
+      <table>
+      {% for chap in chapters %}
+      <tr>
+  	    <td><a href="{% url view_task chap.id %}">{{chap.title}}</a> </td>
+  	    <td> {{chap.status}} </td>
+      </tr>
+      {% endfor %}
+      </table>
     {% else %}
     There are no chapters in this textbook as of now.<br />
     {% endif %}
