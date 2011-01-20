@@ -2,12 +2,16 @@
 
 
 {% load form_helpers %}
+{% load browse_helpers %}
+
 
 {% block title %}
   {{task.title}}
 {% endblock %}
 
 {% block content %}
+  {% as_modification_display "Created by" task.created_by task.creation_datetime %}
+
   <h3>{{ task.title }}</h3>
 
   {% if can_edit %}
@@ -21,14 +25,6 @@
   {% if can_close %}
     <a href="{% url close_task task.id %}">Close task</a>
   {% endif %}
-
-  <hr />created by
-  <a href="{% url view_user_profile task.created_by.id %}">
-    {{ task.created_by.username }}
-  </a>
-  on {{task.creation_datetime|date:"D d M Y"}} at 
-  {{task.creation_datetime|time:"H:i"}}
-  <br />
 
   {% if reviewers %}
     Reviewers:
