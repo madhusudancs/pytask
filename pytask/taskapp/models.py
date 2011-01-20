@@ -180,7 +180,10 @@ class PyntRequest(models.Model):
 
 # THIS MODEL IS DEPRECATED AND WILL BE REMOVED IN FUTURE VERSIONS.
 class TextBook(models.Model):
-    """THIS MODEL IS DEPRECATED AND WILL BE REMOVED IN FUTURE VERSIONS.
+    """THIS MODEL IS DEPRECATED AND WILL BE REMOVED IN FUTURE VERSIONS
+    SINCE THIS MODEL IS A MERE COPY OF Task MODEL.
+    Whatever this model tries to do can be done on views side thereby
+    keeping our database as normalized as possible avoiding redundancies.
     """
 
     name = models.CharField(max_length=1024)
