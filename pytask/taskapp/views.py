@@ -384,9 +384,10 @@ def view_work(request, task_id):
     user = request.user
     old_reports = task.reports.all()
 
-    context = {"task": task,
-               "old_reports": old_reports,
-              }
+    context = {
+      'task': task,
+      'old_reports': old_reports,
+      }
 
     if not user.is_authenticated():
         return shortcuts.render_to_response(
