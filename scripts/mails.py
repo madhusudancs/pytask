@@ -9,7 +9,6 @@ __authors__ = [
 
 from django.template import loader
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext
 
 
 def textbook_workshop_remainder(subject_template=None, body_template=None):
@@ -31,5 +30,5 @@ def textbook_workshop_remainder(subject_template=None, body_template=None):
           body_template, dictionary={'name': full_name})
 
         user.email_user(subject=subject, message=message,
-                        from_email='madhusudancs@fossee.in')
+                        from_email='Madhusudan C.S. <madhusudancs@fossee.in>')
 
