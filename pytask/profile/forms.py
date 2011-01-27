@@ -1,8 +1,11 @@
 import os
+import re
 
 from django import forms
+from django.utils.translation import ugettext
 
 from registration.forms import RegistrationFormUniqueEmail
+from registration.forms import attrs_dict
 from registration.models import RegistrationProfile
 
 from pytask.profile.models import GENDER_CHOICES, Profile
@@ -11,6 +14,14 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
     """Used instead of RegistrationForm used by default django-registration
     backend, this adds aboutme, dob, gender, address, phonenum to the default 
     django-registration RegistrationForm"""
+
+    # overriding only this field from the parent Form Class since we 
+    # don't like the restriction imposed by the registration app on username
+    # GMail has more or less set the standard for user names
+    username = forms.CharField(
+      max_length=30, widget=forms.TextInput(attrs=attrs_dict),
+      label=ugettext('Username'), help_text='Username can contain alphabet, '
+      'numbers or special characters underscore (_) and (.)')
 
     full_name = forms.CharField(required=True, max_length=50, 
                                 label="Name as on your bank account", 
@@ -38,6 +49,27 @@ class CustomRegistrationForm(RegistrationFormUniqueEmail):
 
     phonenum = forms.CharField(required=True, max_length=10, 
                                label="Phone Number")
+
+    def clean_username(self):
+        """Add additional cleaner for username than the parent class
+        supplied cleaner.
+        """
+
+        username = self.cleaned_data['username']
+
+        # None of the regular expression works better than this custom
+        # username check.
+        if not re.match(r'^\w+', username):
+            raise forms.ValidationError(
+              ugettext('Username can start only with an alphabet or a number'))
+        elif not re.search(r'\w+$', username):
+            raise forms.ValidationError(
+              ugettext('Username can end only with an alphabet or a number'))
+        elif re.search(r'\.\.+', username):
+            raise forms.ValidationError(
+              ugettext('Username cannot not have consecutive periods(.)'))
+
+        return super(CustomRegistrationForm, self).clean_username()
 
     def clean_aboutme(self):
         """ Empty not allowed """
