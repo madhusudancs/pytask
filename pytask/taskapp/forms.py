@@ -89,7 +89,7 @@ def ChoiceForm(choices, data=None, label="choice"):
 class CreateTextbookForm(forms.ModelForm):
 
     class Meta:
-        model = TextBook
+        model = Task
         fields = ['name', 'chapters', 'tags_field']
 
 class EditTextbookForm(forms.ModelForm):
