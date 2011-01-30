@@ -216,6 +216,7 @@ div #form #field input, #form #field textarea {
   border: 1px solid #ddd;
   background: #fff url('/pytask/static/images/form/form_input.gif') repeat-x;
   padding: .5%;
+  font-size: 16px;
 }
 
 div #form #field-required input, #form #field-required textarea {
@@ -224,6 +225,7 @@ div #form #field-required input, #form #field-required textarea {
   border: 1px solid #ff6161;
   background:#fff url('/pytask/static/images/form/form_input_required.gif') repeat-x;
   padding: .5%;
+  font-size: 16px;
 }
 
 div #form #field textarea, #form #field-required textarea {
