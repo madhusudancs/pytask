@@ -8,11 +8,11 @@
         Logged in as {{ user.username }} <br /><br />
     {% endif %}
 
-    {% if can_create_task %}
-    	<a href="{% url create_textbook %}">Add a new textbook</a><br />
-        <a href="{% url create_task %}">Create a task</a><br />
-    <br />
-    {% endif %}
+<!--    {% if can_create_task %}-->
+<!--    	<a href="{% url create_textbook %}">Add a new textbook</a><br />-->
+<!--        <a href="{% url create_task %}">Create a task</a><br />-->
+<!--    <br />-->
+<!--    {% endif %}-->
     
     {% if unpublished_tasks %}
     Tasks created by you that need approval:<ul>
