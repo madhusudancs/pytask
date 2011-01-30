@@ -544,14 +544,15 @@ def view_textbook(request, task_id, template='task/view_textbook.html'):
     else:
         raise http.Http404
 
-    #chapters = textbook.chapters.all()
+    chapters = textbook.children_tasks.all()
 
     user = request.user
 
-    context = {"user": user,
-               "textbook": textbook,
-    #           "chapters": chapters,
-              }
+    context = {
+      'user': user,
+      'textbook': textbook,
+      'chapters': chapters,
+      }
 
     if not user.is_authenticated():
         return shortcuts.render_to_response(template,
@@ -572,9 +573,10 @@ def view_textbook(request, task_id, template='task/view_textbook.html'):
       textbook.status in [taskapp_models.TB_STATUS_CHOICES[0][0],
       taskapp_models.TB_STATUS_CHOICES[1][0]]):
         can_edit = True
+        can_create_chapters = True
     else:
         can_edit = False
-
+        can_create_chapters = False
 
     if (profile.role in [profile_models.ROLES_CHOICES[0][0],
       profile_models.ROLES_CHOICES[1][0]] and

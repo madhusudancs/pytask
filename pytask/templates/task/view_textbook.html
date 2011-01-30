@@ -11,7 +11,7 @@
 
 {% block content %}
     {% as_modification_display "Created by" textbook.created_by textbook.creation_datetime %}
-    <h3>{{ textbook.title }}</h3>
+    <h2>{{ textbook.title }}</h2>
 
     {% if can_edit %}
         <a href="{% url edit_textbook textbook.id %}">Edit Text book</a>
@@ -24,20 +24,21 @@
     <hr />
 
     {% if textbook.tags.count %}
-        Tags: 
-        {% for tag in textbook.tags %}
-            {{tag}}
-        {% endfor %}
+        Tags: {{ textbook.tags_field }}
         <hr />
     {% endif %}
 
-    Chapters: <br />
+    <h3>
+      Tasks:
+      {% if can_create_chapters %}
+        <a href="{% url create_chapter textbook.id %}">Create Tasks</a>
+      {% endif %}
+    </h3>
     {% if chapters %}
       <table>
       {% for chap in chapters %}
       <tr>
-  	    <td><a href="{% url view_task chap.id %}">{{chap.title}}</a> </td>
-  	    <td> {{chap.status}} </td>
+        <td><a href="{% url view_task chap.id %}">{{chap.title}}</a> </td>
       </tr>
       {% endfor %}
       </table>
@@ -45,7 +46,7 @@
       (Chapters are yet to be added by the Coordinator or T/A.)<br />
     {% endif %}
 
-        <hr />
+     <hr />
     {% if comments %}
         comments:<br /><br />
         {% for comment in comments %}
