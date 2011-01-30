@@ -506,7 +506,7 @@ def create_textbook(request):
 
     context.update(csrf(request))
 
-    if request.method == "POST":
+    if request.method == 'POST':
         form = taskapp_forms.CreateTextbookForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data.copy()
@@ -531,7 +531,7 @@ def create_textbook(request):
         return shortcuts.render_to_response(
           "task/edit.html", RequestContext(request, context))
 
-def view_textbook(request, task_id):
+def view_textbook(request, task_id, template='task/view_textbook.html'):
 
     # Shortcut to get_object_or_404 is not used since django-tagging
     # api expects a queryset object for tag filtering.
@@ -554,19 +554,23 @@ def view_textbook(request, task_id):
               }
 
     if not user.is_authenticated():
-        return shortcuts.render_to_response("task/view_textbook.html",
+        return shortcuts.render_to_response(template,
                                             RequestContext(request, context))
 
     profile = user.get_profile()
 
-    context.update({"profile": profile,
-                    "textbook": textbook,
-                   })
+    context.update({
+      'profile': profile,
+      'textbook': textbook,
+      })
 
     context.update(csrf(request))
 
-    if (user == textbook.created_by and
-      textbook.status == taskapp_models.TB_STATUS_CHOICES[0][0]):
+    user_role = user.get_profile().role
+    if ((user == textbook.created_by or
+      user_role != profile_models.ROLES_CHOICES[3][0]) and
+      textbook.status in [taskapp_models.TB_STATUS_CHOICES[0][0],
+      taskapp_models.TB_STATUS_CHOICES[1][0]]):
         can_edit = True
     else:
         can_edit = False
@@ -579,9 +583,12 @@ def view_textbook(request, task_id):
     else:
         can_approve = False
 
-    context.update({"can_edit": can_edit,
-                    "can_approve": can_approve})
-    return shortcuts.render_to_response("task/view_textbook.html",
+    context.update({
+      'can_edit': can_edit,
+      'can_approve': can_approve,
+      'can_create_chapters': can_create_chapters,
+      })
+    return shortcuts.render_to_response(template,
                                         RequestContext(request, context))
 
 def browse_textbooks(request):
