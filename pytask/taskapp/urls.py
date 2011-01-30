@@ -37,4 +37,6 @@ urlpatterns += patterns('pytask.taskapp.views',
       name='approved_textbook'),
   url(r'^textbook/browse/$', 'browse_textbooks',
       name='browse_textbooks'),
+  url(r'^textbook/chapter/create/(?P<book_id>\d+)$', 'create_chapter',
+      name='create_chapter'),
 )

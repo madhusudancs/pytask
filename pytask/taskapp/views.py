@@ -658,6 +658,67 @@ def edit_textbook(request, task_id):
                                             RequestContext(request, context))
 
 @login_required
+def create_chapter(request, book_id, template='task/chapter_edit.html'):
+    """View function to let Coordinators and TAs (Mentor in
+    PyTask terminology) create chapters out of textbooks.
+
+    Args:
+      book_id: ID of the text book to which this chapter belongs to
+    """
+
+    user = request.user
+    profile = user.get_profile()
+
+    if profile.role != profile_models.ROLES_CHOICES[3][0]:
+        can_create = True
+    else:
+        can_create= False
+
+    if not can_create:
+        raise http.HttpResponseForbidden
+
+    context = {
+      'user': user,
+      'profile': profile,
+      }
+
+    context.update(csrf(request))
+
+    textbook = shortcuts.get_object_or_404(taskapp_models.Task, pk=book_id)
+    initial_tags = ', '.join([textbook.tags_field] + ['Chapter'])
+
+    if request.method == 'POST':
+        form = taskapp_forms.CreateChapterForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data.copy()
+
+            data.update({
+              'created_by': user,
+              'creation_datetime': datetime.now(),
+              'parent': textbook,
+              })
+
+            # TODO: remove hard coded default publish for chapters
+            data['status'] = 'Open'
+            new_chapter = taskapp_models.Task(**data)
+            new_chapter.save()
+
+            textbook_url = reverse(
+              'view_textbook', kwargs={'task_id': textbook.id})
+            return shortcuts.redirect(textbook_url)
+        else:
+            context.update({"form": form})
+            return shortcuts.render_to_response(
+              template, RequestContext(request, context))
+    else:
+        form = taskapp_forms.CreateChapterForm(
+          initial={'tags_field': initial_tags})
+        context.update({'form': form})
+        return shortcuts.render_to_response(
+          template, RequestContext(request, context))
+
+
+@login_required
 def claim_task(request, task_id):
 
     context = {}

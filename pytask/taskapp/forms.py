@@ -92,6 +92,12 @@ class CreateTextbookForm(forms.ModelForm):
         model = Task
         fields = ['name', 'chapters', 'tags_field']
 
+class CreateChapterForm(forms.ModelForm):
+
+    class Meta:
+        model = Task
+        fields = ['title', 'desc' , 'pynts', 'tags_field']
+
 class EditTextbookForm(forms.ModelForm):
 
     class Meta:
