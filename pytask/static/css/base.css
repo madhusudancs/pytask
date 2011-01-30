@@ -203,9 +203,9 @@ div #form #field label, #form #field-required label {
   position: relative;
   clear: left;
   float: left;
-  width: 23%;
+  width: 28%;
   margin-right: 1%;
-  padding-right: 4%;
+  padding-right: 3%;
   text-align: right;
   font-weight: bold;
 }
@@ -236,7 +236,7 @@ div #form #field textarea, #form #field-required textarea {
 div #form p.submit {
   clear: both;
   background:url('/pytask/static/images/form/form_bottom.gif') no-repeat 0 100%;
-  padding: 20px 5% 20px 40%;
+  padding: 20px 5% 20px 32%;
   margin:0;
 }
 
