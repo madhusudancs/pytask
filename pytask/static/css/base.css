@@ -191,7 +191,7 @@ h1 {
 div #form {
   margin: 1em 0;
   padding-top: 10px;
-  width: 600px;
+  width: 100%;
   background: url('/pytask/static/images/form/form_top.gif') no-repeat 0 0;
 }
 
@@ -203,26 +203,27 @@ div #form #field label, #form #field-required label {
   position: relative;
   clear: left;
   float: left;
-  width: 15em;
-  margin-right: 5px;
-  padding-right: 30px;
+  width: 23%;
+  margin-right: 1%;
+  padding-right: 4%;
   text-align: right;
+  font-weight: bold;
 }
 
 div #form #field input, #form #field textarea {
-  width:252px;
+  width: 44%;
   clear: left;
-  border:1px solid #ddd;
-  background:#fff url('/pytask/static/images/form/form_input.gif') repeat-x;
-  padding:3px;
+  border: 1px solid #ddd;
+  background: #fff url('/pytask/static/images/form/form_input.gif') repeat-x;
+  padding: .5%;
 }
 
 div #form #field-required input, #form #field-required textarea {
-  width:252px;
+  width: 44%;
   clear: left;
-  border:1px solid #ff6161;
+  border: 1px solid #ff6161;
   background:#fff url('/pytask/static/images/form/form_input_required.gif') repeat-x;
-  padding:3px;
+  padding: .5%;
 }
 
 div #form #field textarea, #form #field-required textarea {
@@ -233,7 +234,7 @@ div #form #field textarea, #form #field-required textarea {
 div #form p.submit {
   clear: both;
   background:url('/pytask/static/images/form/form_bottom.gif') no-repeat 0 100%;
-  padding:20px 25px 20px 240px;
+  padding: 20px 5% 20px 40%;
   margin:0;
 }
 
