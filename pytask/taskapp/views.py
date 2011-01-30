@@ -172,6 +172,7 @@ def view_task(request, task_id):
 
     selected_users = task.selected_users.all()
 
+    user_role = user.get_profile().role
     is_creator = True if user == task.created_by else False
 
     context['selected_users'] = selected_users
@@ -185,7 +186,8 @@ def view_task(request, task_id):
     else:
         context['can_approve'] = False
 
-    if is_creator and task.status == taskapp_models.TASK_STATUS_CHOICES[0][0]:
+    if ((is_creator or user_role != profile_models.ROLES_CHOICES[3][0])
+      and task.status == taskapp_models.TASK_STATUS_CHOICES[0][0]):
         context['can_edit'] = True
     else:
         context['can_edit'] = False
@@ -489,13 +491,18 @@ def create_textbook(request):
     user = request.user
     profile = user.get_profile()
 
-    can_create = True if profile.role != profile_models.ROLES_CHOICES[3][0] else False
-    if not can_create:
-        raise http.Http404
+    if profile.role != profile_models.ROLES_CHOICES[3][0]:
+        can_create = True
+    else:
+        can_create= False
 
-    context = {"user": user,
-               "profile": profile,
-              }
+    if not can_create:
+        raise http.HttpResponseForbidden
+
+    context = {
+      'user': user,
+      'profile': profile,
+      }
 
     context.update(csrf(request))
 
