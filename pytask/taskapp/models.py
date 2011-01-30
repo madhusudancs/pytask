@@ -27,6 +27,9 @@ UPLOADS_DIR = "/pytask/static/uploads"
 
 class Task(models.Model):
 
+    parent = models.ForeignKey('self', blank=True, null=True,
+                               related_name="children_tasks")
+
     title = models.CharField(
       max_length=1024, verbose_name=u"Title",
       help_text=u"Keep it simple and below 100 chars.")
