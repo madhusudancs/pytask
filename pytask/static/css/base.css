@@ -321,3 +321,10 @@ div #modification a:hover {
   width:98%;
   text-align: center;
 }
+
+/* Styling for displaying page errors. */
+.exception {
+  font-size: 18px;
+  color: red;
+  font-weight: bold;
+}
