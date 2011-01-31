@@ -27,6 +27,7 @@ from pytask.profile import models as profile_models
 
 from pytask.taskapp import forms as taskapp_forms
 from pytask.taskapp import models as taskapp_models
+from pytask.taskapp.views.utils import get_intial_tags_for_chapter
 
 
 DONT_CLAIM_TASK_MSG = ugettext(
@@ -262,7 +263,6 @@ def create_chapter(request, book_id, template='task/chapter_edit.html'):
     context.update(csrf(request))
 
     textbook = shortcuts.get_object_or_404(taskapp_models.Task, pk=book_id)
-    initial_tags = ', '.join([textbook.tags_field] + ['Chapter'])
 
     if request.method == 'POST':
         form = taskapp_forms.CreateChapterForm(request.POST)
@@ -289,7 +289,7 @@ def create_chapter(request, book_id, template='task/chapter_edit.html'):
               template, RequestContext(request, context))
     else:
         form = taskapp_forms.CreateChapterForm(
-          initial={'tags_field': initial_tags})
+          initial={'tags_field': get_intial_tags_for_chapter(textbook)})
         context.update({'form': form})
         return shortcuts.render_to_response(
           template, RequestContext(request, context))
