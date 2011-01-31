@@ -2,7 +2,7 @@ from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
 
 
-urlpatterns = patterns('pytask.taskapp.views',
+urlpatterns = patterns('pytask.taskapp.views.task',
   url(r'^create/$', 'create_task', name='create_task'),
   url(r'^edit/(?P<task_id>\d+)$', 'edit_task', name='edit_task'),
   url(r'^view/(?P<task_id>\d+)$', 'view_task', name='view_task'),
@@ -24,7 +24,7 @@ urlpatterns = patterns('pytask.taskapp.views',
 )
 
 # URL patterns specific to textbook projects.
-urlpatterns += patterns('pytask.taskapp.views',
+urlpatterns += patterns('pytask.taskapp.views.textbook',
   url(r'^textbook/create/$', 'create_textbook',
       name='create_textbook'),
   url(r'^textbook/view/(?P<task_id>\d+)$', 'view_textbook',
