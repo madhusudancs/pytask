@@ -38,7 +38,7 @@
       <table>
       {% for chap in chapters %}
       <tr>
-        <td><a href="{% url view_task chap.id %}">{{chap.title}}</a> </td>
+        <td><a href="{% url view_chapter chap.parent.id chap.id %}">{{chap.title}}</a> </td>
       </tr>
       {% endfor %}
       </table>
