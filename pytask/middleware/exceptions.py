@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.template import loader
 from django.template import RequestContext
 
+from pytask.helpers.exceptions import PyTaskException
 from pytask.helpers.exceptions import UnauthorizedAccess
 
 
@@ -21,7 +22,8 @@ class ExceptionMiddleware(object):
         """Process the exception raised.
         """
 
-        if isinstance(exception, UnauthorizedAccess):
+        if (isinstance(exception, PyTaskException) or 
+          isinstance(exception, UnauthorizedAccess)):
             template = loader.get_template('error.html')
             context = RequestContext(request, {
               'error_message': exception.message
