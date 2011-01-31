@@ -21,24 +21,28 @@ from django.utils.translation import ugettext
 
 from tagging.managers import TaggedItem
 
-from pytask.helpers.exceptions import UnauthorizedAccess
+from pytask.helpers import exceptions
 
 from pytask.profile import models as profile_models
 
 from pytask.taskapp import forms as taskapp_forms
 from pytask.taskapp import models as taskapp_models
+from pytask.taskapp.views import task as task_view
 from pytask.taskapp.views.utils import get_intial_tags_for_chapter
 
 
 DONT_CLAIM_TASK_MSG = ugettext(
-  "Please don't submit any claims for the tasks until the workshop is "
-  "over. During the workshop we will introduce you to the work-flow of "
-  "this entire project. Also please be warned that the task claim work-"
+  "Please don't submit any claims for the tasks until you get an email "
+  "to start claiming tasks. Please be warned that the task claim work-"
   "flow may change. So all the claims submitted before the workshop may "
   "not be valid.")
 
 NO_EDIT_RIGHT = ugettext(
   "You are not authorized to edit this page.")
+
+NOT_A_PARENT_FOR_CHAPTER = ugettext(
+  "There is an error in your request. The chapter you are requesting is "
+  "does not belong to the textbook you have requested.")
 
 
 @login_required
@@ -210,7 +214,7 @@ def edit_textbook(request, task_id):
         can_edit = False
 
     if not can_edit:
-        raise UnauthorizedAccess(NO_EDIT_RIGHT)
+        raise exceptions.UnauthorizedAccess(NO_EDIT_RIGHT)
 
     context = {
       'user': user,
@@ -293,6 +297,41 @@ def create_chapter(request, book_id, template='task/chapter_edit.html'):
         context.update({'form': form})
         return shortcuts.render_to_response(
           template, RequestContext(request, context))
+
+@login_required
+def edit_chapter(request, book_id, chapter_id,
+                 template='task/chapter_edit.html'):
+    """View function that lets edit chapters from textbooks.
+    """
+    chapter = shortcuts.get_object_or_404(taskapp_models.Task, pk=chapter_id)
+
+    if chapter.parent.id != int(book_id):
+        raise exceptions.PyTaskException(NOT_A_PARENT_FOR_CHAPTER)
+
+    return task_view.edit_task(request, chapter_id)
+
+
+def view_chapter(request, book_id, chapter_id,
+                 template='task/chapter_edit.html'):
+    """View that displays the chapter of the textbook.
+
+    Args:
+        book_id: the id of the book to which this chapter belongs.
+        chapter_id: id of the chapter that must be displayed.
+    """
+
+    chapter = shortcuts.get_object_or_404(taskapp_models.Task, pk=chapter_id)
+
+    if chapter.parent.id != int(book_id):
+        raise exceptions.PyTaskException(NOT_A_PARENT_FOR_CHAPTER)
+
+    context = {
+      'edit_url': reverse('edit_chapter', kwargs={
+        'book_id': book_id, 'chapter_id': chapter_id})
+      }
+    kwargs = {'context': context}
+
+    return task_view.view_task(request, chapter_id, **kwargs)
 
 @login_required
 def approve_textbook(request, task_id):

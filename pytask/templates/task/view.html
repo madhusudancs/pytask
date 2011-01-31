@@ -15,7 +15,13 @@
   <h3>{{ task.title }}</h3>
 
   {% if can_edit %}
-    <a href="{% url edit_task task.id %}">Edit task</a>
+    {% if edit_url %}
+      <a href="{{ edit_url }}">
+    {% else %}
+      <a href="{% url edit_task task.id %}">
+    {% endif %}
+      Edit task
+    </a>
   {% endif %}
 
   {% if can_approve %}

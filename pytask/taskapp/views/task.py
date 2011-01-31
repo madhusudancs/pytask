@@ -25,6 +25,7 @@ from django.utils.translation import ugettext
 
 from tagging.models import Tag
 
+from pytask.helpers import exceptions
 from pytask.views import show_msg
 
 from pytask.profile import models as profile_models
@@ -34,11 +35,13 @@ from pytask.taskapp import models as taskapp_models
 
 
 DONT_CLAIM_TASK_MSG = ugettext(
-  "Please don't submit any claims for the tasks until the workshop is "
-  "over. During the workshop we will introduce you to the work-flow of "
-  "this entire project. Also please be warned that the task claim work-"
+  "Please don't submit any claims for the tasks until you get an email "
+  "to start claiming tasks. Please be warned that the task claim work-"
   "flow may change. So all the claims submitted before the workshop may "
   "not be valid.")
+
+NO_EDIT_RIGHT = ugettext(
+  "You are not authorized to edit this page.")
 
 
 @login_required
@@ -130,12 +133,16 @@ def browse_tasks(request):
                                         RequestContext(request, context))
 
 
-def view_task(request, task_id):
-    """ get the task depending on its task_id and display accordingly if it is a get.
-    check for authentication and add a comment if it is a post request.
+def view_task(request, task_id, **kwargs):
+    """View to get the requested.
+
+    Checks for authentication and add a comment if it is a post request.
     """
 
     context = {}
+
+    if 'context' in kwargs:
+        context.update(kwargs['context'])
 
     # TODO(disable): Disable once the tasks can be claimed
     context['uberbar_message'] = DONT_CLAIM_TASK_MSG
@@ -199,7 +206,8 @@ def view_task(request, task_id):
         context['can_approve'] = False
 
     if ((is_creator or user_role != profile_models.ROLES_CHOICES[3][0])
-      and task.status == taskapp_models.TASK_STATUS_CHOICES[0][0]):
+      and task.status in [taskapp_models.TASK_STATUS_CHOICES[0][0],
+      taskapp_models.TASK_STATUS_CHOICES[1][0]]):
         context['can_edit'] = True
     else:
         context['can_edit'] = False
@@ -272,9 +280,16 @@ def edit_task(request, task_id):
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     is_creator = True if user == task.created_by else False
-    can_edit = True if task.status == taskapp_models.TASK_STATUS_CHOICES[0][0] and is_creator else False
+
+    if ((is_creator or profile.role != profile_models.ROLES_CHOICES[3][0])
+      and task.status in [taskapp_models.TASK_STATUS_CHOICES[0][0],
+      taskapp_models.TASK_STATUS_CHOICES[1][0]]):
+        can_edit = True 
+    else:
+        can_edit = False
+
     if not can_edit:
-        raise http.Http404
+        raise exceptions.UnauthorizedAccess(NO_EDIT_RIGHT)
 
     context = {"user": user,
                "profile": profile,
