@@ -7,7 +7,7 @@ __authors__ = [
     ]
 
 
-from pytask import configuration as config_settings
+from pytask.helpers import configuration as config_settings
 
 
 def configuration(request):
