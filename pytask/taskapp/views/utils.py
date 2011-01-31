@@ -13,7 +13,6 @@ def get_intial_tags_for_chapter(textbook):
         textbook: textbook entity for which the tags should be built.
     """
 
-    tags1=textbook.tags_field
     tags = textbook.tags_field.split(',')
     rebuild_tags = []
     for tag in tags:
