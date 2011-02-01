@@ -15,13 +15,13 @@ register = template.Library()
 
 
 @register.inclusion_tag('templatetags/_as_browse_textbooks.html')
-def as_list_textbooks(textbooks, title):
+def as_list_tasks(tasks, title):
     """Returns a dictionary required to display the list of tasks.
     """
 
     return {
-      'tasks': textbooks,
-      'title': title,
+      'tasks': tasks,
+      'title': title.capitalize(),
       }
 
 
