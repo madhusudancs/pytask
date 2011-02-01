@@ -47,3 +47,13 @@ def as_uberbar(message):
     return {
       'message': message,
       }
+
+@register.inclusion_tag('templatetags/_as_tags.html')
+def as_tags(tags):
+    """Returns a context dictionary containing the fields necessary
+    to render list of tags.
+    """
+
+    return {
+      'tags': tags,
+      }

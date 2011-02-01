@@ -24,8 +24,7 @@
     <hr />
 
     {% if textbook.tags.count %}
-        Tags: {{ textbook.tags_field }}
-        <hr />
+      Tags: {% as_tags textbook.tags %}<hr />
     {% endif %}
 
     <h3>

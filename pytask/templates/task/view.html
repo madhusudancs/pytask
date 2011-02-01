@@ -52,13 +52,7 @@
   <br /><br /><hr />
 
   {% if task.tags.count %}
-
-    Tags: 
-    {% for tag in task.tags %}
-      {{tag}}
-    {% endfor %}
-    <hr />
-
+    Tags: {% as_tags task.tags %}<hr />
   {% endif %}
 
   {% if selected_users %}

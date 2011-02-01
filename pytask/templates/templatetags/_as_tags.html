@@ -1,0 +1,5 @@
+<div id="tags">
+  {% for tag in tags %}
+    <a href="{% url view_tag tag.name %}">{{ tag }}</a>,
+  {% endfor %}
+</div>
