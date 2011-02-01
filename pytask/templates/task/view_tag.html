@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+
+{% load browse_helpers %}
+
+
+{% block title %}
+  {{ tag_name|capfirst }}
+{% endblock %}
+
+
+{% block content %}
+  {% as_list_tasks tasks tag_name %}
+{% endblock %}

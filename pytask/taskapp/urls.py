@@ -20,7 +20,6 @@ urlpatterns = patterns('pytask.taskapp.views.task',
   url(r'^submit/report/(?P<task_id>\d+)$', 'submit_report',
       name='submit_report'),
   url(r'^browse/$', 'browse_tasks', name='browse_tasks'),
-  url(r'^suggest_tags/$', 'suggest_task_tags', name='suggest_task_tags'),
 )
 
 # URL patterns specific to textbook projects.
@@ -45,4 +44,10 @@ urlpatterns += patterns('pytask.taskapp.views.textbook',
   url(r'^textbook/chapter/view/(?P<book_id>\d+)/(?P<chapter_id>\d+)$',
       'view_chapter',
       name='view_chapter'),
+)
+
+# URL patterns specific to tags.
+urlpatterns += patterns('pytask.taskapp.views.task',
+  url(r'^tag/suggest/$', 'suggest_task_tags', name='suggest_task_tags'),
+  url(r'^tag/view/(?P<tag_name>[\w. ]+)$', 'view_tag', name='view_tag'),
 )

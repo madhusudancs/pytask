@@ -24,6 +24,7 @@ from django.utils import simplejson as json
 from django.utils.translation import ugettext
 
 from tagging.models import Tag
+from tagging.models import TaggedItem
 
 from pytask.helpers import exceptions
 from pytask.views import show_msg
@@ -655,3 +656,18 @@ def suggest_task_tags(request):
 
     json_response = json.dumps(response)
     return http.HttpResponse(json_response)
+
+def view_tag(request, tag_name, template='task/view_tag.html'):
+    """View that displays all the tasks tagged with the given name
+    """
+
+    tag = Tag.objects.filter(name=tag_name)
+    tasks = TaggedItem.objects.get_by_model(taskapp_models.Task, tag)
+
+    context = {
+      'tag_name': tag_name,
+      'tasks': tasks,
+      }
+
+    return shortcuts.render_to_response(
+      template, RequestContext(request, context))
