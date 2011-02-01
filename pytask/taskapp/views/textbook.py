@@ -308,7 +308,12 @@ def edit_chapter(request, book_id, chapter_id,
     if chapter.parent.id != int(book_id):
         raise exceptions.PyTaskException(NOT_A_PARENT_FOR_CHAPTER)
 
-    return task_view.edit_task(request, chapter_id)
+    kwargs = {
+      'task_url': reverse(
+        'view_chapter', kwargs={'book_id': book_id, 'chapter_id': chapter_id})
+      }
+
+    return task_view.edit_task(request, chapter_id, **kwargs)
 
 
 def view_chapter(request, book_id, chapter_id,
@@ -329,7 +334,11 @@ def view_chapter(request, book_id, chapter_id,
       'edit_url': reverse('edit_chapter', kwargs={
         'book_id': book_id, 'chapter_id': chapter_id})
       }
-    kwargs = {'context': context}
+    kwargs = {
+      'context': context,
+      'task_url': reverse(
+        'view_chapter', kwargs={'book_id': book_id, 'chapter_id': chapter_id})
+      }
 
     return task_view.view_task(request, chapter_id, **kwargs)
 

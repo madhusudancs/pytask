@@ -5,6 +5,7 @@ even if there nothing relevant to tasks alone since task is the basis
 for everything else.
 """
 
+
 __authors__ = [
     '"Nishanth Amuluru" <nishanth@fossee.in>',
     '"Madhusudan.C.S" <madhusudancs@fossee.in>',
@@ -148,7 +149,9 @@ def view_task(request, task_id, **kwargs):
     # TODO(disable): Disable once the tasks can be claimed
     context['uberbar_message'] = DONT_CLAIM_TASK_MSG
 
-    task_url = reverse('view_task', kwargs={'task_id': task_id})
+    task_url = kwargs.get(
+      'task_url', reverse('view_task', kwargs={'task_id': task_id}))
+
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     user = request.user
@@ -269,7 +272,7 @@ def view_task(request, task_id, **kwargs):
           'task/view.html', RequestContext(request, context))
 
 @login_required
-def edit_task(request, task_id):
+def edit_task(request, task_id, **kwargs):
     """ only creator gets to edit the task and that too only before it gets
     approved.
     """
@@ -277,7 +280,8 @@ def edit_task(request, task_id):
     user = request.user
     profile = user.get_profile()
 
-    task_url = reverse('view_task', kwargs={'task_id': task_id})
+    task_url = kwargs.get(
+      'task_url', reverse('view_task', kwargs={'task_id': task_id}))
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
     is_creator = True if user == task.created_by else False
