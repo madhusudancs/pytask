@@ -42,3 +42,4 @@ apache/*
 *.db-journal
 *.db
 migrations
+wsgi.log
