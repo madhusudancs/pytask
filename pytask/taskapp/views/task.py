@@ -45,6 +45,9 @@ DONT_CLAIM_TASK_MSG = ugettext(
 NO_EDIT_RIGHT = ugettext(
   "You are not authorized to edit this page.")
 
+NO_MOD_REVIEWERS_RIGHT = ugettext(
+  "You are not authorized to moderate reviewers.")
+
 
 @login_required
 def create_task(request):
@@ -377,7 +380,7 @@ def addreviewer(request, task_id, template_name='task/addreviewer.html'):
         can_mod_reviewers = False
 
     if not can_mod_reviewers:
-        raise http.Http404
+        raise exceptions.UnauthorizedAccess(NO_MOD_REVIEWERS_RIGHT)
 
     context = {
       'user': user,
