@@ -101,8 +101,8 @@ class CreateChapterForm(forms.ModelForm):
 class EditTextbookForm(forms.ModelForm):
 
     class Meta:
-        model = TextBook
-        fields = ['name', 'chapters', 'tags_field']
+        model = Task
+        fields = ['title', 'desc', 'pynts', 'tags_field']
 
 def AddTaskForm(task_choices, is_plain=False):
     """ if is_plain is true, it means the task has no subs/deps.
