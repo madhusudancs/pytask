@@ -362,7 +362,7 @@ def approved_task(request, task_id):
       "task/approved_task.html", RequestContext(request, context))
 
 @login_required
-def addreviewer(request, task_id):
+def addreviewer(request, task_id, template_name='task/addreviewer.html'):
 
     user = request.user
     profile = user.get_profile()
@@ -370,30 +370,36 @@ def addreviewer(request, task_id):
     task_url = reverse('view_task', kwargs={'task_id': task_id})
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
-    can_mod_reviewers = True if profile.role in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] else False
+    if profile.role in [profile_models.ROLES_CHOICES[0][0],
+      profile_models.ROLES_CHOICES[1][0]]:
+        can_mod_reviewers = True
+    else:
+        can_mod_reviewers = False
+
     if not can_mod_reviewers:
         raise http.Http404
 
-    context = {"user": user,
-               "profile": profile,
-               "task": task,
-              }
+    context = {
+      'user': user,
+      'profile': profile,
+      'task': task,
+      }
 
     context.update(csrf(request))
 
 
-    # This part has to be made better
-    reviewer_choices = User.objects.filter(is_active=True).\
-                                           exclude(reviewing_tasks__id=task_id).\
-                                           exclude(claimed_tasks__id=task_id).\
-                                           exclude(selected_tasks__id=task_id).\
-                                           exclude(created_tasks__id=task_id)
+    # TODO(Madhu): This part has to be made better
+    reviewer_choices = User.objects.filter(
+      is_active=True).exclude(reviewing_tasks__id=task_id).exclude(
+      claimed_tasks__id=task_id).exclude(
+      selected_tasks__id=task_id).exclude(created_tasks__id=task_id)
 
-    choices = ((a_user.id,a_user.username) for a_user in reviewer_choices)
+    choices = ((a_user.id, a_user.username) for a_user in reviewer_choices)
     label = "Reviewer"
 
     if request.method == "POST":
-        form = taskapp_forms.ChoiceForm(choices, data=request.POST, label=label)
+        form = taskapp_forms.ChoiceForm(
+          choices, data=request.POST, label=label)
         if form.is_valid():
             data = form.cleaned_data.copy()
             uid = data['choice']
@@ -404,12 +410,12 @@ def addreviewer(request, task_id):
         else:
             context.update({"form": form})
             return shortcuts.render_to_response(
-              "task/addreviewer.html", RequestContext(request, context))
+              template_name, RequestContext(request, context))
     else:
         form = taskapp_forms.ChoiceForm(choices, label=label)
         context.update({"form": form})
         return shortcuts.render_to_response(
-          "task/addreviewer.html", RequestContext(request, context))
+          template_name, RequestContext(request, context))
 
 def view_work(request, task_id):
 
