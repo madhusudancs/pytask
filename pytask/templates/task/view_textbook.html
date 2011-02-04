@@ -16,15 +16,15 @@
     {% if can_edit %}
         <a href="{% url edit_textbook textbook.id %}">Edit Text book</a>
     {% endif %}
-    
+
     {% if can_approve %}
         <a href="{% url approve_textbook textbook.id %}">Approve Text book</a>
     {% endif %}
 
     <hr />
-
+    <strong>Pynts: {{ textbook.pynts }}</strong><br/>
     {% if textbook.tags.count %}
-      Tags: {% as_tags textbook.tags %}<hr />
+      <strong>Tags:</strong> {% as_tags textbook.tags %}<hr />
     {% endif %}
 
     <h3>
