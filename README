@@ -23,3 +23,9 @@ concerns, since this file contains server specific configuration
 information like database server name, database name, password among
 other things.
 
+~~~~~~~~~~~
+SOURCE CODE
+~~~~~~~~~~~
+
+The source code of PyTask is available as a git repository at github.com.
+The repository URL is https://github.com/madhusudancs/pytask
