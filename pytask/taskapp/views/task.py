@@ -93,9 +93,6 @@ def browse_tasks(request):
 
     context = {}
 
-    # TODO(disable): Disable once the tasks can be claimed
-    context['uberbar_message'] = DONT_CLAIM_TASK_MSG
-
     open_tasks = taskapp_models.Task.objects.filter(
       status=taskapp_models.TASK_STATUS_CHOICES[1][0])
     working_tasks = taskapp_models.Task.objects.filter(
@@ -148,9 +145,6 @@ def view_task(request, task_id, **kwargs):
 
     if 'context' in kwargs:
         context.update(kwargs['context'])
-
-    # TODO(disable): Disable once the tasks can be claimed
-    context['uberbar_message'] = DONT_CLAIM_TASK_MSG
 
     task_url = kwargs.get(
       'task_url', reverse('view_task', kwargs={'task_id': task_id}))
@@ -530,9 +524,6 @@ def submit_report(request, task_id):
 def claim_task(request, task_id):
 
     context = {}
-
-    # TODO(disable): Disable once the tasks can be claimed
-    context['uberbar_message'] = DONT_CLAIM_TASK_MSG
 
     claim_url = reverse('claim_task', kwargs={'task_id': task_id})
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
