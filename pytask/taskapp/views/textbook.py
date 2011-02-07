@@ -174,6 +174,8 @@ def browse_textbooks(request):
         open_textbooks, ['Textbook', 'Chemical']),
       'computerscience_textbooks': TaggedItem.objects.get_by_model(
         open_textbooks, ['Textbook', 'ComputerScience']),
+      'civil_textbooks': TaggedItem.objects.get_by_model(
+        open_textbooks, ['Textbook', 'Civil']),
       'electrical_textbooks': TaggedItem.objects.get_by_model(
         open_textbooks, ['Textbook', 'Electrical']),
       'engineeringphysics_textbooks': TaggedItem.objects.get_by_model(
