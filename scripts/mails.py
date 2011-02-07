@@ -11,11 +11,15 @@ from django.template import loader
 from django.contrib.auth.models import User
 
 
-def textbook_workshop_remainder(subject_template=None, body_template=None):
+def textbook_workshop_remainder(subject_template=None, body_template=None,
+                                user_filter = None):
     """Sends a mail to each delegate about the template content specified.
     """
 
-    users = User.objects.all()
+    if user_filter:
+        users = User.objects.filter(**user_filter)
+    else:
+        users = User.objects.all()
 
     subject = loader.render_to_string(subject_template).strip(' \n\t')
 
