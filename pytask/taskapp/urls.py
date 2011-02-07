@@ -49,5 +49,5 @@ urlpatterns += patterns('pytask.taskapp.views.textbook',
 # URL patterns specific to tags.
 urlpatterns += patterns('pytask.taskapp.views.task',
   url(r'^tag/suggest/$', 'suggest_task_tags', name='suggest_task_tags'),
-  url(r'^tag/view/(?P<tag_name>[\w\-&. ]+)$', 'view_tag', name='view_tag'),
+  url(r'^tag/view/(?P<tag_name>[\w\-&./ ]+)$', 'view_tag', name='view_tag'),
 )
