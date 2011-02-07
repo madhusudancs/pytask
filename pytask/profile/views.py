@@ -36,7 +36,7 @@ def view_user_profile(request, user_id, template_name='profile/view_user.html'):
     """ Display the profile information of the user specified in the ID.
     """
 
-    user = shortcuts.get_object_or_404(User, pk=user_id)
+    user = shortcuts.get_object_or_404(User, pk=int(user_id))
     profile = user.get_profile()
 
     context = {
