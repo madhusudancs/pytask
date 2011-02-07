@@ -1,4 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+
 {% block content %}
 Name: {{viewing_profile.full_name}} <br />
 
@@ -16,35 +18,35 @@ Name: {{viewing_profile.full_name}} <br />
 {% if comp_tasks %}
 Tasks completed by {{viewing_profile.full_name}}:
 <ul>
-	{% for task in comp_tasks %}
-	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
-	{% endfor %}
+  {% for task in comp_tasks %}
+  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  {% endfor %}
 </ul>
 {% endif %}
 
 {% if working_tasks %}
 Tasks {{viewing_profile.full_name}} is currently working on:
 <ul>
-	{% for task in working_tasks %}
-	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
-	{% endfor %}
+  {% for task in working_tasks %}
+  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  {% endfor %}
 </ul>
 {% endif %}
 
 {% if reviewing_tasks %}
 Tasks reviewed by {{viewing_profile.full_name}}:
 <ul>
-	{% for task in reviewing_tasks %}
-	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
-	{% endfor %}
+  {% for task in reviewing_tasks %}
+  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  {% endfor %}
 </ul>
 {% endif %}
 
 {% if claimed_tasks and can_view_info %}
 <ul>
-	{% for task in claimed_tasks %}
-	<li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
-	{% endfor %}
+  {% for task in claimed_tasks %}
+  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  {% endfor %}
 </ul>
 {% endif %}
 

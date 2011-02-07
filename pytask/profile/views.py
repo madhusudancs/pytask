@@ -16,32 +16,36 @@ from pytask.profile.utils import get_user
 
 
 @login_required
-def view_profile(request):
+def view_profile(request, template_name='profile/view.html'):
     """ Display the profile information.
     """
 
     user = request.user
     profile = user.get_profile()
 
-    context = {"user": user,
-               "profile": profile,
-              }
-    return shortcuts.render_to_response("profile/view.html",
-                                        RequestContext(request, context))
+    context = {
+      'user': user,
+      'profile': profile,
+      }
+
+    return shortcuts.render_to_response(
+      template_name, RequestContext(request, context))
 
 @login_required
-def view_user_profile(request, user_id):
+def view_user_profile(request, user_id, template_name='profile/view_user.html'):
     """ Display the profile information of the user specified in the ID.
     """
 
     user = shortcuts.get_object_or_404(User, pk=user_id)
     profile = user.get_profile()
 
-    context = {"user": user,
-               "profile": profile,
-              }
-    return shortcuts.render_to_response("profile/view.html",
-                                        RequestContext(request, context))
+    context = {
+      'user': user,
+      'profile': profile,
+      }
+
+    return shortcuts.render_to_response(
+      template_name, RequestContext(request, context))
 
 @login_required
 def edit_profile(request):
