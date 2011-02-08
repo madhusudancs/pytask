@@ -48,6 +48,9 @@ NO_EDIT_RIGHT = ugettext(
 NO_MOD_REVIEWERS_RIGHT = ugettext(
   "You are not authorized to moderate reviewers.")
 
+NO_SELECT_USER = ugettext(
+  "You are not authorized to approve task claims.")
+
 
 @login_required
 def create_task(request):
@@ -644,7 +647,7 @@ def select_user(request, task_id):
             return show_msg(user, 'There are no pending claims for this task',
                             task_url, 'view the task')
     else:
-        raise http.Http404
+        raise exceptions.UnauthorizedAccess(NO_SELECT_USER)
 
 def suggest_task_tags(request):
     """Returns the tags matching the query for the AJAXy autocomplete
