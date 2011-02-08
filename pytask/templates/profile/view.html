@@ -2,15 +2,15 @@
 
 
 {% block content %}
-Name: {{profile.full_name}} <br />
-Username: {{user.username}} <br />
-Gender: {{profile.gender}} <br />
-Date of Birth: {{profile.dob}}<br />
+Name: {{ profile.full_name }} <br />
+Username: {{ user.username }} <br />
+Gender: {{ profile.gender }} <br />
+Date of Birth: {{ profile.dob }}<br />
 <hr />
-About Me: {{profile.aboutme|linebreaksbr}} <br />
+About Me: {{ profile.aboutme|linebreaksbr }} <br />
 <hr />
-Address: {{profile.address|linebreaksbr}} <br />
+Address: {{ profile.address|linebreaksbr }} <br />
 <hr />
-Phone Number: {{profile.phonenum}} <br />
+Phone Number: {{ profile.phonenum }} <br />
 <a href="{% url edit_profile %}">Edit profile</a>
 {% endblock %}
