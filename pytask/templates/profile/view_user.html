@@ -9,28 +9,28 @@ Gender: {{ profile.gender }} <br />
 About: {{ profile.aboutme|linebreaksbr }} <br />
 
 {% if comp_tasks %}
-Tasks completed by {{viewing_profile.full_name}}:
+Tasks completed by {{ profile.full_name }}:
 <ul>
   {% for task in comp_tasks %}
-  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
 
 {% if working_tasks %}
-Tasks {{viewing_profile.full_name}} is currently working on:
+Tasks {{ profile.full_name }} is currently working on:
 <ul>
   {% for task in working_tasks %}
-  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
 
 {% if reviewing_tasks %}
-Tasks reviewed by {{viewing_profile.full_name}}:
+Tasks reviewed by {{ profile.full_name }}:
 <ul>
   {% for task in reviewing_tasks %}
-  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
@@ -38,7 +38,7 @@ Tasks reviewed by {{viewing_profile.full_name}}:
 {% if claimed_tasks and can_view_info %}
 <ul>
   {% for task in claimed_tasks %}
-  <li><a href="{% url view_task task.id %}">{{task.title}}</a></li>
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
