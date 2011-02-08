@@ -24,7 +24,7 @@
             The task cannot be claimed at this stage.<br />
         {% endif %}
     {% endif %}
-    {% if old_claims and is_creator %}
+    {% if old_claims and can_approve %}
     <hr />
         <a href="{% url select_user task.id %}">Select a user to assign the work</a>
     {% endif %}

@@ -326,7 +326,9 @@ def approve_task(request, task_id):
 
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
-    if profile.role not in [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]] or task.status != taskapp_models.TASK_STATUS_CHOICES[0][0]:
+    if (profile.role not in [profile_models.ROLES_CHOICES[0][0],
+      profile_models.ROLES_CHOICES[1][0]] or
+      task.status != taskapp_models.TASK_STATUS_CHOICES[0][0]):
         raise http.Http404
 
     context = {"user": user,
@@ -524,7 +526,7 @@ def submit_report(request, task_id):
           'task/submit_report.html', RequestContext(request, context))
 
 @login_required
-def claim_task(request, task_id):
+def claim_task(request, task_id, template_name='task/claim.html'):
 
     context = {}
 
@@ -552,25 +554,42 @@ def claim_task(request, task_id):
     is_reviewer = True if user in reviewers else False
     has_claimed = True if user in claimed_users else False
 
-    task_claimable = True if task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0], taskapp_models.TASK_STATUS_CHOICES[3][0]] else False
-    can_claim = True if task_claimable and ( not has_claimed )\
-                        and ( not is_reviewer ) and (not is_creator ) \
-                        else False
+    if task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0],
+      taskapp_models.TASK_STATUS_CHOICES[3][0]]:
+        task_claimable = True
+    else:
+        task_claimable = False
+
+    if (task_claimable and not has_claimed
+      and not is_reviewer and not is_creator):
+        can_claim = True
+    else:
+        can_claim =False
+
+    if (is_creator or is_reviewer or profile.role in
+      [profile_models.ROLES_CHOICES[0][0],
+      profile_models.ROLES_CHOICES[1][0]]):
+        can_approve = True
+    else:
+        can_approve = False
 
     old_claims = task.claims.all()
 
-    context.update({"is_creator": is_creator,
-                    "task_claimable": task_claimable,
-                    "can_claim": can_claim,
-                    "old_claims": old_claims})
+    context.update({
+      'can_approve': can_approve,
+      'task_claimable': task_claimable,
+      'can_claim': can_claim,
+      'old_claims': old_claims
+      })
 
-    if request.method == "POST" and can_claim:
+    if request.method == 'POST' and can_claim:
         form = taskapp_forms.ClaimTaskForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data.copy()
-            data.update({"task": task,
-                         "claim_datetime": datetime.now(),
-                         "claimed_by": user,})
+            data.update({
+              'task': task,
+              'claim_datetime': datetime.now(),
+              'claimed_by': user,})
             new_claim = taskapp_models.TaskClaim(**data)
             new_claim.save()
 
@@ -580,14 +599,14 @@ def claim_task(request, task_id):
             return shortcuts.redirect(claim_url)
 
         else:
-            context.update({"form": form})
+            context.update({'form': form})
             return shortcuts.render_to_response(
-              "task/claim.html", RequestContext(request, context))
+              template_name, RequestContext(request, context))
     else:
         form = taskapp_forms.ClaimTaskForm()
-        context.update({"form": form})
+        context.update({'form': form})
         return shortcuts.render_to_response(
-          "task/claim.html", RequestContext(request, context))
+          template_name, RequestContext(request, context))
 
 @login_required
 def select_user(request, task_id):
@@ -601,20 +620,26 @@ def select_user(request, task_id):
     profile = user.get_profile()
     task = shortcuts.get_object_or_404(taskapp_models.Task, pk=task_id)
 
-    context = {"user": user,
-               "profile": profile,
-               "task": task,
-              }
+    context = {
+      'user': user,
+      'profile': profile,
+      'task': task,
+      }
 
     context.update(csrf(request))
 
+    reviewers = task.reviewers.all()
     claimed_users = task.claimed_users.all()
+
+    is_reviewer = True if user in reviewers else False
     task_claimed = True if claimed_users else False
-    
+
     is_creator = True if user == task.created_by else False
 
-    if (is_creator or profile.role in [profile_models.ROLES_CHOICES[1][0], profile_models.ROLES_CHOICES[2][0]]) and \
-       task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0], taskapp_models.TASK_STATUS_CHOICES[3][0]]:
+    if (is_creator or is_reviewer  or profile.role in
+      [profile_models.ROLES_CHOICES[0][0], profile_models.ROLES_CHOICES[1][0]]
+      and task.status in [taskapp_models.TASK_STATUS_CHOICES[1][0],
+      taskapp_models.TASK_STATUS_CHOICES[3][0]]):
 
         if task_claimed:
 
