@@ -40,7 +40,7 @@ def view_user_profile(request, user_id, template_name='profile/view_user.html'):
     profile = user.get_profile()
 
     context = {
-      'user': user,
+      'profile_user': user,
       'profile': profile,
       }
 

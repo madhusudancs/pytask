@@ -8,41 +8,42 @@ Gender: {{ profile.gender }} <br />
 <hr />
 About: {{ profile.aboutme|linebreaksbr }} <br />
 
-{% if user.claimed_tasks.all %}
+{{ profile_user.getprofile.full_name }}
+{% if profile_user.claimed_tasks.all %}
 <hr />
 <h3>List of Tasks requested for claim but awaiting approval:</h3>
 <ul>
-  {% for task in user.claimed_tasks.all %}
+  {% for task in profile_user.claimed_tasks.all %}
   <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
 
-{% if user.selected_tasks.all %}
+{% if profile_user.selected_tasks.all %}
 <hr />
 <h3>List of Tasks currently working on:</h3>
 <ul>
-  {% for task in user.selected_tasks.all %}
+  {% for task in profile_user.selected_tasks.all %}
   <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
 
-{% if user.comp_tasks.all %}
+{% if profile_user.comp_tasks.all %}
 <hr />
 <h3>List of Tasks completed:</h3>
 <ul>
-  {% for task in user.comp_tasks.all %}
+  {% for task in profile_user.comp_tasks.all %}
   <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
 
-{% if user.reviewing_tasks.all %}
+{% if profile_user.reviewing_tasks.all %}
 <hr />
 <h3>List of Tasks reviewed:</h3>
 <ul>
-  {% for task in user.reviewing_tasks.all %}
+  {% for task in profile_user.reviewing_tasks.all %}
   <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
   {% endfor %}
 </ul>
