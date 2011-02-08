@@ -104,7 +104,7 @@ def view_textbook(request, task_id, template='task/view_textbook.html'):
     else:
         raise http.Http404
 
-    chapters = textbook.children_tasks.all()
+    chapters = textbook.children_tasks.all().order_by('creation_datetime')
 
     user = request.user
 
