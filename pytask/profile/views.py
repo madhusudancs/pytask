@@ -16,33 +16,34 @@ from pytask.profile.utils import get_user
 
 
 @login_required
-def view_profile(request, template_name='profile/view.html'):
-    """ Display the profile information.
-    """
-
-    user = request.user
-    profile = user.get_profile()
-
-    context = {
-      'user': user,
-      'profile': profile,
-      }
-
-    return shortcuts.render_to_response(
-      template_name, RequestContext(request, context))
-
-@login_required
-def view_user_profile(request, user_id, template_name='profile/view_user.html'):
+def view_profile(request, user_id=None,
+                 template_name='profile/view.html'):
     """ Display the profile information of the user specified in the ID.
     """
 
-    user = shortcuts.get_object_or_404(User, pk=int(user_id))
-    profile = user.get_profile()
+    if user_id:
+        profile_user = shortcuts.get_object_or_404(User, pk=int(user_id))
+    else:
+        profile_user = request.user
+    profile = profile_user.get_profile()
 
     context = {
-      'profile_user': user,
+      'profile_user': profile_user,
       'profile': profile,
       }
+
+    access_user_role = request.user.get_profile().role
+
+    if (request.user == profile_user or access_user_role == 'Administrator'
+      or request.user.is_superuser):
+        # context variable all is used to indicate that the currently
+        # logged in user has access to all the sensitive information.
+        # context variable medium indicates that the currently logged
+        # in user has access to medium sensitive information.
+        context['all'] = True
+        context['medium'] = True
+    elif access_user_role == 'Coordinator':
+        context['medium'] = True
 
     return shortcuts.render_to_response(
       template_name, RequestContext(request, context))

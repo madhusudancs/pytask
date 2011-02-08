@@ -2,15 +2,78 @@
 
 
 {% block content %}
+
+{% if all %}
+  <a href="{% url edit_profile %}">Edit Profile</a><br />
+{% endif %}
+
 Name: {{ profile.full_name }} <br />
-Username: {{ user.username }} <br />
 Gender: {{ profile.gender }} <br />
-Date of Birth: {{ profile.dob }}<br />
+
+{% if medium %}
+  <hr />
+  Username: {{ user.username }} <br />
+{% endif %}
+
+{% if all %}
+  Date of Birth: {{ profile.dob }}<br />
+{% endif %}
+
+{% if medium %}
 <hr />
-About Me: {{ profile.aboutme|linebreaksbr }} <br />
-<hr />
+<h4>Contact Details</h4>
+Email: {{ profile_user.email }}<br />
+{% endif %}
+
+{% if all %}
 Address: {{ profile.address|linebreaksbr }} <br />
-<hr />
 Phone Number: {{ profile.phonenum }} <br />
-<a href="{% url edit_profile %}">Edit profile</a>
+{% endif %}
+
+{% if medium %}
+  <hr />
+{% endif %}
+
+About: {{ profile.aboutme|linebreaksbr }} <br />
+
+{% if profile_user.claimed_tasks.all %}
+<hr />
+<h3>List of Tasks requested for claim but awaiting approval:</h3>
+<ul>
+  {% for task in profile_user.claimed_tasks.all %}
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if profile_user.selected_tasks.all %}
+<hr />
+<h3>List of Tasks currently working on:</h3>
+<ul>
+  {% for task in profile_user.selected_tasks.all %}
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if profile_user.comp_tasks.all %}
+<hr />
+<h3>List of Tasks completed:</h3>
+<ul>
+  {% for task in profile_user.comp_tasks.all %}
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% if profile_user.reviewing_tasks.all %}
+<hr />
+<h3>List of Tasks reviewed:</h3>
+<ul>
+  {% for task in profile_user.reviewing_tasks.all %}
+  <li><a href="{% url view_task task.id %}">{{ task.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+
 {% endblock %}

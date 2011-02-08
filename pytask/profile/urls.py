@@ -4,7 +4,7 @@ from django.conf.urls.defaults import url
 
 urlpatterns = patterns('pytask.profile.views',
   url(r'^view/$', 'view_profile', name='view_profile'),
-  url(r'^view/(?P<user_id>\d+)$', 'view_user_profile',
+  url(r'^view/(?P<user_id>\d+)$', 'view_profile',
     name='view_user_profile'),
   url(r'^edit/$', 'edit_profile', name='edit_profile'),
   url(r'^notification/browse/$', 'browse_notifications',
