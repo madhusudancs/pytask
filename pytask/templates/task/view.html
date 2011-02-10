@@ -46,14 +46,16 @@
   <br />
 
   <hr />
+  <strong>Pynts: {{ task.pynts }}</strong><br/>
+  {% if task.tags.count %}
+    Tags: {% as_tags task.tags %}<hr />
+  {% endif %}
+
+  <hr />
   <b>Description:</b><br />
 
   {{ task.desc|linebreaksbr }}
   <br /><br /><hr />
-
-  {% if task.tags.count %}
-    Tags: {% as_tags task.tags %}<hr />
-  {% endif %}
 
   {% if selected_users %}
 
