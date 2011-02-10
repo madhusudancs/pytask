@@ -41,7 +41,14 @@
       <table>
       {% for chap in chapters %}
       <tr>
-        <td><a href="{% url view_chapter chap.parent.id chap.id %}">{{chap.title}}</a> </td>
+        <td>
+          <a href="{% url view_chapter chap.parent.id chap.id %}">
+            {{ chap.title }}
+          </a>
+        </td>
+        <td>
+        (<strong>{{ chap.pynts }} Pynt{% if chap.pynts != 1 %}s{% endif %}</strong>)
+        </td>
       </tr>
       {% endfor %}
       </table>
