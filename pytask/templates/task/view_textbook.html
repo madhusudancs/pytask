@@ -27,6 +27,10 @@
       <strong>Tags:</strong> {% as_tags textbook.tags %}<hr />
     {% endif %}
 
+    <hr />
+    <b>Description:</b><br />
+    {{ textbook.desc|linebreaksbr }}
+
     <h3>
       Tasks:
       {% if can_create_chapters %}
