@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+
 {% comment %}
 Copyright 2011 Authors of PyTask.
 
@@ -17,8 +19,6 @@ You should have received a copy of the GNU General Public License
 along with PyTask.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment%}
 
-
-{% extends "base.html" %}
 
 {% block content %}
 The task <a href="{% url view_task task.id %}">{{task.title}}</a>
