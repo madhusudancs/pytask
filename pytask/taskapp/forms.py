@@ -24,9 +24,15 @@ __authors__ = [
     ]
 
 
+import re
+
 from django import forms
-from pytask.taskapp.models import Task, WorkReport, TaskComment, TaskClaim, \
-                                  TextBook
+
+from pytask.taskapp.models import Task
+from pytask.taskapp.models import TaskClaim
+from pytask.taskapp.models import TaskComment
+from pytask.taskapp.models import WorkReport
+
 
 class CreateTaskForm(forms.ModelForm):
     class Meta:
@@ -55,6 +61,19 @@ class CreateTaskForm(forms.ModelForm):
 
         return data
 
+    def clean_tags_field(self):
+        """Clean the tags field to contain only allowed characters.
+        """
+        tags_field = self.cleaned_data.get('tags_field', '')
+
+        if tags_field and not re.match(r'[\w,\-&./\'\" ]+', tags_field):
+            raise forms.ValidationError("Contains unallowed characters. "
+              "Allowed characters are all alphabet, numbers, underscore(_), "
+              "period(.), forward slash(/), dash(-), ampersand(&), single "
+              "quote(') and space.")
+
+        return tags_field
+
 class EditTaskForm(forms.ModelForm):
     class Meta:
         model = Task
@@ -77,6 +96,19 @@ class EditTaskForm(forms.ModelForm):
                 return data
         except Task.DoesNotExist:
             return data
+
+    def clean_tags_field(self):
+        """Clean the tags field to contain only allowed characters.
+        """
+        tags_field = self.cleaned_data.get('tags_field', '')
+
+        if tags_field and not re.match(r'[\w,\-&./\'\" ]+', tags_field):
+            raise forms.ValidationError("Contains unallowed characters. "
+              "Allowed characters are all alphabet, numbers, underscore(_), "
+              "period(.), forward slash(/), dash(-), ampersand(&), single "
+              "quote(') and space.")
+
+        return tags_field
 
 class TaskCommentForm(forms.ModelForm):
 
@@ -118,17 +150,59 @@ class CreateTextbookForm(forms.ModelForm):
         model = Task
         fields = ['name', 'chapters', 'tags_field']
 
+    def clean_tags_field(self):
+        """Clean the tags field to contain only allowed characters.
+        """
+        tags_field = self.cleaned_data.get('tags_field', '')
+
+        if tags_field and not re.match(r'[\w,\-&./\'\" ]+', tags_field):
+            raise forms.ValidationError("Contains unallowed characters. "
+              "Allowed characters are all alphabet, numbers, underscore(_), "
+              "period(.), forward slash(/), dash(-), ampersand(&), single "
+              "quote(') and space.")
+
+        return tags_field
+
 class CreateChapterForm(forms.ModelForm):
 
     class Meta:
         model = Task
         fields = ['title', 'desc' , 'pynts', 'tags_field']
 
+    def clean_tags_field(self):
+        """Clean the tags field to contain only allowed characters.
+        """
+        tags_field = self.cleaned_data.get('tags_field', '')
+
+        if tags_field and not re.match(r'[\w,\-&./\'\" ]+', tags_field):
+            raise forms.ValidationError("Contains unallowed characters. "
+              "Allowed characters are all alphabet, numbers, underscore(_), "
+              "period(.), forward slash(/), dash(-), ampersand(&), single "
+              "quote(') and space.")
+
+        return tags_field
+
+
 class EditTextbookForm(forms.ModelForm):
 
     class Meta:
         model = Task
         fields = ['title', 'desc', 'pynts', 'tags_field']
+
+    def clean_tags_field(self):
+        """Clean the tags field to contain only allowed characters.
+        """
+
+        tags_field = self.cleaned_data.get('tags_field', '')
+
+        if tags_field and not re.match(r'^[\w,\-&./\'\" ]+$', tags_field):
+            raise forms.ValidationError("Contains unallowed characters. "
+              "Allowed characters are all alphabet, numbers, underscore(_), "
+              "period(.), forward slash(/), dash(-), ampersand(&), single "
+              "quote(') and space.")
+
+        return tags_field
+
 
 def AddTaskForm(task_choices, is_plain=False):
     """ if is_plain is true, it means the task has no subs/deps.

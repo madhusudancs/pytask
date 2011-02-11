@@ -66,8 +66,11 @@ class Task(models.Model):
                               choices=TASK_STATUS_CHOICES,
                               default="Unpublished")
 
-    tags_field = TagField(verbose_name=u"Tags", 
-                          help_text=u"Give tags separated by commas") 
+    tags_field = TagField(
+      verbose_name=u"Tags", help_text=u"Give tags separated by commas. "
+      "The allowed characters are all alphabet, numbers, underscore(_), "
+      "period(.), forward slash(/), dash(-), ampersand(&), single quote(') "
+      " and space.")
 
     pynts = models.PositiveSmallIntegerField(
       help_text=u"Number of Pynts a user gets on completing the task")
