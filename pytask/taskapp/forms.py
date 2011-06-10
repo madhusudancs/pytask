@@ -148,7 +148,7 @@ class CreateTextbookForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['name', 'chapters', 'tags_field']
+        fields = ['title', 'desc', 'pynts', 'tags_field']
 
     def clean_tags_field(self):
         """Clean the tags field to contain only allowed characters.
