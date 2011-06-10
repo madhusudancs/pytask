@@ -23,7 +23,11 @@ along with PyTask.  If not, see <http://www.gnu.org/licenses/>.
 <ul>
   {% for task in tasks %}
     <li>
-      <a href="{% url view_textbook task.id %}">
+      {% if task.parent %}
+        <a href="{% url view_chapter task.parent.id task.id %}">
+      {% else %}
+        <a href="{% url view_textbook task.id %}">
+      {% endif %}
         {{ task.title }}
       </a>
     </li>
