@@ -37,7 +37,7 @@ from pytask.helpers.exceptions import UnauthorizedAccess
 class ExceptionMiddleware(object):
     """Middleware definition that processes exceptions raised in PyTaskViews.
     """
-  
+
     def process_exception(self, request, exception):
         """Process the exception raised.
         """
@@ -49,6 +49,6 @@ class ExceptionMiddleware(object):
               'error_message': exception.message
               })
             return HttpResponse(template.render(context))
-    
+
         # let Django handle it
         return None

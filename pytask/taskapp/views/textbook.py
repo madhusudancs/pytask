@@ -33,7 +33,6 @@ from datetime import datetime
 from django import shortcuts
 from django import http
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
