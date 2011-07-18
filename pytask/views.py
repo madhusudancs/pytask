@@ -49,7 +49,7 @@ def home_page(request):
 
     user = request.user
     if not user.is_authenticated():
-        return render_to_response("index.html")
+        return render_to_response("index.html", RequestContext(request, {}))
 
     profile = user.get_profile()
 
